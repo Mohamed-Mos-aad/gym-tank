@@ -8,47 +8,59 @@ import Button from "@/components/ui/Button";
 
 export default function Footer() {
     return (
-        <footer className="bg-[#F2F4F6] px-12 py-20">
-            <div className="grid grid-cols-4 gap-12">
-                <div className="flex flex-col gap-6">
-                    <h1 className="text-[30px] font-black text-primary">جيم تانك</h1>
-                    <p className="text-[16px] text-[#464555]">
-                        المنصة الرائدة في الشرق الأوسط لإدارة
-                        المنشآت الرياضية بكل ذكاء وسهولة.
-                    </p>
-                    <div className="flex gap-4">
-                        <Link href={""} className="w-10 h-10 flex justify-center items-center bg-[#ECEEF0] rounded-full"><Share2 className="w-5 text-[#191C1E]" /></Link>
-                        <Link href={""} className="w-10 h-10 flex justify-center items-center bg-[#ECEEF0] rounded-full"><MessageSquareText className="w-5 text-[#191C1E]" /></Link>
-                        <Link href={""} className="w-10 h-10 flex justify-center items-center bg-[#ECEEF0] rounded-full"><Earth className="w-5 text-[#191C1E]" /></Link>
+        <footer className="bg-neutral-100 px-4 py-14 sm:px-6 lg:px-10 lg:py-20">
+            <div className="mx-auto w-full max-w-7xl">
+                <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="flex flex-col gap-6">
+                        <h1 className="text-[30px] font-black text-brand-500">جيم تانك</h1>
+                        <p className="text-[16px] text-neutral-700">
+                            المنصة الرائدة في الشرق الأوسط لإدارة
+                            المنشآت الرياضية بكل ذكاء وسهولة.
+                        </p>
+                        <div className="flex gap-3">
+                            <Link href="#" className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 transition-colors hover:bg-brand-50"><Share2 className="w-5 text-neutral-900" /></Link>
+                            <Link href="#" className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 transition-colors hover:bg-brand-50"><MessageSquareText className="w-5 text-neutral-900" /></Link>
+                            <Link href="#" className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-200 transition-colors hover:bg-brand-50"><Earth className="w-5 text-neutral-900" /></Link>
+                        </div>
+                    </div>
+                    <div className="mb-2">
+                        <h2 className="mb-4 text-[18px] font-bold text-neutral-900">المنتج</h2>
+                        <ul className="flex flex-col gap-4 text-[16px] text-neutral-700">
+                            <li><Link href="#features" className="transition-colors hover:text-brand-500">المميزات</Link></li>
+                            <li><Link href="#pricing" className="transition-colors hover:text-brand-500">الأسعار</Link></li>
+                            <li><Link href="#" className="transition-colors hover:text-brand-500">التحديثات</Link></li>
+                            <li><Link href="#" className="transition-colors hover:text-brand-500">المدونة</Link></li>
+                        </ul>
+                    </div>
+                    <div className="mb-2">
+                        <h2 className="mb-4 text-[18px] font-bold text-neutral-900">الشركة</h2>
+                        <ul className="flex flex-col gap-4 text-[16px] text-neutral-700">
+                            <li><Link href="#" className="transition-colors hover:text-brand-500">من نحن</Link></li>
+                            <li><Link href="#contact" className="transition-colors hover:text-brand-500">اتصل بنا</Link></li>
+                            <li><Link href="#" className="transition-colors hover:text-brand-500">الشروط والأحكام</Link></li>
+                            <li><Link href="#" className="transition-colors hover:text-brand-500">سياسة الخصوصية</Link></li>
+                        </ul>
+                    </div>
+                    <div className="flex flex-col gap-6">
+                        <h2 className="text-[18px] font-bold text-neutral-900">اشترك في النشرة</h2>
+                        <p className="text-[16px] text-neutral-700">
+                            احصل على آخر نصائح إدارة الجيمات والمنشآت
+                            الرياضية.
+                        </p>
+                        <div className="flex flex-col gap-2 sm:flex-row">
+                            <input
+                                type="email"
+                                name="email"
+                                id="email"
+                                className="w-full rounded-xl bg-white px-4 py-3 text-neutral-900 placeholder:text-neutral-700/70"
+                                placeholder="بريدك الإلكتروني"
+                            />
+                            <Button variant="primary" className="w-full sm:w-fit"><SendHorizontal size={20}/></Button>
+                        </div>
                     </div>
                 </div>
-                <ul className="flex flex-col gap-4 text-[16px] text-[#464555] mb-2">
-                    <h2 className="text-[18px] font-bold text-[#191C1E] mb-2">المنتج</h2>
-                    <li><Link href={""}>المميزات</Link></li>
-                    <li><Link href={""}>الأسعار</Link></li>
-                    <li><Link href={""}>التحديثات</Link></li>
-                    <li><Link href={""}>التحديثات</Link></li>
-                </ul>
-                <ul className="flex flex-col gap-4 text-[16px] text-[#464555] mb-2">
-                    <h2 className="text-[18px] font-bold text-[#191C1E] mb-2">الشركة</h2>
-                    <li><Link href={""}>من نحن</Link></li>
-                    <li><Link href={""}>اتصل بنا</Link></li>
-                    <li><Link href={""}>الشروط والأحكام</Link></li>
-                    <li><Link href={""}>سياسة الخصوصية</Link></li>
-                </ul>
-                <div className="flex flex-col gap-6">
-                    <h2 className="text-[18px] font-bold text-[#191C1E]">اشترك في النشرة</h2>
-                    <p className="text-[16px] text-[#464555]">
-                        احصل على آخر نصائح إدارة الجيمات والمنشآت
-                        الرياضية.
-                    </p>
-                    <div className="flex gap-2">
-                        <input type="text" name="email" id="email" className="w-full bg-white px-4 py-3 rounded-xl" placeholder="بريدك الإلكتروني"/>
-                        <Button variant="primary"><SendHorizontal size={20}/></Button>
-                    </div>
-                </div>
+                <h3 className="mt-12 text-center text-[14px] text-neutral-700 lg:mt-16">جميع الحقوق محفوظة. © 2026 GymTank.</h3>
             </div>
-            <h3 className="text-[14px] text-[#464555] text-center mt-16">جميع الحقوق محفوظة. © 2026 GymTank.</h3>
         </footer>
     )
 }

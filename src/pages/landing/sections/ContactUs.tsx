@@ -7,22 +7,25 @@ import contactUsImage from '@/assets/images/contactUs.png'
 
 export default function ContactUs() {
     return (
-        <section 
-            className="flex flex-col items-center gap-8 px-12 py-26 bg-black/80 bg-cover bg-center bg-no-repeat"
+        <section
+            id="contact"
+            className="scroll-mt-24 bg-neutral-900/75 bg-cover bg-center bg-no-repeat bg-blend-multiply px-4 py-16 sm:px-6 lg:px-10 lg:py-24"
             style={{ backgroundImage: `url(${contactUsImage.src})` }}
         >
-                <h1 className="text-[60px] font-black text-[#F8F9FB]">
+            <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6 text-center">
+                <h1 className="text-3xl font-black leading-tight text-neutral-50 sm:text-4xl lg:text-6xl">
                     هل أنت مستعد لنقل جيمك
                     إلى المستوى التالي؟
                 </h1>
-                <p className="text-[20px] text-[#F8F9FB]">
+                <p className="text-[16px] text-neutral-50 sm:text-[18px] lg:text-[20px]">
                     انضم إلى مئات ملاك الجيمات الذين يثقون في GymTank لإدارة أعمالهم
                     يومياً.
                 </p>
-                <div className="flex gap-4">
-                    <Button variant="primary">ابدأ الآن مجاناً</Button>
-                    <Button variant="primary" className="bg-white/40">تواصل مع المبيعات</Button>
+                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+                    <Button variant="primary" className="w-full sm:w-fit">ابدأ الآن مجاناً</Button>
+                    <Button variant="primary" className="w-full bg-white/25 text-white hover:bg-white/35 sm:w-fit">تواصل مع المبيعات</Button>
                 </div>
+            </div>
         </section>
     )
 }
