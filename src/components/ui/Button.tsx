@@ -9,7 +9,7 @@ export default function Button({variant ,children, ...props}: ButtonProps) {
     const typeStyle = {
         primary : "bg-primary text-white",
         outline: "",
-        guest: "text-primary"
+        guest: "bg-white text-primary"
     }
 
 
