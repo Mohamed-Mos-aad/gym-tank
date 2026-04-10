@@ -10,7 +10,7 @@ import gymTankDashboardPreview from '@/assets/images/GymTankDashboardPreview.png
 
 export default function HeroSection() {
     return (
-        <section className="min-h-screen grid grid-cols-2 items-center px-12">
+        <section className="min-h-screen grid grid-cols-2 items-center px-24">
             <div className='flex flex-col gap-8'>
                 <span className="w-fit flex items-center gap-2 bg-[#D8E2FF] px-4 py-1 rounded-full text-[14px] font-bold text-[#001A42]">
                     <Zap size={12} strokeWidth={3}/>

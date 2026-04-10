@@ -7,7 +7,7 @@ import NavBar from "@/components/navigation/NavBar";
 
 export default function LandingPageLayout() {
     return (
-        <main className="min-h-screen px-12">
+        <main className="min-h-screen">
             <NavBar />
             <LandingPage />
         </main>

@@ -6,7 +6,7 @@ import Button from "../ui/Button";
 
 export default function NavBar() {
     return (
-        <nav className="flex justify-between py-5">
+        <nav className="flex justify-between px-12 py-5">
             <h1 className="text-2xl font-black text-primary">جيم تانك</h1>
             <ul className="flex gap-8 text-[16px] font-bold">
                 <li className="text-primary cursor-pointer">الرئيسية</li>
