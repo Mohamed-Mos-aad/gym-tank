@@ -3,6 +3,7 @@ import HeroSection from "./sections/HeroSection";
 import Features from "./sections/Features";
 import Prices from "./sections/Prices";
 import ContactUs from "./sections/ContactUs";
+import Footer from "./sections/Footer";
 
 
 
@@ -13,6 +14,7 @@ export default function LandingPage() {
             <Features />
             <Prices />
             <ContactUs />
+            <Footer />
         </main>
     )
 }
