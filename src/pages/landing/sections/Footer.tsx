@@ -2,6 +2,7 @@
 import Link from "next/link";
 // ** Assets
 import { Earth, MessageSquareText, SendHorizontal, Share2 } from "lucide-react";
+// ** Components
 import Button from "@/components/ui/Button";
 
 
@@ -35,7 +36,7 @@ export default function Footer() {
                     <div className="mb-2">
                         <h2 className="mb-4 text-[18px] font-bold text-neutral-900">الشركة</h2>
                         <ul className="flex flex-col gap-4 text-[16px] text-neutral-700">
-                            <li><Link href="#" className="transition-colors hover:text-brand-500">من نحن</Link></li>
+                            <li><Link href="#home" className="transition-colors hover:text-brand-500">من نحن</Link></li>
                             <li><Link href="#contact" className="transition-colors hover:text-brand-500">اتصل بنا</Link></li>
                             <li><Link href="#" className="transition-colors hover:text-brand-500">الشروط والأحكام</Link></li>
                             <li><Link href="#" className="transition-colors hover:text-brand-500">سياسة الخصوصية</Link></li>
@@ -55,7 +56,7 @@ export default function Footer() {
                                 className="w-full rounded-xl bg-white px-4 py-3 text-neutral-900 placeholder:text-neutral-700/70"
                                 placeholder="بريدك الإلكتروني"
                             />
-                            <Button variant="primary" className="w-full sm:w-fit"><SendHorizontal size={20}/></Button>
+                            <Button variant="primary" className="flex justify-center items-center"><SendHorizontal size={20}/></Button>
                         </div>
                     </div>
                 </div>

@@ -22,8 +22,8 @@ export default function ContactUs() {
                     يومياً.
                 </p>
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-                    <Button variant="primary" className="w-full sm:w-fit">ابدأ الآن مجاناً</Button>
-                    <Button variant="primary" className="w-full bg-white/25 text-white hover:bg-white/35 sm:w-fit">تواصل مع المبيعات</Button>
+                    <Button variant="primary" className="w-full px-12 py-4 sm:w-fit">ابدأ الآن مجاناً</Button>
+                    <Button variant="primary" className="w-full px-12 py-4 bg-white/25 text-white hover:bg-white/35 sm:w-fit">تواصل مع المبيعات</Button>
                 </div>
             </div>
         </section>
