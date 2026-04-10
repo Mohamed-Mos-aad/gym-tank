@@ -26,8 +26,8 @@ export default function HeroSection() {
                     والنمو في منصة واحدة.
                 </p>
                 <div className='flex gap-4'>
-                    <Button variant='primary'>ابدأ تجربتك المجانية</Button>
-                    <Button variant='guest'>مشاهدة عرض توضيحي</Button>
+                    <Button variant='primary' className='px-10 py-4'>ابدأ تجربتك المجانية</Button>
+                    <Button variant='guest' className='px-10 py-4'>مشاهدة عرض توضيحي</Button>
                 </div>
             </div>
             <div className='flex justify-center'>

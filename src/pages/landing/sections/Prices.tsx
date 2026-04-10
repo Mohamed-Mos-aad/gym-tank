@@ -31,9 +31,12 @@ export default function Prices() {
                             تقارير مالية أساسية
                         </li>
                     </ul>
-                    <Button variant="guest">اشترك الآن</Button>
+                    <Button variant="guest" className="py-4">اشترك الآن</Button>
                 </div>
-                <div className="w-full flex flex-col gap-4 bg-primary shadow-lg rounded-4xl p-10">
+                <div className="w-full flex flex-col gap-4 bg-primary shadow-lg rounded-4xl p-10 relative">
+                    <span className="w-fit flex items-center gap-2 bg-white/20 px-4 py-1 rounded-full text-[12px] font-bold text-white absolute top-10 left-10">
+                        الأكثر طلباً
+                    </span> 
                     <h2 className="text-[20px] font-bold text-white">الخطة الأحترافية</h2>
                     <h3 className="text-[16px] text-white mb-2">
                         <span className="text-[36px] font-black text-white">449 </span>
@@ -53,7 +56,7 @@ export default function Prices() {
                             تقارير مالية أساسية
                         </li>
                     </ul>
-                    <Button variant="guest">اشترك الآن</Button>
+                    <Button variant="guest" className="py-4">اشترك الآن</Button>
                 </div>
             </div>
         </section>
