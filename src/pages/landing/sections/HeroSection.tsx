@@ -15,7 +15,7 @@ export default function HeroSection() {
                 <div className='flex flex-col gap-6 text-center lg:text-right'>
                     <span className="mx-auto flex w-fit items-center gap-2 rounded-full bg-brand-50 px-4 py-1 text-[14px] font-bold text-brand-700 lg:mx-0">
                         <Zap size={12} strokeWidth={3}/>
-                    إدارة ذكية لرياضتك
+                        إدارة ذكية لرياضتك
                     </span>
                     <h1 className='text-4xl font-black leading-tight text-neutral-900 sm:text-5xl lg:text-6xl xl:text-7xl'>
                         ادير جيمك <br />

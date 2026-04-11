@@ -15,7 +15,7 @@ export default function Features() {
                 <div className="mt-10 grid w-full gap-6 sm:grid-cols-2 xl:grid-cols-3">
                     <div className="flex flex-col gap-3 rounded-3xl bg-white p-8 text-right">
                         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-500/10">
-                            <UsersRound strokeWidth={3} className="text-brand-500"/>
+                            <UsersRound className="text-brand-500"/>
                         </div>
                         <h2 className="text-[24px] font-bold text-neutral-900">إدارة الأعضاء</h2>
                         <p className="text-[16px] text-neutral-700">
@@ -26,7 +26,7 @@ export default function Features() {
                     </div>
                     <div className="flex flex-col gap-3 rounded-3xl bg-white p-8 text-right">
                         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-info-600/10">
-                            <Banknote strokeWidth={3} className="text-info-600"/>
+                            <Banknote className="text-info-600"/>
                         </div>
                         <h2 className="text-[24px] font-bold text-neutral-900">إدارة الأعضاء</h2>
                         <p className="text-[16px] text-neutral-700">
@@ -37,7 +37,7 @@ export default function Features() {
                     </div>
                     <div className="flex flex-col gap-3 rounded-3xl bg-white p-8 text-right sm:col-span-2 xl:col-span-1">
                         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-warn-700/10">
-                            <ChartNoAxesCombined strokeWidth={3} className="text-warn-700"/>
+                            <ChartNoAxesCombined className="text-warn-700"/>
                         </div>
                         <h2 className="text-[24px] font-bold text-neutral-900">إدارة الأعضاء</h2>
                         <p className="text-[16px] text-neutral-700">

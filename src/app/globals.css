@@ -38,3 +38,24 @@ body {
 * {
   outline: none;
 }
+
+
+.progress {
+  --progress: 65;
+
+  background: conic-gradient(
+    #001a42 calc(var(--progress) * 1%),
+    #ECEEF0 0
+  );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.progress::before {
+  content: attr(data-text);
+}
