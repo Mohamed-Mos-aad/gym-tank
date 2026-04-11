@@ -3,16 +3,18 @@
 import { InputHTMLAttributes, useState } from 'react';
 // ** Assets
 import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react';
+import Link from 'next/link';
 // ** Interfaces
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     id: string;
     label: string;
     type: "email" | "text" | "password";
+    forgetPassword?: boolean;
 }
 
 
 
-export default function Input({id, label, type, ...props}:InputProps) {
+export default function Input({id, label, type, forgetPassword, ...props}:InputProps) {
     // ** States
     const [passwordHidden, setPasswordHidden] = useState<boolean>(true);
 
@@ -36,7 +38,13 @@ export default function Input({id, label, type, ...props}:InputProps) {
                     )}
                 </div>
             }
-            <label htmlFor={id}>{label}</label>
+            <label htmlFor={id} className='flex justify-between items-center'>
+                {label}
+                {
+                    type === 'password' && forgetPassword &&
+                    <Link href={''} className='text-[14px] font-bold text-brand-500'>نسيت كلمة المرور؟</Link>
+                }
+            </label>
             {
                 type === 'password' &&
                 <div className="absolute left-4 top-[50%] translate-y-1.25 cursor-pointer" onClick={passwordStateToggleHandler}>
@@ -48,7 +56,7 @@ export default function Input({id, label, type, ...props}:InputProps) {
                     }
                 </div>
             }
-            <input type={type !== 'password' ? type : passwordHidden ? type : 'text'} name={id} id={id} className={`w-full rounded-xl bg-neutral-100 py-4 ${type !== 'text' && 'pr-12'} pl-4`} {...props}/>
+            <input type={type !== 'password' ? type : passwordHidden ? type : 'text'} name={id} id={id} className={`w-full rounded-xl bg-neutral-100 py-4 ${type !== 'text' ? 'pr-12' : 'pr-4'} pl-4`} {...props}/>
         </div>
     )
 }

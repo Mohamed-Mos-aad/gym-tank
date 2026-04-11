@@ -1,5 +1,8 @@
+// ** Components
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+
+
 
 export default function Login() {
     return (
@@ -20,7 +23,7 @@ export default function Login() {
                 <p className="text-[15px] font-medium text-neutral-700 sm:text-[16px]">مرحباً بك مجدداً في نظام الإدارة الخاص بك</p>
                 <form className="mt-4 flex flex-col gap-5 sm:gap-6">
                     <Input id="email" label="البريد الإلكتروني" type="email" placeholder="name@gymtank.com"/>
-                    <Input id="password" label="كلمة المرور" type="password"/>
+                    <Input id="password" label="كلمة المرور" type="password" placeholder="************"/>
                     <Button variant="primary" className="mt-2 w-full py-4">تسجيل الدخول</Button>
                 </form>
                 <span className="mx-auto my-8 h-px w-full max-w-105 bg-neutral-200"></span>
