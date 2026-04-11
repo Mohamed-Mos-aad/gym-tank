@@ -2,6 +2,7 @@
 
 // ** Hooks && Tools
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 // ** Assets
 import { CreditCard, LayoutDashboard, LogOut, Settings, UsersRound, X } from "lucide-react";
 
@@ -12,13 +13,15 @@ interface SideNavBarProps {
 }
 
 const navItems = [
-    { href: "/user/home", label: "لوحة القيادة", icon: LayoutDashboard, active: true },
-    { href: "#", label: "الأعضاء", icon: UsersRound },
+    { href: "/user/home", label: "لوحة القيادة", icon: LayoutDashboard },
+    { href: "/user/members", label: "الأعضاء", icon: UsersRound },
     { href: "#", label: "الاشتراكات", icon: CreditCard },
     { href: "#", label: "الإعدادات", icon: Settings },
 ];
 
 export default function SideNavBar({ isOpen, onClose }: SideNavBarProps) {
+    const pathname = usePathname();
+
     return (
         <nav
             className={`fixed top-0 right-0 z-40 flex h-screen w-72 max-w-[85vw] flex-col gap-8 border-l border-brand-700/10 bg-white px-4 py-6 shadow-xl transition-transform duration-300 lg:w-64 lg:translate-x-0 lg:shadow-none ${isOpen ? "translate-x-0" : "translate-x-full"}`}
@@ -39,18 +42,22 @@ export default function SideNavBar({ isOpen, onClose }: SideNavBarProps) {
             </div>
 
             <ul className="flex flex-1 flex-col gap-1.5 text-neutral-700">
-                {navItems.map(({ href, label, icon: Icon, active }) => (
-                    <li key={label}>
-                        <Link
-                            href={href}
-                            className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-colors ${active ? "bg-brand-50 text-brand-500 font-bold" : "hover:bg-neutral-100 hover:text-brand-500"}`}
-                            onClick={onClose}
-                        >
-                            <Icon size={18} />
-                            {label}
-                        </Link>
-                    </li>
-                ))}
+                {navItems.map(({ href, label, icon: Icon }) => {
+                    const isActive = href !== "#" && pathname === href;
+
+                    return (
+                        <li key={label}>
+                            <Link
+                                href={href}
+                                className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-colors ${isActive ? "bg-brand-50 text-brand-500 font-bold" : "hover:bg-neutral-100 hover:text-brand-500"}`}
+                                onClick={onClose}
+                            >
+                                <Icon size={18} />
+                                {label}
+                            </Link>
+                        </li>
+                    );
+                })}
             </ul>
 
             <Link

@@ -1,3 +1,5 @@
+import { twMerge } from "tailwind-merge";
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant: "primary" | "outline" | "guest";
     children: React.ReactNode;
@@ -16,6 +18,15 @@ export default function Button({variant ,className, children, ...props}: ButtonP
 
 
     return (
-        <button className={`${typeStyle[variant]} ${className} text-[16px] font-black rounded-xl px-6 py-2 shadow cursor-pointer transition-colors duration-200`} {...props}>{children}</button>
+        <button
+            className={twMerge(
+                "text-[16px] font-black rounded-xl px-6 py-2 shadow cursor-pointer transition-colors duration-200",
+                typeStyle[variant],
+                className
+            )}
+            {...props}
+        >
+            {children}
+        </button>
     )
 }
