@@ -23,7 +23,7 @@ export default function Members() {
             <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h1 className="text-[32px] font-black text-neutral-900 sm:text-[40px]">الأعضاء</h1>
                 <Button variant="primary" className="flex w-full items-center justify-center gap-2 sm:w-fit">
-                    <Plus className="text-brand-500" size={20} strokeWidth={3} />
+                    <Plus className="text-white" size={20} strokeWidth={3} />
                     إضافة عضو جديد
                 </Button>
             </section>
@@ -62,7 +62,7 @@ export default function Members() {
                 </h2>
 
                 <div className="overflow-x-auto">
-                    <table className="w-full min-w-[760px]">
+                    <table className="w-full min-w-190">
                         <thead>
                             <tr className="border-b border-neutral-200">
                                 <th className="px-6 py-4 text-start text-[14px] font-bold text-neutral-700">الاسم</th>

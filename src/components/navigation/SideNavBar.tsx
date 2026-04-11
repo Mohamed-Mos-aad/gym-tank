@@ -16,7 +16,7 @@ const navItems = [
     { href: "/user/home", label: "لوحة القيادة", icon: LayoutDashboard },
     { href: "/user/members", label: "الأعضاء", icon: UsersRound },
     { href: "#", label: "الاشتراكات", icon: CreditCard },
-    { href: "#", label: "الإعدادات", icon: Settings },
+    { href: "/user/setting", label: "الإعدادات", icon: Settings },
 ];
 
 export default function SideNavBar({ isOpen, onClose }: SideNavBarProps) {
