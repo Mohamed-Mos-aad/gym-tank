@@ -9,7 +9,7 @@ export default function ContactUs() {
     return (
         <section
             id="contact"
-            className="scroll-mt-24 bg-neutral-900/75 bg-cover bg-center bg-no-repeat bg-blend-multiply px-4 py-16 sm:px-6 lg:px-10 lg:py-24"
+            className="scroll-mt-24 bg-neutral-900/72 bg-cover bg-center bg-no-repeat bg-blend-multiply px-4 py-16 sm:px-6 lg:px-10 lg:py-24"
             style={{ backgroundImage: `url(${contactUsImage.src})` }}
         >
             <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-6 text-center">
