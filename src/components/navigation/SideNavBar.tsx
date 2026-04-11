@@ -1,30 +1,66 @@
+"use client";
+
 // ** Hooks && Tools
 import Link from "next/link";
+// ** Assets
+import { CreditCard, LayoutDashboard, LogOut, Settings, UsersRound, X } from "lucide-react";
 
+// ** Interfaces
+interface SideNavBarProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
 
+const navItems = [
+    { href: "/user/home", label: "لوحة القيادة", icon: LayoutDashboard, active: true },
+    { href: "#", label: "الأعضاء", icon: UsersRound },
+    { href: "#", label: "الاشتراكات", icon: CreditCard },
+    { href: "#", label: "الإعدادات", icon: Settings },
+];
 
-export default function SideNavBar() {
+export default function SideNavBar({ isOpen, onClose }: SideNavBarProps) {
     return (
-        <nav className="w-64 h-screen flex flex-col gap-10 border border-[#C7C4D8]/15 px-4 py-6 fixed top-0 right-0">
-            <div>
-                <h1 className="text-[24px] font-black text-brand-500">جيم تانك</h1>
-                <h2 className="text-[10px] text-neutral-700">إدارة الجيم الذكية</h2>
+        <nav
+            className={`fixed top-0 right-0 z-40 flex h-screen w-72 max-w-[85vw] flex-col gap-8 border-l border-brand-700/10 bg-white px-4 py-6 shadow-xl transition-transform duration-300 lg:w-64 lg:translate-x-0 lg:shadow-none ${isOpen ? "translate-x-0" : "translate-x-full"}`}
+        >
+            <div className="flex items-start justify-between gap-3">
+                <div>
+                    <h1 className="text-[24px] font-black text-brand-500">جيم تانك</h1>
+                    <h2 className="text-[10px] text-neutral-700">إدارة الجيم الذكية</h2>
+                </div>
+                <button
+                    type="button"
+                    aria-label="Close sidebar"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-neutral-700 transition-colors hover:bg-neutral-100 hover:text-brand-500 lg:hidden"
+                    onClick={onClose}
+                >
+                    <X size={18} />
+                </button>
             </div>
-            <ul className="flex flex-col gap-2 text-[#64748B]">
-                <li>
-                    <Link href={""} className="flex items-center gap-3 bg-[#EEF2FF]/50 rounded-lg px-4 py-3 font-bold text-brand-500">لوحة القيادة</Link>
-                </li>
-                <li>
-                    <Link href={""} className="flex items-center gap-3 px-4 py-3">الأعضاء</Link>
-                </li>
-                <li>
-                    <Link href={""} className="flex items-center gap-3 px-4 py-3">الاشتراكات</Link>
-                </li>
-                <li>
-                    <Link href={""} className="flex items-center gap-3 px-4 py-3">الإعدادات</Link>
-                </li>
+
+            <ul className="flex flex-1 flex-col gap-1.5 text-neutral-700">
+                {navItems.map(({ href, label, icon: Icon, active }) => (
+                    <li key={label}>
+                        <Link
+                            href={href}
+                            className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-colors ${active ? "bg-brand-50 text-brand-500 font-bold" : "hover:bg-neutral-100 hover:text-brand-500"}`}
+                            onClick={onClose}
+                        >
+                            <Icon size={18} />
+                            {label}
+                        </Link>
+                    </li>
+                ))}
             </ul>
-            <Link href={"/"} className="flex items-center gap-3 text-[16px] text-[#64748B] px-4 py-3 absolute bottom-3">تسجيل الخروج</Link>
+
+            <Link
+                href="/"
+                className="mt-auto flex items-center gap-3 rounded-xl px-4 py-3 text-neutral-700 transition-colors hover:bg-neutral-100 hover:text-warn-700"
+                onClick={onClose}
+            >
+                <LogOut size={18} />
+                تسجيل الخروج
+            </Link>
         </nav>
-    )
+    );
 }
