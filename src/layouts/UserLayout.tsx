@@ -1,6 +1,8 @@
 // ** Hooks && Tools
 import Link from "next/link";
 import React from "react";
+// ** Components
+import UserNavBar from "@/components/navigation/UserNavBar";
 
 
 
@@ -28,10 +30,8 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
                 </ul>
                 <Link href={"/"} className="flex items-center gap-3 text-[16px] text-[#64748B] px-4 py-3 absolute bottom-3">تسجيل الخروج</Link>
             </section>
-            <div>
-                <nav>
-                    navbar
-                </nav>
+            <div className="w-full">
+                <UserNavBar />
                 {children}
             </div>
         </div>
