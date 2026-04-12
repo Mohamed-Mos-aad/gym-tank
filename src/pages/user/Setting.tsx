@@ -5,6 +5,7 @@ import Button from "@/components/ui/Button";
 import Input from '@/components/ui/Input';
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
+import Select from "@/components/ui/Select";
 
 
 
@@ -52,8 +53,8 @@ export default function Setting() {
                             </div>
                         </div>
                         <form className="grid grid-cols-2 gap-6">
-                            <Input id="systemLanguage" label="لغة النظام الافتراضية" type="text" defaultValue="العربية (Arabic)"/>
-                            <Input id="systemTime" label="المنطقة الزمنية" type="text" defaultValue="(GMT+03:00) الرياض"/>
+                            <Select id="systemLanguage" label="لغة النظام الافتراضية" options={[{label: 'text1', value: 'text1'},{label: 'text2', value: 'text2'}]}/>
+                            <Select id="systemTime" label="المنطقة الزمنية" options={[{label: 'text1', value: 'text1'},{label: 'text2', value: 'text2'}]}/>
                         </form>
                     </div>
                 </div>
