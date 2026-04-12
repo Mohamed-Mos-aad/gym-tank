@@ -10,12 +10,22 @@ interface DatePickerProps {
     label: string;
     placeholder?: string;
     onChange?: (date: Date) => void;
+    value?: number;
+    disabled?: boolean;
 }
 
-export default function DatePicker({ id, label, placeholder = "اختر التاريخ...", onChange }: DatePickerProps) {
+export default function DatePicker({ 
+    id, 
+    label, 
+    placeholder = "اختر التاريخ...", 
+    onChange, 
+    value, 
+    disabled 
+}: DatePickerProps) {
     // ** States
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    // نستخدم القيمة القادمة من الـ props وإذا لم توجد نتركها null
+    const selectedDate = value ? new Date(value) : null;
     const [viewDate, setViewDate] = useState(new Date());
     const [dropUp, setDropUp] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -32,8 +42,8 @@ export default function DatePicker({ id, label, placeholder = "اختر التا
     const getFirstDayOfMonth = (year: number, month: number) => new Date(year, month, 1).getDay();
 
     const handleDateClick = (day: number) => {
+        if (disabled) return;
         const newDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), day);
-        setSelectedDate(newDate);
         setIsOpen(false);
         if (onChange) onChange(newDate);
     };
@@ -43,14 +53,17 @@ export default function DatePicker({ id, label, placeholder = "اختر التا
     };
 
     const toggleDropdown = () => {
+        if (disabled) return; // منع فتح التقويم إذا كان الحقل معطلاً
+        
         if (!isOpen && containerRef.current) {
             const rect = containerRef.current.getBoundingClientRect();
             const spaceBelow = window.innerHeight - rect.bottom;
-            setDropUp(spaceBelow < 400); // التقويم يحتاج مساحة أكبر قليلاً
+            setDropUp(spaceBelow < 400); 
         }
         setIsOpen(!isOpen);
     };
 
+    // إغلاق التقويم عند الضغط خارجه
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -68,7 +81,7 @@ export default function DatePicker({ id, label, placeholder = "اختر التا
     const emptyDays = Array.from({ length: firstDay }, (_, i) => i);
 
     return (
-        <div className="flex flex-col gap-2 relative" ref={containerRef}>
+        <div className={`flex flex-col gap-2 relative ${disabled ? 'opacity-60' : ''}`} ref={containerRef}>
             <label className="text-base font-medium text-neutral-800">
                 {label}
             </label>
@@ -78,18 +91,19 @@ export default function DatePicker({ id, label, placeholder = "اختر التا
                     id={id}
                     onClick={toggleDropdown}
                     className={`
-                        w-full rounded-xl py-4 px-4 cursor-pointer flex items-center justify-between transition-all outline-none border-none
-                        ${isOpen ? 'bg-white shadow-sm' : 'bg-neutral-100'}
+                        w-full rounded-xl py-4 px-4 flex items-center justify-between transition-all outline-none border-none
+                        ${disabled ? 'cursor-not-allowed bg-neutral-200' : 'cursor-pointer bg-neutral-100'}
+                        ${isOpen ? 'bg-white shadow-sm ring-2 ring-brand-500/20' : ''}
                     `}
                 >
                     <span className={`${!selectedDate ? 'text-neutral-400' : 'text-neutral-900'}`}>
                         {selectedDate ? selectedDate.toLocaleDateString('ar-EG') : placeholder}
                     </span>
                     
-                    <CalendarIcon size={20} className="text-neutral-500" />
+                    <CalendarIcon size={20} className={disabled ? 'text-neutral-400' : 'text-neutral-500'} />
                 </div>
 
-                {isOpen && (
+                {isOpen && !disabled && (
                     <div className={`
                         absolute z-50 w-[320px] bg-white rounded-2xl shadow-2xl p-4 animate-in fade-in zoom-in duration-200 border border-neutral-100
                         ${dropUp ? 'bottom-[calc(100%+8px)]' : 'mt-2 top-full'}
@@ -97,7 +111,7 @@ export default function DatePicker({ id, label, placeholder = "اختر التا
                         {/* Calendar Header */}
                         <div className="flex items-center justify-between mb-4">
                             <button onClick={() => changeMonth(-1)} className="p-2 hover:bg-neutral-100 rounded-full transition-colors">
-                                <ChevronRight size={18} /> {/* عكس الاتجاه للغة العربية */}
+                                <ChevronRight size={18} /> 
                             </button>
                             <span className="font-bold text-neutral-800">
                                 {months[viewDate.getMonth()]} {viewDate.getFullYear()}
@@ -128,6 +142,7 @@ export default function DatePicker({ id, label, placeholder = "اختر التا
                                 return (
                                     <button
                                         key={day}
+                                        type="button"
                                         onClick={() => handleDateClick(day)}
                                         className={`
                                             aspect-square flex items-center justify-center rounded-lg text-sm transition-all

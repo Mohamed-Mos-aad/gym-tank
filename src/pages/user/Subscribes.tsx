@@ -13,22 +13,53 @@ import { useEffect, useState } from "react";
 import { getMembersListAction } from "../../../actions/user.actions";
 // ** Interfaces
 import { MemberLite } from "@/types";
+interface ModalProps{
+    name: string;
+    type: "monthly" | '3Months' | 'special';
+    startDate?: number;
+    endDate?: number
+}
+
 
 
 export default function Subscribes() {
     // ** States
     const [ membersData, setMembersData ] = useState<MemberLite[]>([]);
-    const [ modalOpen, setModalOpen ] = useState<boolean>(false);
-
+    const [ modalOpen, setModalOpen ] = useState<boolean>(true);
+    const [ modalData, setModalData ] = useState<ModalProps>({
+        name: '',
+        type: "monthly",
+        startDate: new Date().getTime(),
+    })
 
 
     // ** Handlers
     const modalStateToggleHandler = () =>{
         setModalOpen(prev => !prev)
     }
-
-
-
+    const updateSubscriptionData = (newData: Partial<ModalProps>) => {
+        setModalData(prev => {
+            const updated = { ...prev, ...newData };
+            
+            // حساب تاريخ الانتهاء فقط إذا لم يكن النوع "special"
+            if (updated.type !== 'special' && updated.startDate) {
+                const start = new Date(updated.startDate);
+                const end = new Date(updated.startDate);
+                
+                if (updated.type === 'monthly') {
+                    end.setMonth(start.getMonth() + 1);
+                } else if (updated.type === '3Months') {
+                    end.setMonth(start.getMonth() + 3);
+                }
+                updated.endDate = end.getTime();
+            }
+            
+            return updated;
+        });
+    };
+    const changeModalTypeHandler = (id: "monthly" | '3Months' | 'special') => {
+        updateSubscriptionData({ type: id });
+    };
     // ** UseEffect
     useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +69,7 @@ export default function Subscribes() {
 
         fetchData()
     }, [])
+
 
 
     return (
@@ -52,14 +84,14 @@ export default function Subscribes() {
                     <div className="flex flex-col gap-2">
                         <h2 className="text-[16px] font-bold text-neutral-700">نوع الاشتراك</h2>
                         <div className="flex gap-1 bg-[#F2F4F6] p-1.5 rounded-xl">
-                            <h3 className="w-full bg-white text-center rounded-lg text-[16px] font-black text-brand-500 py-2.5 cursor-pointer">شهري</h3>
-                            <h3 className="w-full text-center rounded-lg text-[16px] text-neutral-700 py-2.5 cursor-pointer">3 شهور</h3>
-                            <h3 className="w-full text-center rounded-lg text-[16px] text-neutral-700 py-2.5 cursor-pointer">مخصص</h3>
+                            <h3 onClick={()=>{changeModalTypeHandler("monthly")}} className={`w-full text-center rounded-lg text-[16px] ${modalData.type === 'monthly' ? 'bg-white text-brand-500 font-bold' : 'text-neutral-700' } py-2.5 cursor-pointer`}>شهري</h3>
+                            <h3 onClick={()=>{changeModalTypeHandler("3Months")}} className={`w-full text-center rounded-lg text-[16px] ${modalData.type === '3Months' ? 'bg-white text-brand-500 font-bold' : 'text-neutral-700' } py-2.5 cursor-pointer`}>3 شهور</h3>
+                            <h3 onClick={()=>{changeModalTypeHandler("special")}} className={`w-full text-center rounded-lg text-[16px] ${modalData.type === 'special' ? 'bg-white text-brand-500 font-bold' : 'text-neutral-700' } py-2.5 cursor-pointer`}>مخصص</h3>
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <DatePicker label="تاريخ البدء" id="startDate"/>
-                        <DatePicker label="تاريخ الانتهاء" id="endDate"/>
+                        <DatePicker label="تاريخ البدء" id="startDate" value={modalData.startDate} onChange={(date) => updateSubscriptionData({ startDate: date.getTime() })}/>
+                        <DatePicker label="تاريخ الانتهاء" id="endDate" value={modalData.endDate}  onChange={(date) => updateSubscriptionData({ endDate: date.getTime() })}/>
                     </div>
                     <div className="bg-[#3525CD]/5 border border-[#3525CD]/10 rounded-xl p-6">
                         <h2 className="w-full flex justify-between items-center text-[16px] font-bold text-neutral-700">
