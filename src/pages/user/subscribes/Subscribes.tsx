@@ -10,11 +10,11 @@ import { ChevronLeft, ChevronRight, MoreHorizontal, Plus } from "lucide-react";
 // ** Hooks && Tools
 import { useEffect, useState } from "react";
 // ** Actions
-import { getMembersListAction } from "../../../../actions/user.actions";
+import { getMembersListAction, updateMemberAction } from "../../../../actions/user.actions";
 // ** Interfaces
 import { MemberLite } from "@/types";
 interface ModalProps{
-    name: string;
+    id: string | number;
     type: "monthly" | '3Months' | 'special';
     startDate?: number;
     endDate?: number
@@ -27,13 +27,18 @@ export default function Subscribes() {
     const [ membersData, setMembersData ] = useState<MemberLite[]>([]);
     const [ modalOpen, setModalOpen ] = useState<boolean>(false);
     const [ modalData, setModalData ] = useState<ModalProps>({
-        name: '',
+        id: '',
         type: "monthly",
         startDate: new Date().getTime(),
     })
 
 
+
     // ** Handlers
+    const getMembersDataAction = async () => {
+        const res = await getMembersListAction()
+        setMembersData(res.data)
+    }
     const modalStateToggleHandler = () =>{
         setModalOpen(prev => !prev)
     }
@@ -58,16 +63,34 @@ export default function Subscribes() {
     const changeModalTypeHandler = (id: "monthly" | '3Months' | 'special') => {
         updateSubscriptionData({ type: id });
     };
+    const membersListHandler = ()=>{
+        const options: {label: string, value: string}[] = []
+        membersData.map(member => {
+            options.push({
+                label: member.name,
+                value: member.id
+            })
+        })
+        return options;
+    }
+    const updateMemberActionHandler = async ()=>{
+        if(!modalData.id) return
+        await updateMemberAction(modalData.id, {
+            subscriptionType: modalData.type,
+            startDate: modalData.startDate ? new Date(modalData.startDate) : undefined,
+            endDate: modalData.endDate ? new Date(modalData.endDate) : undefined
+        });
+        await getMembersDataAction();
+        modalStateToggleHandler();
+    }
 
 
 
     // ** UseEffect
     useEffect(() => {
-    const fetchData = async () => {
-        const res = await getMembersListAction()
-        setMembersData(res.data)
-    }
-
+        const fetchData = ()=>{
+            getMembersDataAction()
+        }
         fetchData()
     }, [])
 
@@ -86,7 +109,11 @@ export default function Subscribes() {
                         label="اختيار العضو"
                         id="memberName"
                         placeholder="ابحث عن اسم العضو أو رقم الهاتف..."
-                        options={[]}
+                        options={membersListHandler()}
+                        onChange={(value)=>{setModalData(prev => ({
+                            ...prev,
+                            id: value
+                        }))}}
                     />
 
                     <div className="flex flex-col gap-2">
@@ -160,8 +187,8 @@ export default function Subscribes() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                        <Button variant="primary" className="w-full py-3 sm:py-4">
-                        حفظ الاشتراك
+                        <Button variant="primary" className="w-full py-3 sm:py-4" onClick={updateMemberActionHandler}>
+                            حفظ الاشتراك
                         </Button>
 
                         <Button
@@ -273,9 +300,12 @@ export default function Subscribes() {
                                 {member.name}
                             </td>
                             <td className="px-6 py-4 text-[16px] font-medium text-neutral-700">
-                                <Badge className="border border-info-600/20 bg-info-600/10 text-[12px] font-bold text-info-600">
-                                {member.subscriptionType}
-                                </Badge>
+                                {
+                                    member.subscriptionType && 
+                                    <Badge className="border border-info-600/20 bg-info-600/10 text-[12px] font-bold text-info-600">
+                                    {member.subscriptionType}
+                                    </Badge>
+                                }
                             </td>
                             <td className="px-6 py-4 text-[14px] text-neutral-700">
                                 {member.startDate.toLocaleDateString()}

@@ -12,7 +12,7 @@ import Badge from "@/components/ui/Badge";
 import { useEffect, useState } from "react";
 
 // ** Actions
-import { getMembersListAction } from "../../../../actions/user.actions";
+import { createMemberAction, getMembersListAction } from "../../../../actions/user.actions";
 
 // ** Interfaces
 import { MemberLite } from "@/types";
@@ -29,41 +29,50 @@ export default function Members() {
 
     // ** States
     const [membersData, setMembersData] = useState<MemberLite[]>([]);
-
     const [attendanceModalOpen, setAttendanceModalOpen] = useState(false);
     const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
-
     const [modalData, setModalData] = useState<ModalProps>({
         name: '',
         type: "monthly",
         startDate: new Date().getTime(),
     })
-
     const [newMember, setNewMember] = useState({
         name: '',
         phone: '',
-        type: 'monthly',
-        startDate: '',
-        endDate: ''
     });
 
+
+
+
     // ** Handlers
+    const getMembersDataAction = async () => {
+        const res = await getMembersListAction()
+        setMembersData(res.data)
+    }
     const toggleAttendanceModal = () => {
         setAttendanceModalOpen(prev => !prev)
     }
-
     const toggleAddMemberModal = () => {
         setAddMemberModalOpen(prev => !prev)
     }
+    const saveMemberHandler = async ()=>{
+        if(!newMember.name) return
+        await createMemberAction(newMember);
+        await getMembersDataAction();
+        toggleAddMemberModal();
+    }
+
+
 
     // ** Effects
     useEffect(() => {
-        const fetchData = async () => {
-            const res = await getMembersListAction()
-            setMembersData(res.data)
+        const fetchData = ()=>{
+            getMembersDataAction()
         }
         fetchData()
     }, [])
+
+
 
     return (
         <main className="flex flex-col gap-6 lg:gap-8">
@@ -130,18 +139,8 @@ export default function Members() {
                         value={newMember.phone}
                         onChange={(e) => setNewMember({...newMember, phone: e.target.value})}
                     />
-                    <Select 
-                        id="memberType"
-                        placeholder="نوع الاشتراك"
-                        label="نوع الاشتراك"
-                        options={[
-                            {label: 'شهري', value: 'monthly'},
-                            {label: '3 شهور', value: '3Months'},
-                            {label: 'مميز', value: 'special'}
-                        ]}
-                    />
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                        <Button variant="primary" className="w-full py-3 sm:py-4">
+                        <Button variant="primary" className="w-full py-3 sm:py-4" onClick={saveMemberHandler}>
                             حفظ
                         </Button>
 
