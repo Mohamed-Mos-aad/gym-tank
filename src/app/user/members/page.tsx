@@ -1,5 +1,5 @@
 // ** Pages
-import Members from "@/pages/user/Members";
+import Members from "@/pages/user/members/Members";
 
 
 

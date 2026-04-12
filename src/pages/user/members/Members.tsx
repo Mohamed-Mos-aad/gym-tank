@@ -1,34 +1,179 @@
+'use client'
 // ** Assets
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock, Plus } from "lucide-react";
+
 // ** Components
+import Select from "@/components/ui/Select";
+import Modal from "@/components/popUp/Modal";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
+
+// ** Hooks && Tools
+import { useEffect, useState } from "react";
+
 // ** Actions
-import { getMembersListAction } from "../../../actions/user.actions";
+import { getMembersListAction } from "../../../../actions/user.actions";
 
+// ** Interfaces
+import { MemberLite } from "@/types";
+import Input from "@/components/ui/Input";
 
+interface ModalProps{
+    name: string;
+    type: "monthly" | '3Months' | 'special';
+    startDate?: number;
+    endDate?: number
+}
 
-export default async function Members() {
-    const { data } = await getMembersListAction();
+export default function Members() {
 
+    // ** States
+    const [membersData, setMembersData] = useState<MemberLite[]>([]);
 
+    const [attendanceModalOpen, setAttendanceModalOpen] = useState(false);
+    const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
 
+    const [modalData, setModalData] = useState<ModalProps>({
+        name: '',
+        type: "monthly",
+        startDate: new Date().getTime(),
+    })
+
+    const [newMember, setNewMember] = useState({
+        name: '',
+        phone: '',
+        type: 'monthly',
+        startDate: '',
+        endDate: ''
+    });
+
+    // ** Handlers
+    const toggleAttendanceModal = () => {
+        setAttendanceModalOpen(prev => !prev)
+    }
+
+    const toggleAddMemberModal = () => {
+        setAddMemberModalOpen(prev => !prev)
+    }
+
+    // ** Effects
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await getMembersListAction()
+            setMembersData(res.data)
+        }
+        fetchData()
+    }, [])
 
     return (
         <main className="flex flex-col gap-6 lg:gap-8">
+            {
+                attendanceModalOpen &&
+                <Modal>
+                    <h1 className="text-[20px] sm:text-[24px] font-bold text-[#191C1E]">
+                        تسجيل حضور العضو
+                    </h1>
+
+                    <Select
+                        label="اختيار العضو"
+                        id="memberName"
+                        placeholder="ابحث عن اسم العضو أو رقم الهاتف..."
+                        options={membersData.map(m => ({
+                            label: `${m.name} - ${m.phone}`,
+                            value: m.name
+                        }))}
+                    />
+
+                    <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#F2F4F6] border border-[#191C1E]/10 rounded-xl py-4 px-6">
+                        <h2 className="flex items-center gap-4 text-[14px] sm:text-[16px] text-neutral-700">
+                            <Clock strokeWidth={1.5}/>
+                            وقت تسجيل الدخول:
+                        </h2>
+                        <span className="text-[16px] text-[#191C1E]">
+                            {new Date().toLocaleTimeString()}
+                        </span>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <Button variant="primary" className="w-full py-3 sm:py-4">
+                            تأكيد
+                        </Button>
+
+                        <Button
+                            variant="guest"
+                            className="w-full py-3 sm:py-4"
+                            onClick={toggleAttendanceModal}
+                        >
+                            إلغاء
+                        </Button>
+                    </div>
+                </Modal>
+            }
+            {
+                addMemberModalOpen &&
+                <Modal>
+                    <h1 className="text-[20px] sm:text-[24px] font-bold text-[#191C1E]">
+                        إضافة عضو جديد
+                    </h1>
+
+                    <Input type="text"
+                        id="memberName"
+                        placeholder="اسم العضو"
+                        label="اسم العضو"
+                        value={newMember.name}
+                        onChange={(e) => setNewMember({...newMember, name: e.target.value})}
+                    />
+                    <Input type="text"
+                        id="memberPhone"
+                        placeholder="رقم الهاتف"
+                        label="رقم الهاتف"
+                        value={newMember.phone}
+                        onChange={(e) => setNewMember({...newMember, phone: e.target.value})}
+                    />
+                    <Select 
+                        id="memberType"
+                        placeholder="نوع الاشتراك"
+                        label="نوع الاشتراك"
+                        options={[
+                            {label: 'شهري', value: 'monthly'},
+                            {label: '3 شهور', value: '3Months'},
+                            {label: 'مميز', value: 'special'}
+                        ]}
+                    />
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <Button variant="primary" className="w-full py-3 sm:py-4">
+                            حفظ
+                        </Button>
+
+                        <Button
+                            variant="guest"
+                            className="w-full py-3 sm:py-4"
+                            onClick={toggleAddMemberModal}
+                        >
+                            إلغاء
+                        </Button>
+                    </div>
+                </Modal>
+            }
             <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h1 className="text-[32px] font-black text-neutral-900 sm:text-[40px]">الأعضاء</h1>
-                <Button variant="primary" className="flex w-full items-center justify-center gap-2 sm:w-fit">
-                    <Plus className="text-white" size={20} strokeWidth={3} />
-                    تسجيل حضور
-                </Button>
+                <div className="flex gap-4">
+                    <Button variant="primary" className="flex w-full items-center justify-center gap-2 sm:w-fit" onClick={toggleAttendanceModal}>
+                        <Plus className="text-white" size={20} strokeWidth={3} />
+                        تسجيل حضور
+                    </Button>
+                    <Button variant="primary" className="flex w-full items-center justify-center gap-2 sm:w-fit" onClick={toggleAddMemberModal}>
+                        <Plus className="text-white" size={20} strokeWidth={3} />
+                        إضافة عضو جديد
+                    </Button>
+                </div>
             </section>
 
             <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <div className="flex flex-col gap-1 rounded-3xl bg-white p-6 text-right shadow sm:p-8">
                     <h2 className="text-[16px] font-bold text-neutral-700">إجمالي الأعضاء</h2>
                     <h3 className="text-[30px] font-black text-neutral-900">
-                        1,284
+                        {membersData.length}
                         <span className="text-[12px] font-bold text-info-600"> 12%+ </span>
                     </h3>
                 </div>
@@ -70,7 +215,7 @@ export default async function Members() {
                         </thead>
 
                         <tbody>
-                            {data.map((member) => (
+                            {membersData.map((member) => (
                                 <tr key={`${member.name}-${member.phone}`} className="border-b border-neutral-100 last:border-b-0">
                                     <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
                                         <div className="flex flex-col">

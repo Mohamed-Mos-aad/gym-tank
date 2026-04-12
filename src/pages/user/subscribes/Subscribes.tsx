@@ -10,7 +10,7 @@ import { ChevronLeft, ChevronRight, MoreHorizontal, Plus } from "lucide-react";
 // ** Hooks && Tools
 import { useEffect, useState } from "react";
 // ** Actions
-import { getMembersListAction } from "../../../actions/user.actions";
+import { getMembersListAction } from "../../../../actions/user.actions";
 // ** Interfaces
 import { MemberLite } from "@/types";
 interface ModalProps{

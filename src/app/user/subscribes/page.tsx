@@ -1,5 +1,5 @@
 // ** Pages
-import Subscribes from "@/pages/user/Subscribes";
+import Subscribes from "@/pages/user/subscribes/Subscribes";
 
 
 
