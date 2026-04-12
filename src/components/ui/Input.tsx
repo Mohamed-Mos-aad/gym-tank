@@ -38,7 +38,7 @@ export default function Input({id, label, type, forgetPassword, ...props}:InputP
                     )}
                 </div>
             }
-            <label htmlFor={id} className='flex justify-between items-center'>
+            <label htmlFor={id} className='flex justify-between items-center text-[16px] font-bold text-neutral-700'>
                 {label}
                 {
                     type === 'password' && forgetPassword &&

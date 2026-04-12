@@ -11,7 +11,6 @@ import { getMembersListAction } from "../../../actions/user.actions";
 export default async function Members() {
     const { data } = await getMembersListAction();
 
-    console.log(data);
 
 
 
@@ -21,7 +20,7 @@ export default async function Members() {
                 <h1 className="text-[32px] font-black text-neutral-900 sm:text-[40px]">الأعضاء</h1>
                 <Button variant="primary" className="flex w-full items-center justify-center gap-2 sm:w-fit">
                     <Plus className="text-white" size={20} strokeWidth={3} />
-                    إضافة عضو جديد
+                    تسجيل حضور
                 </Button>
             </section>
 

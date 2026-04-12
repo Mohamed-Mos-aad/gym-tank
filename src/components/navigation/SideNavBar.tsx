@@ -13,7 +13,7 @@ interface SideNavBarProps {
 }
 
 const navItems = [
-    { href: "/user/home", label: "لوحة القيادة", icon: LayoutDashboard },
+    { href: "/user", label: "لوحة القيادة", icon: LayoutDashboard },
     { href: "/user/members", label: "الأعضاء", icon: UsersRound },
     { href: "/user/subscribes", label: "الاشتراكات", icon: CreditCard },
     { href: "/user/setting", label: "الإعدادات", icon: Settings },

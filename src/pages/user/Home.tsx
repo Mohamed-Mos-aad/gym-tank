@@ -1,12 +1,21 @@
-import type { CSSProperties } from "react";
-
 // ** Components
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+// ** Assets
 import { CircleAlert, CircleCheck, EllipsisVertical, Plus, UsersRound } from "lucide-react";
+// ** Hooks && Tools
 import Link from "next/link";
+import type { CSSProperties } from "react";
+// ** Actions
+import { getMembersListAction } from "../../../actions/user.actions";
 
-export default function Home() {
+export default async function Home() {
+    // ** States
+    const { data } = await getMembersListAction();
+
+
+
+    // ** Constans
     const progressStyle = { "--progress": 68 } as CSSProperties;
 
     return (
@@ -30,7 +39,7 @@ export default function Home() {
                         <UsersRound className="text-brand-500" />
                     </div>
                     <h2 className="text-[14px] font-medium text-neutral-900">إجمالي الأعضاء</h2>
-                    <p className="-mt-6 text-[36px] font-black text-brand-700">1,284</p>
+                    <p className="-mt-6 text-[36px] font-black text-brand-700">{data.length}</p>
                 </div>
 
                 <div className="relative flex flex-col gap-4 rounded-3xl bg-white p-6 text-right shadow sm:p-8">

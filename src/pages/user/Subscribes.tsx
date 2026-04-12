@@ -1,18 +1,77 @@
+'use client'
 // ** Components
+import Select from "@/components/ui/Select";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
+import Modal from "@/components/popUp/Modal";
+import DatePicker from "@/components/ui/DatePicker";
 // ** Assets
 import { ChevronLeft, ChevronRight, MoreHorizontal, Plus } from "lucide-react";
+// ** Hooks && Tools
+import { useEffect, useState } from "react";
 // ** Actions
 import { getMembersListAction } from "../../../actions/user.actions";
 
-export default async function Subscribes() {
-    const { data } = await getMembersListAction();
 
-    console.log(data);
+export default function Subscribes() {
+    // ** States
+    const [ membersData, setMembersData ] = useState([]);
+    const [ modalOpen, setModalOpen ] = useState<boolean>(false);
+
+
+
+    // ** Handlers
+    const getDataHandler = async ()=>{
+        const { data } = await getMembersListAction();
+        setMembersData(data);
+    }
+    const modalStateToggleHandler = () =>{
+        setModalOpen(prev => !prev)
+    }
+
+
+
+    useEffect(()=>{
+        getDataHandler()
+    },[])
+
+
 
     return (
         <main className="flex flex-col gap-6 lg:gap-8">
+            {
+                modalOpen &&
+                <Modal>
+                    <h1 className="text-[24px] font-bold text-[#191C1E]">
+                        إضافة اشتراك جديد
+                    </h1>
+                    <Select label="اختيار العضو" id="memberName" placeholder="ابحث عن اسم العضو أو رقم الهاتف..." options={[]}/>
+                    <div className="flex flex-col gap-2">
+                        <h2 className="text-[16px] font-bold text-neutral-700">نوع الاشتراك</h2>
+                        <div className="flex gap-1 bg-[#F2F4F6] p-1.5 rounded-xl">
+                            <h3 className="w-full bg-white text-center rounded-lg text-[16px] font-black text-brand-500 py-2.5 cursor-pointer">شهري</h3>
+                            <h3 className="w-full text-center rounded-lg text-[16px] text-neutral-700 py-2.5 cursor-pointer">3 شهور</h3>
+                            <h3 className="w-full text-center rounded-lg text-[16px] text-neutral-700 py-2.5 cursor-pointer">مخصص</h3>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <DatePicker label="تاريخ البدء" id="startDate"/>
+                        <DatePicker label="تاريخ الانتهاء" id="endDate"/>
+                    </div>
+                    <div className="bg-[#3525CD]/5 border border-[#3525CD]/10 rounded-xl p-6">
+                        <h2 className="w-full flex justify-between items-center text-[16px] font-bold text-neutral-700">
+                            المبلغ الإجمالي
+                            <span className="text-[30px] text-brand-500">
+                                450 <span className="text-[14px]"> ر.س</span>
+                            </span>
+                        </h2>
+                    </div>
+                    <div className="flex gap-4">
+                        <Button variant="primary" className="w-full py-4">حفظ الاشتراك</Button>
+                        <Button variant="guest" className="w-full py-4" onClick={modalStateToggleHandler}>إلغاء</Button>
+                    </div>
+                </Modal>
+            }
             <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h1 className="text-[32px] font-black text-neutral-900 sm:text-[40px]">
@@ -25,6 +84,7 @@ export default async function Subscribes() {
                 <Button
                     variant="primary"
                     className="flex w-full items-center justify-center gap-2 sm:w-fit"
+                    onClick={modalStateToggleHandler}
                     >
                         <Plus className="text-white" size={20} strokeWidth={3} />
                         إضافة اشتراك جديد
@@ -36,7 +96,7 @@ export default async function Subscribes() {
                         إجمالي المشتركين
                     </h2>
                     <h3 className="text-[36px] font-black text-brand-500">
-                        1,284
+                        {membersData.length}
                         <span className="text-[12px] font-bold text-info-600"> 12%+ </span>
                     </h3>
                 </div>
@@ -102,7 +162,7 @@ export default async function Subscribes() {
                         </thead>
 
                         <tbody>
-                        {data.map((member) => (
+                        {membersData.map((member) => (
                             <tr
                             key={`${member.name}-${member.subscriptionType}`}
                             className="border-b border-neutral-100 last:border-b-0"

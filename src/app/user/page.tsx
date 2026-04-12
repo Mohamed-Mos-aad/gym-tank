@@ -1,8 +1,8 @@
-// ** Hooks && Tools
-import { redirect } from "next/navigation";
+// ** Pages
+import Home from "@/pages/user/Home";
 
 
 
-export default function Page() {
-    redirect("/user/home");
+export default function page() {
+    return <Home />
 }
