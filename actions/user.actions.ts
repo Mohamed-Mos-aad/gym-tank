@@ -1,7 +1,13 @@
 'use server';
-
+// ** Hooks && Tools
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs"; // لتشفير كلمة المرور
+import bcrypt from "bcryptjs"; 
+import cookieStore from "@/utils/cookies";
+
+
+
+
+const gymId = cookieStore.getToken()?.value;
 
 
 // ** User 
@@ -31,12 +37,23 @@ export const createUserAction = async (userData)=>{
 }
 
 
+export const loginUserAction = async (loginData)=>{
+    const data = await prisma.user.findUnique({
+        where: {
+            email: loginData.email,
+            password: loginData.password
+        }
+    })
+    return data
+}
+
+
 
 
 // ** Members
 export const getMembersListAction = async () => {
     const data = await prisma.member.findMany();
-
+    console.log(gymId)
     return { data };
 };
 
@@ -46,7 +63,7 @@ export const createMemberAction = async (memberData)=>{
         data: {
             ...memberData,
             gym: {
-                connect: { id: '69db76d4cba2f42b91a1fe4c' }
+                connect: { id: gymId }
             }
         }
     })
@@ -62,7 +79,7 @@ export const updateMemberAction = async (memberId, memberData)=>{
         data: {
             ...memberData,
             gym: {
-                connect: { id: '69db76d4cba2f42b91a1fe4c' }
+                connect: { id: gymId }
             }
         }
     })
