@@ -83,6 +83,10 @@ export default function Subscribes() {
         await getMembersDataAction();
         modalStateToggleHandler();
     }
+    const getActiveSubscribesNumberHandler = ()=>{
+        const activeSub =  membersData.filter(member => new Date(member.endDate).getDate() < Date.now())
+        return activeSub.length;
+    }
 
 
 
@@ -233,7 +237,7 @@ export default function Subscribes() {
                     <h2 className="text-[16px] font-bold text-neutral-700">
                         الاشتراكات النشطة
                     </h2>
-                    <h3 className="text-[36px] font-black text-neutral-900">942</h3>
+                    <h3 className="text-[36px] font-black text-neutral-900">{getActiveSubscribesNumberHandler()}</h3>
                 </div>
                 <div className="flex flex-col gap-1 rounded-3xl bg-white p-6 text-right shadow sm:p-8">
                     <h2 className="text-[16px] font-bold text-neutral-700">

@@ -1,5 +1,4 @@
 import {
-  SubscriptionType,
   SubscriptionStatus,
   Role
 } from "@prisma/client";
@@ -47,7 +46,7 @@ export interface Member {
     name: string;
     phone: string | null;
 
-    subscriptionType: SubscriptionType | null;
+    subscriptionType: string;
     subscriptionStatus: SubscriptionStatus;
 
     startDate: Date;
@@ -88,9 +87,9 @@ export interface MemberLite {
     id: string;
     name: string;
     phone: string | null;
-    subscriptionType: SubscriptionType | null;
+    subscriptionType: string;
     subscriptionStatus: SubscriptionStatus;
     startDate: Date;
-    endDate: Date | null;
+    endDate: Date;
     gymId: string;
 }
