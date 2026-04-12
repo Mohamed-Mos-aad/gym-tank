@@ -7,8 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -22,7 +20,6 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
 
 model Gym {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -46,14 +43,13 @@ model Gym {
   updatedAt       DateTime @updatedAt
 }
 
-
 model Member {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
 
   name      String
   phone     String?
 
-subscriptionType: string | null
+  subscriptionType   String?
   subscriptionStatus SubscriptionStatus @default(ACTIVE)
 
   startDate DateTime @default(now())
@@ -66,13 +62,10 @@ subscriptionType: string | null
   updatedAt DateTime @updatedAt
 }
 
-
 enum Role {
   GYM_OWNER
   ADMIN
 }
-
-
 
 enum SubscriptionStatus {
   ACTIVE
