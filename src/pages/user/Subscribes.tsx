@@ -3,81 +3,13 @@ import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 // ** Assets
 import { ChevronLeft, ChevronRight, MoreHorizontal, Plus } from "lucide-react";
+// ** Actions
+import { getMembersListAction } from "../../../actions/user.actions";
 
-export default function Subscribes() {
-  // ** Constants
-    const members = [
-        {
-        name: "سارة العمري",
-        plan: "عضوية ذهبية",
-        start: "2023/10/01",
-        end: "2024/10/01",
-        status: "نشط",
-        },
-        {
-        name: "عمر الحربي",
-        plan: "عضوية شهرية",
-        start: "2023/10/04",
-        end: "2024/10/04",
-        status: "نشط",
-        },
-        {
-        name: "خالد السعد",
-        plan: "عضوية سنوية",
-        start: "2023/10/06",
-        end: "2024/10/06",
-        status: "نشط",
-        },
-        {
-        name: "ريما القحطاني",
-        plan: "عضوية ذهبية",
-        start: "2023/10/07",
-        end: "2024/10/07",
-        status: "نشط",
-        },
-        {
-        name: "فهد المطيري",
-        plan: "عضوية شهرية",
-        start: "2023/10/09",
-        end: "2024/10/09",
-        status: "نشط",
-        },
-        {
-        name: "نورة الشهري",
-        plan: "عضوية سنوية",
-        start: "2023/10/10",
-        end: "2024/10/10",
-        status: "نشط",
-        },
-        {
-        name: "أحمد الزهراني",
-        plan: "عضوية ذهبية",
-        start: "2023/10/11",
-        end: "2024/10/11",
-        status: "نشط",
-        },
-        {
-        name: "ليان الدوسري",
-        plan: "عضوية شهرية",
-        start: "2023/10/12",
-        end: "2024/10/12",
-        status: "نشط",
-        },
-        {
-        name: "يوسف الغامدي",
-        plan: "عضوية سنوية",
-        start: "2023/10/13",
-        end: "2024/10/13",
-        status: "نشط",
-        },
-        {
-        name: "هيا العتيبي",
-        plan: "عضوية ذهبية",
-        start: "2023/10/14",
-        end: "2024/10/14",
-        status: "نشط",
-        },
-    ];
+export default async function Subscribes() {
+    const { data } = await getMembersListAction();
+
+    console.log(data);
 
     return (
         <main className="flex flex-col gap-6 lg:gap-8">
@@ -170,9 +102,9 @@ export default function Subscribes() {
                         </thead>
 
                         <tbody>
-                        {members.map((member) => (
+                        {data.map((member) => (
                             <tr
-                            key={`${member.name}-${member.plan}`}
+                            key={`${member.name}-${member.subscriptionType}`}
                             className="border-b border-neutral-100 last:border-b-0"
                             >
                             <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
@@ -180,18 +112,18 @@ export default function Subscribes() {
                             </td>
                             <td className="px-6 py-4 text-[16px] font-medium text-neutral-700">
                                 <Badge className="border border-info-600/20 bg-info-600/10 text-[12px] font-bold text-info-600">
-                                {member.plan}
+                                {member.subscriptionType}
                                 </Badge>
                             </td>
                             <td className="px-6 py-4 text-[14px] text-neutral-700">
-                                {member.start}
+                                {member.startDate.toLocaleDateString()}
                             </td>
                             <td className="px-6 py-4 text-[14px] text-neutral-700">
-                                {member.end}
+                                {member.endDate?.toLocaleDateString()}
                             </td>
                             <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
                                 <Badge className="border border-info-600/20 bg-info-600/10 text-[12px] font-bold text-info-600">
-                                {member.status}
+                                {member.subscriptionStatus}
                                 </Badge>
                             </td>
                             <td className="px-6 py-4">

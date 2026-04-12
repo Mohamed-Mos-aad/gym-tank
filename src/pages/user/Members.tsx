@@ -3,21 +3,18 @@ import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 // ** Components
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
+// ** Actions
+import { getMembersListAction } from "../../../actions/user.actions";
 
-const members = [
-    { name: "سارة العمري", plan: "عضوية ذهبية", phone: "+966 50 123 4567", status: "نشط", start: "2023/10/01", end: "2024/10/01" },
-    { name: "عمر الحربي", plan: "عضوية شهرية", phone: "+966 55 222 8877", status: "نشط", start: "2023/10/04", end: "2024/10/04" },
-    { name: "خالد السعد", plan: "عضوية سنوية", phone: "+966 53 874 6677", status: "نشط", start: "2023/10/06", end: "2024/10/06" },
-    { name: "ريما القحطاني", plan: "عضوية ذهبية", phone: "+966 59 148 2001", status: "نشط", start: "2023/10/07", end: "2024/10/07" },
-    { name: "فهد المطيري", plan: "عضوية شهرية", phone: "+966 56 874 2134", status: "نشط", start: "2023/10/09", end: "2024/10/09" },
-    { name: "نورة الشهري", plan: "عضوية سنوية", phone: "+966 58 603 1256", status: "نشط", start: "2023/10/10", end: "2024/10/10" },
-    { name: "أحمد الزهراني", plan: "عضوية ذهبية", phone: "+966 54 998 2211", status: "نشط", start: "2023/10/11", end: "2024/10/11" },
-    { name: "ليان الدوسري", plan: "عضوية شهرية", phone: "+966 57 331 9921", status: "نشط", start: "2023/10/12", end: "2024/10/12" },
-    { name: "يوسف الغامدي", plan: "عضوية سنوية", phone: "+966 50 761 9032", status: "نشط", start: "2023/10/13", end: "2024/10/13" },
-    { name: "هيا العتيبي", plan: "عضوية ذهبية", phone: "+966 52 117 4456", status: "نشط", start: "2023/10/14", end: "2024/10/14" },
-];
 
-export default function Members() {
+
+export default async function Members() {
+    const { data } = await getMembersListAction();
+
+    console.log(data);
+
+
+
     return (
         <main className="flex flex-col gap-6 lg:gap-8">
             <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -74,22 +71,22 @@ export default function Members() {
                         </thead>
 
                         <tbody>
-                            {members.map((member) => (
+                            {data.map((member) => (
                                 <tr key={`${member.name}-${member.phone}`} className="border-b border-neutral-100 last:border-b-0">
                                     <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
                                         <div className="flex flex-col">
                                             {member.name}
-                                            <span className="text-[12px] font-normal text-neutral-700">{member.plan}</span>
+                                            <span className="text-[12px] font-normal text-neutral-700">{member.subscriptionType}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-[16px] font-medium text-neutral-700">{member.phone}</td>
                                     <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
                                         <Badge className="border border-info-600/20 bg-info-600/10 text-[12px] font-bold text-info-600">
-                                            {member.status}
+                                            {member.subscriptionStatus}
                                         </Badge>
                                     </td>
-                                    <td className="px-6 py-4 text-[14px] text-neutral-700">{member.start}</td>
-                                    <td className="px-6 py-4 text-[14px] text-neutral-700">{member.end}</td>
+                                    <td className="px-6 py-4 text-[14px] text-neutral-700">{member.startDate.toLocaleDateString()}</td>
+                                    <td className="px-6 py-4 text-[14px] text-neutral-700">{member.endDate?.toLocaleDateString()}</td>
                                 </tr>
                             ))}
                         </tbody>

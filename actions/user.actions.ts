@@ -1,9 +1,9 @@
+'use server';
+
 import { prisma } from "@/lib/prisma";
 
-export const getTodosListAction = async () => {
-    const items = await prisma.member.findMany();
+export const getMembersListAction = async () => {
+    const data = await prisma.member.findMany();
 
-    return {
-        items
-    };
-}
+    return { data };
+};
