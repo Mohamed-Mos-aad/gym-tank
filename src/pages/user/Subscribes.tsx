@@ -11,30 +11,33 @@ import { ChevronLeft, ChevronRight, MoreHorizontal, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 // ** Actions
 import { getMembersListAction } from "../../../actions/user.actions";
+// ** Interfaces
+import { MemberLite } from "@/types";
 
 
 export default function Subscribes() {
     // ** States
-    const [ membersData, setMembersData ] = useState([]);
+    const [ membersData, setMembersData ] = useState<MemberLite[]>([]);
     const [ modalOpen, setModalOpen ] = useState<boolean>(false);
 
 
 
     // ** Handlers
-    const getDataHandler = async ()=>{
-        const { data } = await getMembersListAction();
-        setMembersData(data);
-    }
     const modalStateToggleHandler = () =>{
         setModalOpen(prev => !prev)
     }
 
 
 
-    useEffect(()=>{
-        getDataHandler()
-    },[])
+    // ** UseEffect
+    useEffect(() => {
+    const fetchData = async () => {
+        const res = await getMembersListAction()
+        setMembersData(res.data)
+    }
 
+        fetchData()
+    }, [])
 
 
     return (
