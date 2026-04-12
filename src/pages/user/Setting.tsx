@@ -89,6 +89,20 @@ export default function Setting() {
                             ينتهي اشتراكك الحالي في 12 نوفمبر 2024. سيتم التجديد
                             تلقائياً.
                         </p>
+                        <div className="flex flex-col gap-4 bg-white/10 rounded-2xl p-4">
+                            <div className="flex flex-col gap-2">
+                                <h4 className="w-full flex justify-between text-[12px] font-bold text-white">
+                                    STORAGE
+                                    <span>
+                                        75%
+                                    </span>
+                                </h4>
+                                <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden relative">
+                                    <span className="w-[42%] h-2 bg-white absolute top-0 right-0"></span>
+                                </div>
+                            </div>
+                            <Button variant="guest" className="w-full">ترقية</Button>
+                        </div>
                     </div>
                     <div className="relative flex flex-col items-center gap-4 rounded-3xl border-2 border-dashed border-[#C7C4D8]/20 p-8 text-right shadow sm:p-8">
                         <h2 className="text-[16px] text-neutral-700">هل تحتاج إلى مساعدة في الإعدادات؟</h2>

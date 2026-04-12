@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(GYM_OWNER)
+
+  gyms      Gym[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Gym {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  name            String
+  specialty       String?
+  phone           String?
+  email           String?
+  address         String?
+  state           String?
+  systemLanguage  String   @default("ar")
+
+  startDate       DateTime @default(now())
+
+  ownerId         String   @db.ObjectId
+  owner           User     @relation(fields: [ownerId], references: [id])
+
+  members         Member[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+
+model Member {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  name      String
+  phone     String?
+
+  subscriptionType   SubscriptionType?
+  subscriptionStatus SubscriptionStatus @default(ACTIVE)
+
+  startDate DateTime @default(now())
+  endDate   DateTime?
+
+  gymId     String   @db.ObjectId
+  gym       Gym      @relation(fields: [gymId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+enum Role {
+  GYM_OWNER
+  ADMIN
+}
+
+enum SubscriptionType {
+  MONTHLY
+  YEARLY
+  WEEKLY
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  PAUSED
+}
