@@ -84,7 +84,7 @@ export default function Subscribes() {
         modalStateToggleHandler();
     }
     const getActiveSubscribesNumberHandler = ()=>{
-        const activeSub =  membersData.filter(member => new Date(member.endDate).getDate() < Date.now())
+        const activeSub =  membersData.filter(member => new Date(member.endDate?? '').getDate() < Date.now())
         return activeSub.length;
     }
 

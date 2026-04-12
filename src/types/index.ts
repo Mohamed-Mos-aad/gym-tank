@@ -46,7 +46,7 @@ export interface Member {
     name: string;
     phone: string | null;
 
-    subscriptionType: string;
+    subscriptionType: string | null
     subscriptionStatus: SubscriptionStatus;
 
     startDate: Date;
@@ -87,9 +87,9 @@ export interface MemberLite {
     id: string;
     name: string;
     phone: string | null;
-    subscriptionType: string;
+    subscriptionType: string | null
     subscriptionStatus: SubscriptionStatus;
     startDate: Date;
-    endDate: Date;
+    endDate: Date | null;
     gymId: string;
 }

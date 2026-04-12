@@ -53,7 +53,7 @@ model Member {
   name      String
   phone     String?
 
-  subscriptionType   String?
+subscriptionType: string | null
   subscriptionStatus SubscriptionStatus @default(ACTIVE)
 
   startDate DateTime @default(now())
