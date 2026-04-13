@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs"; 
 import cookieStore from "@/utils/cookies";
+import { cookies } from "next/headers";
 
 
 
@@ -37,15 +38,34 @@ export const createUserAction = async (userData)=>{
 }
 
 
-export const loginUserAction = async (loginData)=>{
-    const data = await prisma.user.findUnique({
+export const loginUserAction = async (loginData) => {
+    const user = await prisma.user.findUnique({
         where: {
             email: loginData.email,
-            password: loginData.password
+        },
+    });
+
+    if (!user) throw new Error("Invalid credentials");
+
+    const isValid = await bcrypt.compare(
+        loginData.password,
+        user.password
+    );
+
+    if (!isValid) throw new Error("Invalid credentials");
+
+    (
+        await cookies()).set("gym_tank_token", user.id, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            path: "/",
+            maxAge: 60 * 60 * 24 * 7,
         }
-    })
-    return data
-}
+    );
+
+    return user;
+};
 
 
 

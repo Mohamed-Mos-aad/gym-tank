@@ -14,7 +14,7 @@ export function middleware(request: NextRequest) {
     const isAuthPage = pathname.startsWith("/login");
     const isProtected = pathname.startsWith("/user") || pathname.startsWith("/admin");
 
-    console.log("MIDDLEWARE HIT:", pathname, token); // 👈 للتجربة
+
 
     if (!token && isProtected) {
         return NextResponse.redirect(new URL("/login", request.url));
