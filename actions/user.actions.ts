@@ -104,3 +104,23 @@ export const updateMemberAction = async (memberId, memberData)=>{
         }
     })
 }
+
+
+
+// ** Calc
+
+export const getDashboardStats = async () => {
+    const now = new Date();
+
+    const [members, active, expired] = await Promise.all([
+        prisma.member.count(),
+        prisma.member.count({
+        where: { endDate: { gte: now } },
+        }),
+        prisma.member.count({
+        where: { endDate: { lt: now } },
+        }),
+    ]);
+
+    return { members, active, expired };
+};

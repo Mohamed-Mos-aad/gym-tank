@@ -1,5 +1,5 @@
 // ** Pages
-import Home from "@/pages/user/Home";
+import Home from "@/pages/user/home/Home";
 
 
 
