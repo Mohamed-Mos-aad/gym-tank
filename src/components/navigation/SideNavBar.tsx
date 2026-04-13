@@ -5,7 +5,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 // ** Assets
 import { CreditCard, LayoutDashboard, LogOut, Settings, UsersRound, X } from "lucide-react";
-import cookieStore from "@/utils/cookies";
+
+
 
 // ** Interfaces
 interface SideNavBarProps {
@@ -28,7 +29,6 @@ export default function SideNavBar({ isOpen, onClose }: SideNavBarProps) {
 
     // ** Handlers
     const logOutHandler = ()=>{
-        cookieStore.removeToken();
         router.push('/login');
         onClose();
     }

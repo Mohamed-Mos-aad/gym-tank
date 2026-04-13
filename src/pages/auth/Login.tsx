@@ -11,7 +11,6 @@ import Input from "@/components/ui/Input";
 
 // ** Actions
 import { loginUserAction } from "../../../actions/user.actions";
-import cookieStore from "@/utils/cookies";
 
 export default function Login() {
     // ** Hooks
@@ -39,7 +38,6 @@ export default function Login() {
 
         try {
             const response = await loginUserAction(formData);
-            cookieStore.saveToken(response?.id);
             console.log(response?.id)
             router.push("/user");
         } catch (error) {
