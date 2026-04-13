@@ -2,9 +2,10 @@
 
 // ** Hooks && Tools
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 // ** Assets
 import { CreditCard, LayoutDashboard, LogOut, Settings, UsersRound, X } from "lucide-react";
+import cookieStore from "@/utils/cookies";
 
 // ** Interfaces
 interface SideNavBarProps {
@@ -20,7 +21,19 @@ const navItems = [
 ];
 
 export default function SideNavBar({ isOpen, onClose }: SideNavBarProps) {
+    // ** Hooks && Tools
     const pathname = usePathname();
+    const router = useRouter();
+
+
+    // ** Handlers
+    const logOutHandler = ()=>{
+        cookieStore.removeToken();
+        router.push('/login');
+        onClose();
+    }
+
+
 
     return (
         <nav
@@ -63,7 +76,7 @@ export default function SideNavBar({ isOpen, onClose }: SideNavBarProps) {
             <Link
                 href="/"
                 className="mt-auto flex items-center gap-3 rounded-xl px-4 py-3 text-neutral-700 transition-colors hover:bg-neutral-100 hover:text-warn-700"
-                onClick={onClose}
+                onClick={logOutHandler}
             >
                 <LogOut size={18} />
                 تسجيل الخروج
