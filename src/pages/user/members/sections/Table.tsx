@@ -87,7 +87,8 @@ export default function Table({data}:TableProps) {
             <div className="w-full flex justify-center sm:justify-between border-t border-neutral-200 px-4 py-4 sm:px-6">
                 <div className="w-full flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <h4 className="text-center text-[14px] font-medium text-neutral-700">
-                        عرض 1 إلى { data.data.length > 9 ? 10 : data.data.length } من أصل { data.data.length } عضواً
+                        { (data?.data?.length ?? 0) > 9 ? 10 : (data?.data?.length ?? 0) }
+                        من أصل { data?.data?.length ?? 0 }
                     </h4>
                     <div className="flex justify-center items-center gap-2">
                         <button
