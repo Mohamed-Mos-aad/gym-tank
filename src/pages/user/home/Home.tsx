@@ -7,12 +7,19 @@ import Sessions from "./sections/Sessions";
 import Tracker from "./sections/Tracker";
 // ** Actions
 import { getDashboardStats } from "../../../../actions/user.actions";
+// ** Hooks && Tools
+import { cookies } from "next/headers";
 
 
 
 export default async function Home() {
+    // ** Hooks && Tools
+    const userId = ( await cookies()).get("gym_tank_token" )?.value;
+
+
+    
     // ** States
-    const { members, active, expired } = await getDashboardStats();
+    const { members, active, expired } = await getDashboardStats(userId);
 
 
     

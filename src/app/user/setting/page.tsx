@@ -1,5 +1,5 @@
 // ** Pages
-import Setting from "@/pages/user/Setting";
+import Setting from "@/pages/user/setting/Setting";
 
 
 

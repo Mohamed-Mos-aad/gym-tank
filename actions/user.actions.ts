@@ -6,6 +6,10 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 
+export const getUserId = async () => {
+    const cookieStore = await cookies();
+    return cookieStore.get("gym_tank_token")?.value;
+};
 
 
 // ** User 
@@ -69,7 +73,7 @@ export const loginUserAction = async (loginData) => {
 
 // ** Members
 export const getMembersListAction = async () => {
-    const userId = (await cookies()).get("gym_tank_token")?.value;
+    const userId = await getUserId();
 
     if (!userId) throw new Error("User not found");
 
@@ -79,7 +83,6 @@ export const getMembersListAction = async () => {
 
     if (!gym) throw new Error("Gym not found");
 
-    console.log(gym.id,userId)
     const data = await prisma.member.findMany({
         where: {
             gymId: gym.id,
@@ -188,7 +191,7 @@ export const getAttendanceListAction = async (page = 1, limit = 10) => {
     startOfDay.setHours(0, 0, 0, 0);
 
 
-    const userId = (await cookies()).get("gym_tank_token")?.value;
+    const userId = await getUserId();
     const gym = await prisma.gym.findUnique({
         where: { ownerId: userId },
     });
@@ -237,14 +240,13 @@ export const getAttendanceListAction = async (page = 1, limit = 10) => {
 
 
 // ** Calc
-export const getDashboardStats = async () => {
+export const getDashboardStats = async (userId) => {
     const now = new Date();
 
     const next7Days = new Date();
     next7Days.setDate(now.getDate() + 7);
 
-    const userId = (await cookies()).get("gym_tank_token")?.value;
-
+    
     const gym = await prisma.gym.findUnique({
         where: { ownerId: userId },
     });

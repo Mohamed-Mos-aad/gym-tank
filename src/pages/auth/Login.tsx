@@ -38,7 +38,6 @@ export default function Login() {
 
         try {
             const response = await loginUserAction(formData);
-            console.log(response?.id)
             router.push("/user");
         } catch (error) {
             console.error("Login Error:", error);

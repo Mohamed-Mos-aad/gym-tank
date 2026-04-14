@@ -79,8 +79,10 @@ export interface GymLite {
     address: string | null;
     state: string | null;
     systemLanguage: string;
-    startDate: Date;
+    startDate?: Date;
     ownerId: string;
+    ownerEmail?: string,
+    ownerName?: string,
 }
 
 export interface MemberLite {
