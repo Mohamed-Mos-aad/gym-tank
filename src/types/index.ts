@@ -93,3 +93,34 @@ export interface MemberLite {
     endDate: Date | null;
     gymId: string;
 }
+
+// ** Attendance
+export interface Attendance {
+    id: string;
+
+    memberId: string;
+    gymId: string;
+
+    checkIn: Date;
+    checkOut: Date | null;
+
+    createdAt: Date;
+}
+export interface AttendanceWithMember {
+    id: string;
+
+    memberId: string;
+    gymId: string;
+
+    checkIn: Date;
+    checkOut: Date | null;
+
+    member: {
+        name: string;
+        phone: string | null;
+        subscriptionType: string | null
+        subscriptionStatus: SubscriptionStatus;
+        startDate: Date;
+        endDate: Date | null;
+    };
+}

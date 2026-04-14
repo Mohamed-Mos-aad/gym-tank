@@ -15,7 +15,7 @@ model User {
   password  String
   role      Role     @default(GYM_OWNER)
 
-  gyms      Gym[]
+  gyms      Gym?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -36,7 +36,7 @@ model Gym {
 
   startDate       DateTime @default(now())
 
-  ownerId         String   @db.ObjectId
+  ownerId         String   @unique @db.ObjectId
   owner           User     @relation(fields: [ownerId], references: [id])
 
   members         Member[]
