@@ -1,8 +1,7 @@
 // ** Components
 import Badge from "@/components/ui/Badge";
-import Button from "@/components/ui/Button";
 // ** Assets
-import { Plus } from "lucide-react";
+import AddMemberModal from "../components/AddMemberModal";
 
 
 
@@ -14,10 +13,7 @@ export default function Welcome() {
                 <h1 className="text-[36px] font-black text-white">مرحبًا</h1>
                 <p className="text-[16px] text-brand-50">لديك 12 عضوًا جديدًا انضموا هذا الأسبوع. واصل التقدم الرائع!</p>
             </div>
-            <Button variant="guest" className="flex w-full items-center justify-center gap-2 sm:w-fit">
-                <Plus className="text-brand-500" size={20} strokeWidth={3} />
-                إضافة عضو جديد
-            </Button>
+            <AddMemberModal />
         </section>
     )
 }

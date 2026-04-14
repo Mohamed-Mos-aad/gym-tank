@@ -82,7 +82,7 @@ export const getMembersListAction = async () => {
     console.log(gym.id,userId)
     const data = await prisma.member.findMany({
         where: {
-            gymId: gym.id, // 👈 أهم سطر
+            gymId: gym.id,
         },
         orderBy: {
             createdAt: "desc",
@@ -239,43 +239,62 @@ export const getAttendanceListAction = async (page = 1, limit = 10) => {
 // ** Calc
 export const getDashboardStats = async () => {
     const now = new Date();
+
+    const next7Days = new Date();
+    next7Days.setDate(now.getDate() + 7);
+
     const userId = (await cookies()).get("gym_tank_token")?.value;
+
     const gym = await prisma.gym.findUnique({
         where: { ownerId: userId },
     });
+
     const gymId = gym?.id;
 
     if (!gymId) throw new Error("Gym not found");
-    const [members, active, expired, presentNow] = await Promise.all([
+
+    const [members, active, expired, presentNow, expiringSoon] = await Promise.all([
         prisma.member.count({
             where: { gymId },
         }),
 
         prisma.member.count({
-        where: {
-            gymId,
-            endDate: { gte: now },
-        },
+            where: {
+                gymId,
+                endDate: { gte: now },
+            },
         }),
 
         prisma.member.count({
-        where: {
-            gymId,
-            endDate: { lt: now },
-        },
+            where: {
+                gymId,
+                endDate: { lt: now },
+            },
         }),
 
         prisma.attendance.count({
-        where: {
-            gymId,
-            checkOut: null,
-        },
+            where: {
+                gymId,
+                checkOut: null,
+            },
+        }),
+
+        prisma.member.count({
+            where: {
+                gymId,
+                endDate: {
+                    gte: now,
+                    lte: next7Days,
+                },
+            },
         }),
     ]);
+
     return {
         members,
         active,
         expired,
         presentNow,
+        expiringSoon,
     };
 };

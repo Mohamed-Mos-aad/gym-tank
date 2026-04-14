@@ -6,6 +6,7 @@ import Modal from "@/components/popUp/Modal";
 import Button from "@/components/ui/Button";
 // ** Hooks && Tools
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 // ** Actions
 import { createMemberAction } from "../../../../../actions/user.actions";
 // ** Interfaces
@@ -14,6 +15,11 @@ import Input from "@/components/ui/Input";
 
 
 export default function AddMemberModal() {
+    // ** Hooks && Tools 
+    const router = useRouter();
+
+
+
     // ** States
     const [addMemberModalOpen, setAddMemberModalOpen] = useState(false);
     const [newMember, setNewMember] = useState({
@@ -30,6 +36,7 @@ export default function AddMemberModal() {
     const saveMemberHandler = async ()=>{
         if(!newMember.name) return
         await createMemberAction(newMember);
+        router.refresh();
         toggleAddMemberModal();
     }
 

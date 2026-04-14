@@ -11,7 +11,7 @@ export default async function Members() {
     // ** States
     const { members, active, expired, presentNow } = await getDashboardStats();
     const data = await getAttendanceListAction();
-
+    console.log(presentNow)
 
 
     return (
