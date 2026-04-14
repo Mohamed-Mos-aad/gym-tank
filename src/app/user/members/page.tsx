@@ -3,14 +3,14 @@ import Members from "@/pages/user/members/Members";
 // ** Hooks && Tools
 import { cookies } from "next/headers";
 // ** Actions
-import { getDashboardStats } from './../../../../actions/user/calc.actions';
-import { getAttendanceListAction } from "../../../../actions/user/attendance.actions";
+import { getDashboardStats } from "@/actions/user/calc.actions";
+import { getAttendanceListAction } from "@/actions/user/attendance.actions";
 
 
 
 export default async function Page() {
     // ** Constants
-    const userId = ( await cookies()).get("gym_tank_token" )?.value;
+    const userId = (await cookies()).get("gym_tank_token")?.value;
 
 
 
@@ -19,6 +19,14 @@ export default async function Page() {
     const { members, active, expired, presentNow } = await getDashboardStats(userId);
 
 
-    
-    return <Members data={data} members={members} active={active} expired={expired} presentNow={presentNow}/>
+
+    return (
+        <Members
+            data={data}
+            members={members}
+            active={active}
+            expired={expired}
+            presentNow={presentNow}
+        />
+    );
 }

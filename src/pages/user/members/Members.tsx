@@ -19,7 +19,7 @@ interface MembersProps {
 
 
 
-export default async function Members({ data, members, active, expired, presentNow }:MembersProps) {
+export default function Members({ data, members, active, expired, presentNow }:MembersProps) {
     return (
         <main className="flex flex-col gap-6 lg:gap-8">
             <Title />
