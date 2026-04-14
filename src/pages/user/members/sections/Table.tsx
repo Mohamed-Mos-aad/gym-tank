@@ -33,26 +33,45 @@ export default function Table({data}:TableProps) {
                             <th className="px-6 py-4 text-start text-[14px] font-bold text-neutral-700">تاريخ الانتهاء</th>
                         </tr>
                     </thead>
-
                     <tbody>
-                        {data.data.map((attendance) => (
-                            <tr key={attendance.id} className="border-b border-neutral-100 last:border-b-0">
-                                <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
-                                    <div className="flex flex-col">
-                                        {attendance.member.name}
-                                        <span className="text-[12px] font-normal text-neutral-700">{attendance.member.subscriptionType}</span>
-                                    </div>
+                        {!data || !data.data || data.data.length === 0 ? (
+                            <tr>
+                                <td colSpan={5} className="text-center py-6 text-neutral-500">
+                                    لا يوجد بيانات
                                 </td>
-                                <td className="px-6 py-4 text-[16px] font-medium text-neutral-700">{attendance.member.phone}</td>
-                                <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
-                                    <Badge className="border border-info-600/20 bg-info-600/10 text-[12px] font-bold text-info-600">
-                                        {attendance.member.subscriptionStatus}
-                                    </Badge>
-                                </td>
-                                <td className="px-6 py-4 text-[14px] text-neutral-700">{new Date(attendance.member.startDate).toLocaleDateString()}</td>
-                                <td className="px-6 py-4 text-[14px] text-neutral-700">{attendance.member.endDate?.toLocaleDateString()}</td>
                             </tr>
-                        ))}
+                        ) : (
+                            data.data.map((attendance) => (
+                                <tr key={attendance.id} className="border-b border-neutral-100 last:border-b-0">
+                                    <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
+                                        <div className="flex flex-col">
+                                            {attendance.member.name}
+                                            <span className="text-[12px] font-normal text-neutral-700">
+                                                {attendance.member.subscriptionType}
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <td className="px-6 py-4 text-[16px] font-medium text-neutral-700">
+                                        {attendance.member.phone}
+                                    </td>
+
+                                    <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
+                                        <Badge className="border border-info-600/20 bg-info-600/10 text-[12px] font-bold text-info-600">
+                                            {attendance.member.subscriptionStatus}
+                                        </Badge>
+                                    </td>
+
+                                    <td className="px-6 py-4 text-[14px] text-neutral-700">
+                                        {new Date(attendance.member.startDate).toLocaleDateString()}
+                                    </td>
+
+                                    <td className="px-6 py-4 text-[14px] text-neutral-700">
+                                        {attendance.member.endDate?.toLocaleDateString()}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>

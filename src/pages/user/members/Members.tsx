@@ -6,21 +6,13 @@ import Table from "./sections/Table";
 import { getAttendanceListAction, getDashboardStats } from "../../../../actions/user.actions";
 
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-
 
 export default async function Members() {
     // ** States
     const { members, active, expired, presentNow } = await getDashboardStats();
-    const result = await getAttendanceListAction();
-    
-    const data = result ?? {
-        data: [],
-        total: 0,
-        page: 1,
-        totalPages: 0,
-    };
+    const data = await getAttendanceListAction();
+
+
 
     return (
         <main className="flex flex-col gap-6 lg:gap-8">
