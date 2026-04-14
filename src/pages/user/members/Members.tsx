@@ -20,11 +20,18 @@ interface MembersProps {
 
 
 export default function Members({ data, members, active, expired, presentNow }:MembersProps) {
+    const safeData = data ?? {
+        data: [],
+        total: 0,
+        page: 1,
+        totalPages: 1,
+    };
+
     return (
         <main className="flex flex-col gap-6 lg:gap-8">
-            <Title data={data.data}/>
+            <Title data={safeData.data}/>
             <Cards members={members} active={active} expired={expired} presentNow={presentNow}/>
-            <Table data={data}/>
+            <Table data={safeData}/>
         </main>
     );
 }
