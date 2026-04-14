@@ -9,6 +9,9 @@ import Tracker from "./sections/Tracker";
 import { getDashboardStats } from "../../../../actions/user.actions";
 
 
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 
 export default async function Home() {
     // ** States

@@ -6,6 +6,9 @@ import Table from "./sections/Table";
 import { getAttendanceListAction, getDashboardStats } from "../../../../actions/user.actions";
 
 
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 
 export default async function Members() {
     // ** States

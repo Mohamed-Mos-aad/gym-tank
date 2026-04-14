@@ -7,6 +7,9 @@ import Tips from "./sections/Tips";
 import { getDashboardStats, getMembersListAction } from "../../../../actions/user.actions";
 
 
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 
 export default async function Subscribes() {
     const { data } = await getMembersListAction();
