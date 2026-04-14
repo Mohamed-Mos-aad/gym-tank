@@ -16,6 +16,10 @@ interface TableProps {
 
 
 export default function Table({data}:TableProps) {
+    const rows = data?.data ?? [];
+
+
+
     return (
         <section className="overflow-hidden rounded-2xl bg-white shadow">
             <h2 className="border-b border-neutral-200 px-4 py-5 text-[18px] font-bold text-neutral-900 sm:px-6">
@@ -35,7 +39,7 @@ export default function Table({data}:TableProps) {
                     </thead>
 
                     <tbody>
-                        {data.data.map((attendance) => (
+                        {rows.map((attendance) => (
                             <tr key={attendance.id} className="border-b border-neutral-100 last:border-b-0">
                                 <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
                                     <div className="flex flex-col">
