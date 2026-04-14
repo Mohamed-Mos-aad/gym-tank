@@ -17,8 +17,8 @@ interface TableProps {
 
 export default function Table({data}:TableProps) {
     // ** Constants
-    const currentPage = data.page;
-    const totalPages = data.totalPages;
+    const currentPage = data.page ?? 1;
+    const totalPages = data.totalPages ?? 1;
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
 
