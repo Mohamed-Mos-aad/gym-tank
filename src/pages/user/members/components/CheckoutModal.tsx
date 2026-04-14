@@ -18,6 +18,7 @@ interface CheckoutModalProps{
 
 export default function CheckoutModal({data}:CheckoutModalProps) {
     // ** States
+    const attendanceData = data?? [];
     const [attendanceModalOpen, setAttendanceModalOpen] = useState(false);
     const [selectedMemberId, setSelectedMemberId] = useState("");
     
@@ -66,7 +67,7 @@ export default function CheckoutModal({data}:CheckoutModalProps) {
                     label="اختيار العضو"
                     id="memberName"
                     placeholder="ابحث عن اسم العضو أو رقم الهاتف..."
-                    options={data.map((attendance) => ({
+                    options={attendanceData.map((attendance) => ({
                         label: `${attendance.member.name} - ${attendance.member.phone}`,
                         value: attendance.memberId,
                     }))}
