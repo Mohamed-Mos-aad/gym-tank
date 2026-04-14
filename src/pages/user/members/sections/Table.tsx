@@ -16,6 +16,13 @@ interface TableProps {
 
 
 export default function Table({data}:TableProps) {
+    // ** Constants
+    const currentPage = data.page;
+    const totalPages = data.totalPages;
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+
+
     return (
         <section className="overflow-hidden rounded-2xl bg-white shadow">
             <h2 className="border-b border-neutral-200 px-4 py-5 text-[18px] font-bold text-neutral-900 sm:px-6">
@@ -41,7 +48,9 @@ export default function Table({data}:TableProps) {
                                 </td>
                             </tr>
                         ) : (
-                            data.data.map((attendance) => (
+                            data.data
+                            .filter((attendance) => attendance.checkOut === null)
+                            .map((attendance) => (
                                 <tr key={attendance.id} className="border-b border-neutral-100 last:border-b-0">
                                     <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
                                         <div className="flex flex-col">
@@ -78,39 +87,33 @@ export default function Table({data}:TableProps) {
             <div className="w-full flex justify-center sm:justify-between border-t border-neutral-200 px-4 py-4 sm:px-6">
                 <div className="w-full flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <h4 className="text-center text-[14px] font-medium text-neutral-700">
-                        عرض 1 إلى 10 من أصل 1,284 عضواً
+                        عرض 1 إلى { data.data.length > 9 ? 10 : data.data.length } من أصل { data.data.length } عضواً
                     </h4>
-
                     <div className="flex justify-center items-center gap-2">
                         <button
                             type="button"
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-200 text-neutral-700 transition-colors hover:border-brand-500 hover:text-brand-500"
-                            aria-label="الصفحة السابقة"
+                            disabled={currentPage === 1}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-200 text-neutral-700 disabled:opacity-50"
                         >
                             <ChevronRight size={16} />
                         </button>
+                        {pages.map((page) => (
+                            <button
+                                key={page}
+                                type="button"
+                                className={`inline-flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-[14px] font-bold ${
+                                    page === currentPage
+                                        ? "bg-brand-500 text-white"
+                                        : "border border-neutral-200 text-neutral-700 hover:border-brand-500 hover:text-brand-500"
+                                }`}
+                            >
+                                {page}
+                            </button>
+                        ))}
                         <button
                             type="button"
-                            className="inline-flex h-9 min-w-9 items-center justify-center rounded-lg bg-brand-500 px-3 text-[14px] font-bold text-white"
-                        >
-                            1
-                        </button>
-                        <button
-                            type="button"
-                            className="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-neutral-200 px-3 text-[14px] font-bold text-neutral-700 transition-colors hover:border-brand-500 hover:text-brand-500"
-                        >
-                            2
-                        </button>
-                        <button
-                            type="button"
-                            className="inline-flex h-9 min-w-9 items-center justify-center rounded-lg border border-neutral-200 px-3 text-[14px] font-bold text-neutral-700 transition-colors hover:border-brand-500 hover:text-brand-500"
-                        >
-                            3
-                        </button>
-                        <button
-                            type="button"
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-200 text-neutral-700 transition-colors hover:border-brand-500 hover:text-brand-500"
-                            aria-label="الصفحة التالية"
+                            disabled={currentPage === totalPages}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-neutral-200 text-neutral-700 disabled:opacity-50"
                         >
                             <ChevronLeft size={16} />
                         </button>

@@ -9,11 +9,13 @@ import Button from "@/components/ui/Button";
 import { useEffect, useState } from "react";
 // ** Actions
 import {
-  createAttendanceAction,
   getMembersListAction,
 } from "../../../../actions/user.actions";
+import { createAttendanceAction } from "@/actions/user/attendance.actions";
 // ** Interfaces
 import { MemberLite } from "@/types";
+
+
 
 export default function AttendanceModal() {
   // ** States
@@ -51,6 +53,8 @@ export default function AttendanceModal() {
     };
     fetchData();
   }, []);
+
+
 
   return (
     <>

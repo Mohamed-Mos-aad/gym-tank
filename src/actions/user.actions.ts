@@ -3,7 +3,6 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs"; 
 import { cookies } from "next/headers";
-import { revalidatePath } from "next/cache";
 
 
 
@@ -132,57 +131,7 @@ export const updateMemberAction = async (memberId, memberData)=>{
 
 
 // ** Attendance
-export const createAttendanceAction = async (memberId: string) => {
-    const userId = ( await cookies()).get("gym_tank_token" )?.value;
-    const gym = await prisma.gym.findUnique({
-        where: { ownerId: userId },
-    });
-    const gymId = gym?.id;
-    const now = new Date();
 
-    const member = await prisma.member.findUnique({
-        where: { id: memberId },
-    });
-
-    if (!member) {
-        throw new Error("Member not found");
-    }
-    
-    if (!gymId) {
-        throw new Error("Gym not found");
-    }
-
-
-    if (member.endDate && member.endDate < now) {
-        throw new Error("Subscription expired");
-    }
-
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const alreadyCheckedIn = await prisma.attendance.findFirst({
-        where: {
-        memberId,
-        checkIn: {
-            gte: startOfDay,
-        },
-        },
-    });
-
-    if (alreadyCheckedIn) {
-        throw new Error("Member already checked in today");
-    }
-
-
-    const attendance = await prisma.attendance.create({
-        data: {
-        memberId,
-        gymId,
-        },
-    });
-    revalidatePath("/members");
-    return attendance;
-};
 export const getAttendanceListAction = async (
     userId?: string,
     page = 1,
