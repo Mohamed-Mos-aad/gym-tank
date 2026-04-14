@@ -5,16 +5,16 @@ import Logs from "./sections/Logs";
 import Tips from "./sections/Tips";
 import Sessions from "./sections/Sessions";
 import Tracker from "./sections/Tracker";
-// ** Actions
-import { getDashboardStats } from "@/actions/user.actions";
+// ** Interfaces
+interface HomeProps{
+  members: number;
+  active: number;
+  expired: number;
+}
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
 
-export default async function Home() {
-  // ** States
-  const { members, active, expired } = await getDashboardStats();
 
+export default function Home({ members, active, expired }:HomeProps) {
   return (
     <main className="flex flex-col gap-6 lg:gap-8">
       <Welcome />
