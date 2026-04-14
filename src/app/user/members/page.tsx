@@ -15,7 +15,12 @@ export default async function Page() {
 
 
     // ** Data
-    const data = await getAttendanceListAction(userId);
+    const data = await getAttendanceListAction(userId) ?? {
+        data: [],
+        total: 0,
+        page: 1,
+        totalPages: 1,
+    };
     const { members, active, expired, presentNow } = await getDashboardStats(userId);
 
 
