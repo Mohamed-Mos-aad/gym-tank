@@ -39,42 +39,49 @@ export default function Table({data}:TableProps) {
                         </th>
                     </tr>
                     </thead>
-
-                    <tbody>
-                    {data.map((member) => (
-                        <tr
-                        key={member.id}
-                        className="border-b border-neutral-100 last:border-b-0"
-                        >
-                        <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
-                            {member.name}
-                        </td>
-                        <td className="px-6 py-4 text-[16px] font-medium text-neutral-700">
-                            {
-                                member.subscriptionType && 
-                                <Badge className="border border-info-600/20 bg-info-600/10 text-[12px] font-bold text-info-600">
-                                {member.subscriptionType}
-                                </Badge>
-                            }
-                        </td>
-                        <td className="px-6 py-4 text-[14px] text-neutral-700">
-                            {member.startDate.toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 text-[14px] text-neutral-700">
-                            {member.endDate?.toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
-                            <Badge className="border border-info-600/20 bg-info-600/10 text-[12px] font-bold text-info-600">
-                            {member.subscriptionStatus}
-                            </Badge>
-                        </td>
-                        <td className="px-6 py-4">
-                            <button className="text-neutral-400 hover:text-neutral-900 transition-colors">
-                            <MoreHorizontal size={20} />
-                            </button>
-                        </td>
-                        </tr>
-                    ))}
+                        <tbody>
+                        {!data || !data || data.length === 0 ? (
+                            <tr>
+                                <td colSpan={5} className="text-center py-6 text-neutral-500">
+                                    لا يوجد بيانات
+                                </td>
+                            </tr>
+                        ) : (
+                            data.map((member) => (
+                                <tr
+                                key={member.id}
+                                className="border-b border-neutral-100 last:border-b-0"
+                                >
+                                <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
+                                    {member.name}
+                                </td>
+                                <td className="px-6 py-4 text-[16px] font-medium text-neutral-700">
+                                    {
+                                        member.subscriptionType && 
+                                        <Badge className="border border-info-600/20 bg-info-600/10 text-[12px] font-bold text-info-600">
+                                        {member.subscriptionType}
+                                        </Badge>
+                                    }
+                                </td>
+                                <td className="px-6 py-4 text-[14px] text-neutral-700">
+                                    {member.startDate.toLocaleDateString()}
+                                </td>
+                                <td className="px-6 py-4 text-[14px] text-neutral-700">
+                                    {member.endDate?.toLocaleDateString()}
+                                </td>
+                                <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
+                                    <Badge className="border border-info-600/20 bg-info-600/10 text-[12px] font-bold text-info-600">
+                                    {member.subscriptionStatus}
+                                    </Badge>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <button className="text-neutral-400 hover:text-neutral-900 transition-colors">
+                                    <MoreHorizontal size={20} />
+                                    </button>
+                                </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
