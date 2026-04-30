@@ -92,31 +92,49 @@ export default async function AdminDashboardPage() {
                         <div className="flex justify-between items-center mb-8">
                             <div>
                                 <h2 className="text-lg font-black text-neutral-900">نمو النوادي الرياضية</h2>
-                                <p className="text-xs text-neutral-700">معدل تسجيل الجيمات الجديدة أسبوعياً</p>
+                                <p className="text-xs text-neutral-700">معدل تسجيل الجيمات الجديدة في آخر 7 أيام</p>
                             </div>
                             <span className="text-xs font-bold bg-brand-50 text-brand-500 px-3 py-1 rounded-full">خط النمو</span>
                         </div>
-                        {/* Placeholder for Bar Chart */}
+                        
                         <div className="h-64 flex items-end justify-between gap-2 px-2">
-                            {[40, 60, 30, 80, 50, 40, 20].map((h, i) => (
-                                <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                                    <div className={`w-full rounded-t-xl transition-all ${i === 3 ? 'bg-brand-500' : 'bg-brand-50'}`} style={{ height: `${h}%` }}>
-                                        {i === 3 && <div className="text-white text-[10px] text-center font-bold mt-2">24<br/>جديد</div>}
-                                    </div>
-                                    <span className="text-xs text-neutral-700 font-bold">
-                                        {['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'][i]}
-                                    </span>
-                                </div>
-                            ))}
+                            {(() => {
+                                const maxCount = Math.max(...stats.chartData.map(d => d.count), 1);
+                                return stats.chartData.map((d, i) => {
+                                    const heightPercentage = Math.round((d.count / maxCount) * 100);
+                                    const isMax = d.count === maxCount && maxCount > 0;
+                                    return (
+                                        <div key={i} className="flex-1 flex flex-col items-center gap-2">
+                                            <div className={`w-full rounded-t-xl transition-all ${isMax ? 'bg-brand-500' : 'bg-brand-50'}`} style={{ height: `${Math.max(heightPercentage, 5)}%` }}>
+                                                {isMax && <div className="text-white text-[10px] text-center font-bold mt-2">{d.count}<br/>جديد</div>}
+                                            </div>
+                                            <span className="text-xs text-neutral-700 font-bold whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
+                                                {d.day}
+                                            </span>
+                                        </div>
+                                    );
+                                });
+                            })()}
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-neutral-100 h-64 flex flex-col justify-center items-center">
-                         <h2 className="text-lg font-black text-neutral-900 self-start mb-auto">إحصائيات الاشتراكات</h2>
-                         <div className="flex items-end gap-16 mt-auto w-full justify-center text-sm font-bold text-neutral-700 pb-4">
-                             <span>الخطة الأساسية</span>
-                             <span>الخطة المتقدمة</span>
-                             <span>خطة المؤسسات</span>
+                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-neutral-100 h-64 flex flex-col">
+                         <h2 className="text-lg font-black text-neutral-900 mb-6">إحصائيات الاشتراكات</h2>
+                         <div className="flex-1 flex items-center justify-center gap-8 w-full">
+                             {stats.subscriptionStats && stats.subscriptionStats.length > 0 ? (
+                                 stats.subscriptionStats.map((sub, i) => (
+                                     <div key={i} className="flex flex-col items-center gap-3">
+                                         <div className="relative w-20 h-20 rounded-full border-4 flex items-center justify-center font-black text-xl border-neutral-100">
+                                            {/* Simulate a doughnut chart segment based on index color */}
+                                            <div className={`absolute inset-0 rounded-full border-4 opacity-50 border-transparent border-t-[${['#00DF81', '#3b82f6', '#a855f7'][i % 3] || '#00DF81'}] rotate-[${i * 45}deg]`}></div>
+                                            <span className="z-10">{sub.count}</span>
+                                         </div>
+                                         <span className="text-sm font-bold text-neutral-700">{sub.name}</span>
+                                     </div>
+                                 ))
+                             ) : (
+                                 <div className="text-neutral-500 text-sm">لا توجد اشتراكات مسجلة حالياً</div>
+                             )}
                          </div>
                     </div>
                 </div>

@@ -18,13 +18,56 @@ export async function getAdminDashboardStats() {
             include: { owner: true }
         });
 
+        // Calculate gym growth for the last 7 days
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+        sevenDaysAgo.setHours(0, 0, 0, 0);
+
+        const recentGymsForChart = await prisma.gym.findMany({
+            where: { createdAt: { gte: sevenDaysAgo } },
+            select: { createdAt: true }
+        });
+
+        // Group by day of week (0 = Sunday, 1 = Monday, etc.)
+        const growthByDay = [0, 0, 0, 0, 0, 0, 0];
+        recentGymsForChart.forEach(gym => {
+            const day = gym.createdAt.getDay();
+            growthByDay[day]++;
+        });
+
+        // Map to an array starting from today going back 7 days
+        const today = new Date().getDay();
+        const chartData = [];
+        const daysAr = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        
+        for (let i = 6; i >= 0; i--) {
+            const d = (today - i + 7) % 7;
+            chartData.push({
+                day: daysAr[d],
+                count: growthByDay[d]
+            });
+        }
+
+        // Subscription stats
+        const allSubscriptions = await prisma.gymSubscription.groupBy({
+            by: ['planName'],
+            _count: true
+        });
+
+        const subscriptionStats = allSubscriptions.map(s => ({
+            name: s.planName,
+            count: s._count
+        }));
+
         return {
             totalGyms,
             activeGyms,
             pendingGyms,
             totalUsers,
             activeSubscriptions,
-            recentGyms
+            recentGyms,
+            chartData,
+            subscriptionStats
         };
     } catch (error) {
         console.error("Error fetching admin stats", error);
@@ -34,7 +77,9 @@ export async function getAdminDashboardStats() {
             pendingGyms: 0,
             totalUsers: 0,
             activeSubscriptions: 0,
-            recentGyms: []
+            recentGyms: [],
+            chartData: [],
+            subscriptionStats: []
         };
     }
 }

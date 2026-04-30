@@ -1,6 +1,9 @@
+"use client";
+
+// ** Hooks && Tools
+import { useState, useRef, useEffect } from "react";
 // ** Assets
-import { Bell, Menu, Search, Settings } from "lucide-react";
-import Image from "next/image";
+import { Bell, Menu, Search, CheckCircle2, Circle } from "lucide-react";
 
 // ** Interfaces
 interface AdminNavBarProps {
@@ -8,6 +11,36 @@ interface AdminNavBarProps {
 }
 
 export default function AdminNavBar({ onMenuToggle }: AdminNavBarProps) {
+    const [isNotifOpen, setIsNotifOpen] = useState(false);
+    const notifRef = useRef<HTMLDivElement>(null);
+
+    // Mock Notifications
+    const [notifications, setNotifications] = useState([
+        { id: 1, text: "طلب انضمام جيم جديد: Power House", time: "منذ 10 دقائق", isRead: false },
+        { id: 2, text: "تم تجديد اشتراك نادي العضلات بنجاح", time: "منذ ساعتين", isRead: false },
+        { id: 3, text: "تحديث النظام الأسبوعي مكتمل", time: "أمس", isRead: true },
+    ]);
+
+    const unreadCount = notifications.filter(n => !n.isRead).length;
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+                setIsNotifOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const markAsRead = (id: number) => {
+        setNotifications(notifications.map(n => n.id === id ? { ...n, isRead: true } : n));
+    };
+
+    const markAllAsRead = () => {
+        setNotifications(notifications.map(n => ({ ...n, isRead: true })));
+    };
+
     return (
         <nav className="sticky top-0 z-30 flex w-full items-center justify-between gap-3 border-b border-brand-700/10 bg-white/95 px-4 py-3 shadow-sm backdrop-blur sm:px-6">
             <div className="flex flex-1 items-center gap-3">
@@ -32,29 +65,74 @@ export default function AdminNavBar({ onMenuToggle }: AdminNavBarProps) {
                 </div>
             </div>
 
-            <div className="flex items-center gap-3 sm:gap-4">
-                <button
-                    type="button"
-                    aria-label="Notifications"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full text-neutral-700 transition-colors hover:bg-neutral-100 hover:text-brand-500"
-                >
-                    <Bell size={18} />
-                </button>
-                <button
-                    type="button"
-                    aria-label="Settings"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full text-neutral-700 transition-colors hover:bg-neutral-100 hover:text-brand-500"
-                >
-                    <Settings size={18} />
-                </button>
-                <div className="hidden text-right sm:block">
-                    <h1 className="text-[14px] font-bold text-neutral-900">أحمد المدير</h1>
-                    <h2 className="text-[10px] text-neutral-700">مدير النظام</h2>
+            <div className="flex items-center gap-3 sm:gap-4 relative">
+                {/* Notifications Popover Wrapper */}
+                <div ref={notifRef} className="relative">
+                    <button
+                        type="button"
+                        aria-label="Notifications"
+                        onClick={() => setIsNotifOpen(!isNotifOpen)}
+                        className={`relative inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors ${isNotifOpen ? 'bg-brand-50 text-brand-500' : 'text-neutral-700 hover:bg-neutral-100 hover:text-brand-500'}`}
+                    >
+                        <Bell size={18} />
+                        {unreadCount > 0 && (
+                            <span className="absolute top-1.5 right-1.5 flex h-2 w-2 rounded-full bg-red-500">
+                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                            </span>
+                        )}
+                    </button>
+
+                    {/* Popover Content */}
+                    {isNotifOpen && (
+                        <div className="absolute left-0 sm:right-0 sm:left-auto top-12 w-80 bg-white border border-neutral-100 rounded-2xl shadow-lg z-50 overflow-hidden transform origin-top transition-all">
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 bg-neutral-50/50">
+                                <h3 className="font-bold text-neutral-900 text-sm">الإشعارات</h3>
+                                {unreadCount > 0 && (
+                                    <button onClick={markAllAsRead} className="text-xs font-bold text-brand-500 hover:text-brand-600 transition-colors">
+                                        تحديد الكل كمقروء
+                                    </button>
+                                )}
+                            </div>
+                            <div className="max-h-80 overflow-y-auto">
+                                {notifications.length > 0 ? (
+                                    notifications.map((notif) => (
+                                        <div key={notif.id} className={`flex gap-3 p-4 border-b border-neutral-100 last:border-0 hover:bg-neutral-50 transition-colors cursor-pointer ${!notif.isRead ? 'bg-brand-50/30' : ''}`} onClick={() => markAsRead(notif.id)}>
+                                            <div className="mt-0.5 shrink-0">
+                                                {!notif.isRead ? (
+                                                    <Circle size={10} className="fill-brand-500 text-brand-500" />
+                                                ) : (
+                                                    <CheckCircle2 size={14} className="text-neutral-400" />
+                                                )}
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className={`text-sm ${!notif.isRead ? 'font-bold text-neutral-900' : 'text-neutral-700'}`}>{notif.text}</p>
+                                                <p className="text-xs text-neutral-400 mt-1">{notif.time}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="p-8 text-center text-neutral-500 text-sm">
+                                        لا توجد إشعارات حالياً
+                                    </div>
+                                )}
+                            </div>
+                            <div className="p-2 border-t border-neutral-100 bg-neutral-50/50">
+                                <button className="w-full text-center text-xs font-bold text-neutral-600 hover:text-brand-500 transition-colors py-2">
+                                    عرض كل الإشعارات
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <div className="hidden text-right sm:block border-r border-neutral-200 pr-4 ml-2">
+                    <h1 className="text-[14px] font-bold text-neutral-900">المدير العام</h1>
+                    <h2 className="text-[10px] text-neutral-700">GymTank Admin</h2>
                 </div>
                 <div className="h-10 w-10 overflow-hidden rounded-full border-2 border-white shadow-sm">
                     {/* Placeholder for user image, matching the design */}
-                    <div className="flex h-full w-full items-center justify-center bg-brand-700 text-white">
-                        أ
+                    <div className="flex h-full w-full items-center justify-center bg-brand-700 text-white font-bold">
+                        A
                     </div>
                 </div>
             </div>
