@@ -1,9 +1,18 @@
-"use client";
-
-import { Search, Filter, HelpCircle, ChevronRight, ChevronLeft } from "lucide-react";
+import { Search, Filter, HelpCircle, ChevronRight, ChevronLeft, Dumbbell, Waves, Zap, Building2 } from "lucide-react";
 import Link from "next/link";
+import { getAdminGyms, updateGymStatus } from "@/actions/admin/admin.actions";
 
-export default function AdminGymsPage() {
+export default async function AdminGymsPage() {
+    const gyms = await getAdminGyms();
+
+    const pendingGymsCount = gyms.filter(g => g.status === 'PENDING').length;
+    const activeGymsCount = gyms.filter(g => g.status === 'APPROVED').length;
+    const activePercentage = gyms.length > 0 ? Math.round((activeGymsCount / gyms.length) * 100) : 0;
+
+    const formatDate = (date: Date) => {
+        return new Intl.DateTimeFormat('ar-EG', { dateStyle: 'long' }).format(date);
+    };
+
     return (
         <div className="flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -33,8 +42,7 @@ export default function AdminGymsPage() {
                     <div>
                         <div className="text-sm font-bold text-brand-500 mb-2">إجمالي النوادي</div>
                         <div className="flex items-end gap-2">
-                            <div className="text-4xl font-black text-neutral-900">128</div>
-                            <div className="text-xs font-bold text-brand-500 mb-1">+12%</div>
+                            <div className="text-4xl font-black text-neutral-900">{gyms.length}</div>
                         </div>
                     </div>
                 </div>
@@ -42,14 +50,14 @@ export default function AdminGymsPage() {
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-100 flex items-center justify-between">
                     <div>
                         <div className="text-sm font-bold text-orange-600 mb-2">طلبات معلقة</div>
-                        <div className="text-4xl font-black text-neutral-900">14</div>
+                        <div className="text-4xl font-black text-neutral-900">{pendingGymsCount}</div>
                     </div>
                 </div>
 
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-100 flex items-center justify-between">
                     <div>
-                        <div className="text-sm font-bold text-neutral-700 mb-2">الاشتراكات النشطة</div>
-                        <div className="text-4xl font-black text-neutral-900">94%</div>
+                        <div className="text-sm font-bold text-neutral-700 mb-2">النوادي النشطة</div>
+                        <div className="text-4xl font-black text-neutral-900">{activePercentage}%</div>
                     </div>
                 </div>
             </div>
@@ -63,75 +71,81 @@ export default function AdminGymsPage() {
                                 <th className="px-6 py-4 rounded-tr-3xl">اسم الجيم</th>
                                 <th className="px-6 py-4">اسم المالك</th>
                                 <th className="px-6 py-4">الإيميل</th>
-                                <th className="px-6 py-4">تاريخ التسجيل</th>
+                                <th className="px-6 py-4 text-center">تاريخ التسجيل</th>
                                 <th className="px-6 py-4 text-center">الحالة</th>
                                 <th className="px-6 py-4 text-center">عدد الأعضاء</th>
                                 <th className="px-6 py-4 rounded-tl-3xl">الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-neutral-100 font-medium">
-                            {[
-                                { gym: "Iron Temple Gym", owner: "أحمد محمد", email: "ahmed@irontemple.com", date: "12 أكتوبر 2023", status: "مقبول", members: "450", initials: "IT" },
-                                { gym: "Power Fit Studio", owner: "سارة الكندري", email: "sara.k@powerfit.sa", date: "15 نوفمبر 2023", status: "قيد الانتظار", members: "0", initials: "PF" },
-                                { gym: "Urban X-Fit", owner: "خالد العتيبي", email: "khaled@urbanx.com", date: "05 نوفمبر 2023", status: "مرفوض", members: "--", initials: "UX" },
-                                { gym: "Body Zone Center", owner: "فيصل الحربي", email: "faisal@bodyzone.me", date: "01 نوفمبر 2023", status: "مقبول", members: "892", initials: "BZ" },
-                                { gym: "Zenith Gym", owner: "ليلى عبدالله", email: "info@zenithgym.com", date: "18 نوفمبر 2023", status: "قيد الانتظار", members: "0", initials: "ZG" }
-                            ].map((row, i) => (
-                                <tr key={i} className="hover:bg-neutral-50 transition-colors">
+                            {gyms.length > 0 ? gyms.map((gym) => (
+                                <tr key={gym.id} className="hover:bg-neutral-50 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-500 flex items-center justify-center font-bold text-sm shrink-0">
-                                                {row.initials}
+                                                {gym.name.substring(0, 2).toUpperCase()}
                                             </div>
-                                            <div className="font-bold text-neutral-900">{row.gym}</div>
+                                            <div className="font-bold text-neutral-900">{gym.name}</div>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4">{row.owner}</td>
-                                    <td className="px-6 py-4 text-neutral-500">{row.email}</td>
+                                    <td className="px-6 py-4">{gym.owner?.name || 'غير محدد'}</td>
+                                    <td className="px-6 py-4 text-neutral-500">{gym.email || gym.owner?.email || '-'}</td>
                                     <td className="px-6 py-4">
-                                        <div className="w-24 text-center">{row.date}</div>
+                                        <div className="text-center text-xs">{formatDate(gym.createdAt)}</div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex justify-center">
                                             <span className={`px-3 py-1 rounded-full text-[11px] font-bold ${
-                                                row.status === 'مقبول' ? 'bg-green-50 text-green-600' : 
-                                                row.status === 'قيد الانتظار' ? 'bg-yellow-50 text-yellow-600' : 
+                                                gym.status === 'APPROVED' ? 'bg-green-50 text-green-600' : 
+                                                gym.status === 'PENDING' ? 'bg-yellow-50 text-yellow-600' : 
                                                 'bg-red-50 text-red-600'
                                             }`}>
-                                                {row.status}
+                                                {gym.status === 'APPROVED' ? 'مقبول' : gym.status === 'PENDING' ? 'قيد الانتظار' : 'مرفوض/موقوف'}
                                             </span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-center font-black text-lg text-neutral-900">{row.members}</td>
+                                    <td className="px-6 py-4 text-center font-black text-lg text-neutral-900">{gym._count?.members || 0}</td>
                                     <td className="px-6 py-4">
-                                        {row.status === 'قيد الانتظار' ? (
+                                        {gym.status === 'PENDING' ? (
                                             <div className="flex items-center gap-2">
-                                                <button className="bg-brand-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-brand-700 transition-colors">قبول</button>
-                                                <button className="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-100 transition-colors">رفض</button>
+                                                <form action={updateGymStatus.bind(null, gym.id, 'APPROVED')}>
+                                                    <button type="submit" className="bg-brand-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-brand-700 transition-colors">قبول</button>
+                                                </form>
+                                                <form action={updateGymStatus.bind(null, gym.id, 'REJECTED')}>
+                                                    <button type="submit" className="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-100 transition-colors">رفض</button>
+                                                </form>
                                             </div>
-                                        ) : null}
+                                        ) : (
+                                            <div className="text-xs text-neutral-400">-</div>
+                                        )}
                                     </td>
                                 </tr>
-                            ))}
+                            )) : (
+                                <tr>
+                                    <td colSpan={7} className="px-6 py-8 text-center text-neutral-500">
+                                        لا توجد أندية رياضية مسجلة حالياً
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
                 
                 {/* Pagination */}
+                {gyms.length > 0 && (
                 <div className="px-6 py-4 border-t border-neutral-100 flex items-center justify-between text-sm">
-                    <span className="text-neutral-500">عرض 5 من أصل 128 جيم</span>
+                    <span className="text-neutral-500">عرض {gyms.length} جيم</span>
                     <div className="flex items-center gap-2">
                         <button className="w-8 h-8 rounded-lg border border-neutral-200 flex items-center justify-center text-neutral-500 hover:bg-neutral-50">
                             <ChevronRight size={16} />
                         </button>
                         <button className="w-8 h-8 rounded-lg bg-brand-500 text-white flex items-center justify-center font-bold">1</button>
-                        <button className="w-8 h-8 rounded-lg hover:bg-neutral-50 text-neutral-700 font-bold">2</button>
-                        <button className="w-8 h-8 rounded-lg hover:bg-neutral-50 text-neutral-700 font-bold">3</button>
                         <button className="w-8 h-8 rounded-lg border border-neutral-200 flex items-center justify-center text-neutral-500 hover:bg-neutral-50">
                             <ChevronLeft size={16} />
                         </button>
                     </div>
                 </div>
+                )}
             </div>
 
             {/* Bottom Banners */}
@@ -154,3 +168,4 @@ export default function AdminGymsPage() {
         </div>
     );
 }
+

@@ -1,9 +1,15 @@
-"use client";
-
 import { Building2, Calendar, CheckCircle2, AlertCircle, Users, Banknote, HelpCircle, Activity, Waves, Dumbbell, Zap } from "lucide-react";
 import Link from "next/link";
+import { getAdminDashboardStats } from "@/actions/admin/admin.actions";
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+    const stats = await getAdminDashboardStats();
+
+    // Helper to format date
+    const formatDate = (date: Date) => {
+        return new Intl.DateTimeFormat('ar-EG', { dateStyle: 'long' }).format(date);
+    };
+
     return (
         <div className="flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -13,7 +19,7 @@ export default function AdminDashboardPage() {
                 </div>
                 <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-neutral-200 text-sm text-neutral-700 shadow-sm">
                     <Calendar size={16} className="text-brand-500" />
-                    <span>14 أكتوبر 2023 - 21 أكتوبر 2023</span>
+                    <span>تحديث حي للبيانات</span>
                 </div>
             </div>
 
@@ -24,10 +30,10 @@ export default function AdminDashboardPage() {
                         <span className="text-sm font-bold">إجمالي الجيمات</span>
                         <Building2 size={20} />
                     </div>
-                    <div className="text-3xl font-black text-neutral-900">1,284</div>
+                    <div className="text-3xl font-black text-neutral-900">{stats.totalGyms}</div>
                     <div className="text-xs text-brand-500 font-bold flex items-center gap-1">
                         <Activity size={12} />
-                        12%+ الشهر الحالي
+                        تم تسجيلها بالمنصة
                     </div>
                 </div>
 
@@ -36,10 +42,10 @@ export default function AdminDashboardPage() {
                         <span className="text-sm font-bold">الجيمات النشطة</span>
                         <CheckCircle2 size={20} />
                     </div>
-                    <div className="text-3xl font-black text-neutral-900">1,150</div>
+                    <div className="text-3xl font-black text-neutral-900">{stats.activeGyms}</div>
                     <div className="text-xs text-info-600 font-bold flex items-center gap-1">
                         <div className="w-1.5 h-1.5 rounded-full bg-info-600"></div>
-                        94% معدل النشاط
+                        تعمل بشكل طبيعي
                     </div>
                 </div>
 
@@ -48,7 +54,7 @@ export default function AdminDashboardPage() {
                         <span className="text-sm font-bold">الجيمات المعلقة</span>
                         <AlertCircle size={20} />
                     </div>
-                    <div className="text-3xl font-black text-neutral-900">134</div>
+                    <div className="text-3xl font-black text-neutral-900">{stats.pendingGyms}</div>
                     <div className="text-xs text-warn-700 font-bold">
                         تتطلب مراجعة فورية
                     </div>
@@ -59,22 +65,22 @@ export default function AdminDashboardPage() {
                         <span className="text-sm font-bold">عدد المستخدمين</span>
                         <Users size={20} />
                     </div>
-                    <div className="text-3xl font-black text-neutral-900">42.5k</div>
+                    <div className="text-3xl font-black text-neutral-900">{stats.totalUsers}</div>
                     <div className="text-xs text-brand-500 font-bold flex items-center gap-1">
                         <Users size={12} />
-                        2.4k+ مستخدم جديد
+                        ملاك الإدارة والنوادي
                     </div>
                 </div>
 
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-neutral-100 border-r-4 border-r-purple-500 flex flex-col gap-3">
                     <div className="flex items-center justify-between text-purple-600">
-                        <span className="text-sm font-bold">الإيرادات</span>
+                        <span className="text-sm font-bold">الاشتراكات الفعالة</span>
                         <Banknote size={20} />
                     </div>
-                    <div className="text-3xl font-black text-neutral-900">$84k</div>
+                    <div className="text-3xl font-black text-neutral-900">{stats.activeSubscriptions}</div>
                     <div className="text-xs text-purple-600 font-bold flex items-center gap-1">
                         <Activity size={12} />
-                        8%+ عن المستهدف
+                        اشتراك أندية نشط
                     </div>
                 </div>
             </div>
@@ -124,28 +130,25 @@ export default function AdminDashboardPage() {
                         </div>
 
                         <div className="flex flex-col gap-5">
-                            {[
-                                { name: "أيرون فيست جيم", loc: "الرياض، المملكة العربية السعودية", status: "نشط", time: "منذ ساعتين", icon: Dumbbell, color: "text-brand-500", bg: "bg-brand-50" },
-                                { name: "نادي بلو ووتر", loc: "دبي، الإمارات العربية المتحدة", status: "قيد المراجعة", time: "منذ 5 ساعات", icon: Waves, color: "text-info-600", bg: "bg-blue-50" },
-                                { name: "أكاديمية الفنون القتالية", loc: "جدة، المملكة العربية السعودية", status: "نشط", time: "أمس", icon: Building2, color: "text-neutral-700", bg: "bg-neutral-100" },
-                                { name: "باور هاوس جيم", loc: "الكويت، الكويت", status: "نشط", time: "منذ يومين", icon: Zap, color: "text-brand-500", bg: "bg-brand-50" },
-                            ].map((gym, i) => (
-                                <div key={i} className="flex gap-3 items-center border-b border-neutral-100 pb-4 last:border-0 last:pb-0">
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${gym.bg} ${gym.color} shrink-0`}>
-                                        <gym.icon size={20} />
+                            {stats.recentGyms.length > 0 ? stats.recentGyms.map((gym, i) => (
+                                <div key={gym.id} className="flex gap-3 items-center border-b border-neutral-100 pb-4 last:border-0 last:pb-0">
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-brand-50 text-brand-500 shrink-0`}>
+                                        <Dumbbell size={20} />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <h3 className="text-sm font-bold text-neutral-900 truncate">{gym.name}</h3>
-                                        <p className="text-xs text-neutral-500 truncate mt-0.5">{gym.loc}</p>
+                                        <p className="text-xs text-neutral-500 truncate mt-0.5">{gym.state || 'غير محدد'}</p>
                                         <div className="mt-1 flex items-center justify-between">
-                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${gym.status === 'نشط' ? 'bg-brand-50 text-brand-500' : 'bg-orange-50 text-orange-600'}`}>
-                                                {gym.status}
+                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${gym.status === 'APPROVED' ? 'bg-green-50 text-green-600' : gym.status === 'PENDING' ? 'bg-orange-50 text-orange-600' : 'bg-red-50 text-red-600'}`}>
+                                                {gym.status === 'APPROVED' ? 'نشط' : gym.status === 'PENDING' ? 'معلق' : 'موقوف'}
                                             </span>
-                                            <span className="text-[10px] text-neutral-400">{gym.time}</span>
+                                            <span className="text-[10px] text-neutral-400">{formatDate(gym.createdAt)}</span>
                                         </div>
                                     </div>
                                 </div>
-                            ))}
+                            )) : (
+                                <p className="text-sm text-neutral-500 text-center py-4">لا توجد نوادي مسجلة حتى الآن</p>
+                            )}
                         </div>
                     </div>
 
@@ -166,3 +169,4 @@ export default function AdminDashboardPage() {
         </div>
     );
 }
+
