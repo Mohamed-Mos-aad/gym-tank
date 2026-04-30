@@ -18,5 +18,5 @@ export default async function page() {
 
 
 
-    return <Home  members={members} active={active} expired={expired} />
+    return <Home members={members} active={active} expired={expired} />
 }

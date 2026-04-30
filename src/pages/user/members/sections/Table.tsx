@@ -21,7 +21,7 @@ export default function Table({data}:TableProps) {
     const totalPages = data?.totalPages ?? 1;
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-
+    console.log(data.data[0].checkIn)
 
     return (
         <section className="overflow-hidden rounded-2xl bg-white shadow">
@@ -36,8 +36,8 @@ export default function Table({data}:TableProps) {
                             <th className="px-6 py-4 text-start text-[14px] font-bold text-neutral-700">الاسم</th>
                             <th className="px-6 py-4 text-start text-[14px] font-bold text-neutral-700">رقم الهاتف</th>
                             <th className="px-6 py-4 text-start text-[14px] font-bold text-neutral-700">حالة الاشتراك</th>
-                            <th className="px-6 py-4 text-start text-[14px] font-bold text-neutral-700">تاريخ البدء</th>
-                            <th className="px-6 py-4 text-start text-[14px] font-bold text-neutral-700">تاريخ الانتهاء</th>
+                            <th className="px-6 py-4 text-start text-[14px] font-bold text-neutral-700">وقت الحضور</th>
+                            <th className="px-6 py-4 text-start text-[14px] font-bold text-neutral-700">وقت الانصراف</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,7 +49,6 @@ export default function Table({data}:TableProps) {
                             </tr>
                         ) : (
                             data.data
-                            .filter((attendance) => attendance.checkOut === null)
                             .map((attendance) => (
                                 <tr key={attendance.id} className="border-b border-neutral-100 last:border-b-0">
                                     <td className="px-6 py-4 text-[16px] font-bold text-neutral-900">
@@ -72,11 +71,11 @@ export default function Table({data}:TableProps) {
                                     </td>
 
                                     <td className="px-6 py-4 text-[14px] text-neutral-700">
-                                        {new Date(attendance.member.startDate).toLocaleDateString()}
+                                        {new Date(attendance.checkIn).toLocaleTimeString()}
                                     </td>
 
                                     <td className="px-6 py-4 text-[14px] text-neutral-700">
-                                        {attendance.member.endDate?.toLocaleDateString()}
+                                        {attendance.checkOut?.toLocaleTimeString()}
                                     </td>
                                 </tr>
                             ))
