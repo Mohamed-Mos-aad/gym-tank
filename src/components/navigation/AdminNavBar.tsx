@@ -84,7 +84,7 @@ export default function AdminNavBar({ onMenuToggle }: AdminNavBarProps) {
 
                     {/* Popover Content */}
                     {isNotifOpen && (
-                        <div className="absolute left-0 sm:right-0 sm:left-auto top-12 w-80 bg-white border border-neutral-100 rounded-2xl shadow-lg z-50 overflow-hidden transform origin-top transition-all">
+                        <div className="absolute left-[-10px] sm:left-[-16px] sm:right-auto top-12 w-[320px] max-w-[90vw] bg-white border border-neutral-100 rounded-2xl shadow-lg z-50 overflow-hidden transform origin-top transition-all">
                             <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 bg-neutral-50/50">
                                 <h3 className="font-bold text-neutral-900 text-sm">الإشعارات</h3>
                                 {unreadCount > 0 && (

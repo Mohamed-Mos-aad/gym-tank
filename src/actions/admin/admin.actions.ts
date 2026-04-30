@@ -37,7 +37,7 @@ export async function getAdminDashboardStats() {
 
         // Map to an array starting from today going back 7 days
         const today = new Date().getDay();
-        const chartData = [];
+        const chartData: { day: string; count: number }[] = [];
         const daysAr = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
         
         for (let i = 6; i >= 0; i--) {
@@ -130,6 +130,20 @@ export async function getAdminUsers() {
     } catch (error) {
         console.error("Error fetching admin users", error);
         return [];
+    }
+}
+
+export async function updateUserStatus(userId: string, isActive: boolean) {
+    try {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { isActive }
+        });
+        revalidatePath("/admin/users");
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating user status", error);
+        return { success: false };
     }
 }
 
