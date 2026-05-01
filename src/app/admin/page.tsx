@@ -170,18 +170,6 @@ export default async function AdminDashboardPage() {
                         </div>
                     </div>
 
-                    <div className="bg-neutral-100 rounded-3xl p-6 text-center border border-neutral-200 border-dashed flex flex-col items-center">
-                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-brand-500 mb-3 shadow-sm">
-                            <HelpCircle size={24} />
-                        </div>
-                        <h3 className="text-sm font-bold text-neutral-900 mb-2">هل تحتاج للمساعدة؟</h3>
-                        <p className="text-xs text-neutral-500 mb-4 leading-relaxed">
-                            الدعم الفني متاح على مدار الساعة لمساعدتك في إدارة المنصة.
-                        </p>
-                        <button className="w-full bg-white text-brand-500 border border-brand-500/20 font-bold py-2.5 rounded-xl text-sm transition-all hover:bg-brand-50 hover:border-brand-500">
-                            تواصل مع الدعم
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>

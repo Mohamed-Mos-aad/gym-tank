@@ -15,6 +15,8 @@ type NotificationData = {
 };
 
 export default function AdminNotificationsPage() {
+    const [notifications, setNotifications] = useState<NotificationData[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<"ALL" | "UNREAD">("ALL");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [users, setUsers] = useState<any[]>([]);
@@ -59,6 +61,13 @@ export default function AdminNotificationsPage() {
         setIsSending(false);
     };
 
+    const formatNotifDate = (date: Date) => {
+        return new Intl.DateTimeFormat('ar-EG', { 
+            dateStyle: 'long', 
+            timeStyle: 'short' 
+        }).format(new Date(date));
+    };
+
     const getIcon = (type: string) => {
         switch (type) {
             case "GYM_REGISTRATION": return <Zap className="text-orange-500" size={18} />;
@@ -87,14 +96,13 @@ export default function AdminNotificationsPage() {
                         <Zap size={16} />
                         إرسال تنبيه جديد
                     </button>
-                <div className="flex items-center gap-3">
+                    <div className="h-8 w-[1px] bg-neutral-200 mx-2 hidden sm:block"></div>
                     <button 
                         onClick={handleMarkAllAsRead}
                         className="text-sm font-bold text-brand-500 hover:underline"
                     >
                         تحديد الكل كمقروء
                     </button>
-                    <div className="h-4 w-[1px] bg-neutral-200 mx-2"></div>
                     <div className="flex bg-neutral-100 p-1 rounded-xl">
                         <button 
                             onClick={() => setFilter("ALL")}

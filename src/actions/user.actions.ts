@@ -69,6 +69,11 @@ export const loginUserAction = async (loginData) => {
     return user;
 };
 
+export const logoutUserAction = async () => {
+    (await cookies()).delete("gym_tank_token");
+    (await cookies()).delete("gym_tank_role");
+};
+
 export const getCurrentUserAction = async () => {
     const userId = (await cookies()).get("gym_tank_token")?.value;
     if (!userId) return null;

@@ -145,11 +145,11 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
                                             <div className="absolute left-0 top-14 w-40 bg-white border border-neutral-100 rounded-xl shadow-lg z-[60] overflow-hidden">
                                                 <div className="flex flex-col p-1">
                                                     {user.isActive ? (
-                                                        <button onClick={() => { updateUserStatus(user.id, false); setOpenActionId(null); }} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-bold w-full text-right">
+                                                        <button onClick={() => { if(confirm('هل أنت متأكد من تعطيل هذا الحساب؟')) { updateUserStatus(user.id, false); setOpenActionId(null); } }} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-bold w-full text-right">
                                                             <AlertCircle size={16} /> تعطيل الحساب
                                                         </button>
                                                     ) : (
-                                                        <button onClick={() => { updateUserStatus(user.id, true); setOpenActionId(null); }} className="flex items-center gap-2 px-3 py-2 text-sm text-green-600 hover:bg-green-50 rounded-lg transition-colors font-bold w-full text-right">
+                                                        <button onClick={() => { if(confirm('هل أنت متأكد من تفعيل هذا الحساب؟')) { updateUserStatus(user.id, true); setOpenActionId(null); } }} className="flex items-center gap-2 px-3 py-2 text-sm text-green-600 hover:bg-green-50 rounded-lg transition-colors font-bold w-full text-right">
                                                             <CheckCircle2 size={16} /> تفعيل الحساب
                                                         </button>
                                                     )}

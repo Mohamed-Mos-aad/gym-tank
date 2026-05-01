@@ -4,7 +4,8 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 // ** Assets
-import { CreditCard, Dumbbell, LayoutDashboard, LogOut, Settings, UsersRound, X, Plus } from "lucide-react";
+import { CreditCard, Dumbbell, LayoutDashboard, LogOut, Settings, UsersRound, X, Plus, Activity, HelpCircle } from "lucide-react";
+import { logoutUserAction } from "@/actions/user.actions";
 
 // ** Interfaces
 interface AdminSideNavBarProps {
@@ -17,6 +18,8 @@ const navItems = [
     { href: "/admin/gyms", label: "إدارة النوادي", icon: Dumbbell },
     { href: "/admin/users", label: "المستخدمين", icon: UsersRound },
     { href: "/admin/subscriptions", label: "الاشتراكات", icon: CreditCard },
+    { href: "/admin/logs", label: "سجل العمليات", icon: Activity },
+    { href: "/admin/support", label: "رسائل الدعم", icon: HelpCircle },
     { href: "/admin/settings", label: "الإعدادات", icon: Settings },
 ];
 
@@ -26,8 +29,9 @@ export default function AdminSideNavBar({ isOpen, onClose }: AdminSideNavBarProp
     const router = useRouter();
 
     // ** Handlers
-    const logOutHandler = () => {
-        router.push('/');
+    const logOutHandler = async () => {
+        await logoutUserAction();
+        router.push('/login');
         onClose();
     }
 
