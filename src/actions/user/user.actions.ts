@@ -29,15 +29,45 @@ export const getMembersListAction = async (userId?: string) => {
     if (!gym) throw new Error("Gym not found");
 
     const data = await prisma.member.findMany({
-        where: {
+        where: { gymId: gym.id },
+        orderBy: { createdAt: "desc" },
+    });
+
+    return { 
+        data,
+        total: data.length,
+        page: 1,
+        totalPages: 1
+    };
+};
+
+export const createMemberAction = async (data: any) => {
+    const userId = (await cookies()).get("gym_tank_token")?.value;
+    if (!userId) throw new Error("Unauthorized");
+
+    const gym = await prisma.gym.findFirst({
+        where: { ownerId: userId },
+    });
+
+    if (!gym) throw new Error("Gym not found");
+
+    const endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + (data.months || 1));
+
+    await prisma.member.create({
+        data: {
+            name: data.name,
+            phone: data.phone,
+            subscriptionType: data.subscriptionType || "عادي",
+            subscriptionStatus: "ACTIVE",
+            startDate: new Date(),
+            endDate: endDate,
             gymId: gym.id,
-        },
-        orderBy: {
-            createdAt: "desc",
         },
     });
 
-    return { data };
+    revalidatePath("/user/members");
+    return { success: true };
 };
 
 export const updateUserProfileAction = async (data: any) => {
@@ -77,4 +107,60 @@ export const updateUserProfileAction = async (data: any) => {
         console.error("Error updating profile:", error);
         return { success: false, error: "حدث خطأ غير متوقع" };
     }
+};
+
+export const renewMemberAction = async (memberId: string, months: number) => {
+    const userId = (await cookies()).get("gym_tank_token")?.value;
+    if (!userId) throw new Error("Unauthorized");
+
+    const member = await prisma.member.findUnique({ where: { id: memberId } });
+    if (!member) throw new Error("Member not found");
+
+    const currentEndDate = member.endDate ? new Date(member.endDate) : null;
+    const now = new Date();
+    
+    // If membership is already expired or null, start from now. If not, add to the current end date.
+    const baseDate = (!currentEndDate || currentEndDate < now) ? now : currentEndDate;
+    const newEndDate = new Date(baseDate);
+    newEndDate.setMonth(newEndDate.getMonth() + months);
+
+    await prisma.member.update({
+        where: { id: memberId },
+        data: {
+            endDate: newEndDate,
+            subscriptionStatus: "ACTIVE"
+        },
+    });
+
+    revalidatePath("/user/members");
+    return { success: true };
+};
+
+export const deleteMemberAction = async (memberId: string) => {
+    const userId = (await cookies()).get("gym_tank_token")?.value;
+    if (!userId) throw new Error("Unauthorized");
+
+    await prisma.member.delete({
+        where: { id: memberId },
+    });
+
+    revalidatePath("/user/members");
+    return { success: true };
+};
+
+export const updateMemberAction = async (memberId: string, data: any) => {
+    const userId = (await cookies()).get("gym_tank_token")?.value;
+    if (!userId) throw new Error("Unauthorized");
+
+    await prisma.member.update({
+        where: { id: memberId },
+        data: {
+            name: data.name,
+            phone: data.phone,
+            subscriptionType: data.subscriptionType
+        },
+    });
+
+    revalidatePath("/user/members");
+    return { success: true };
 };

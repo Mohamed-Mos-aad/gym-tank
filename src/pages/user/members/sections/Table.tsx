@@ -3,7 +3,12 @@
 import { useState } from "react";
 import { Search, Filter, MoreVertical, User, Calendar, Phone, CreditCard, LogIn, LogOut } from "lucide-react";
 import Badge from "@/components/ui/Badge";
+import CustomSelect from "@/components/ui/Select";
+import MemberActions from "../components/MemberActions";
+import EditMemberModal from "../components/EditMemberModal";
+import RenewMemberModal from "../components/RenewMemberModal";
 import { createAttendanceAction, createCheckoutAction } from "@/actions/user/attendance.actions";
+import { deleteMemberAction } from "@/actions/user/user.actions";
 
 interface TableProps {
     data: {
@@ -13,14 +18,20 @@ interface TableProps {
 
 export default function Table({ data }: TableProps) {
     const [searchTerm, setSearchTerm] = useState("");
+    const [statusFilter, setStatusFilter] = useState("ALL");
     
     const members = data?.data || [];
     const [isProcessing, setIsProcessing] = useState<string | null>(null);
+    const [selectedMember, setSelectedMember] = useState<any>(null);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isRenewOpen, setIsRenewOpen] = useState(false);
 
-    const filteredMembers = members.filter(m => 
-        m.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        m.phone.includes(searchTerm)
-    );
+    const filteredMembers = members.filter(m => {
+        const matchesSearch = m.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                             m.phone.includes(searchTerm);
+        const matchesStatus = statusFilter === "ALL" || m.subscriptionStatus === statusFilter;
+        return matchesSearch && matchesStatus;
+    });
 
     const handleCheckIn = async (memberId: string) => {
         setIsProcessing(memberId);
@@ -44,6 +55,17 @@ export default function Table({ data }: TableProps) {
             alert(error.message || "حدث خطأ");
         }
         setIsProcessing(null);
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("هل أنت متأكد من حذف هذا العضو؟")) return;
+        try {
+            await deleteMemberAction(id);
+            alert("تم حذف العضو بنجاح");
+            window.location.reload();
+        } catch (error) {
+            alert("حدث خطأ أثناء الحذف");
+        }
     };
 
     const formatDate = (date: any) => {
@@ -79,13 +101,16 @@ export default function Table({ data }: TableProps) {
                     />
                 </div>
                 <div className="flex items-center gap-3 w-full md:w-auto">
-                    <button className="flex-1 md:flex-none flex items-center justify-center gap-2 h-12 px-6 rounded-2xl bg-neutral-50 text-neutral-600 font-bold text-sm hover:bg-neutral-100 transition-colors border border-neutral-100">
-                        <Filter size={16} />
-                        تصفية
-                    </button>
-                    <button className="flex-1 md:flex-none bg-brand-500 text-white h-12 px-8 rounded-2xl font-black text-sm hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20">
-                        إضافة عضو جديد
-                    </button>
+                    <CustomSelect 
+                        value={statusFilter}
+                        onChange={(val) => setStatusFilter(val)}
+                        options={[
+                            { label: "كل الأعضاء", value: "ALL" },
+                            { label: "نشط فقط", value: "ACTIVE" },
+                            { label: "منتهي فقط", value: "EXPIRED" }
+                        ]}
+                        icon={<Filter size={16} />}
+                    />
                 </div>
             </div>
 
@@ -159,9 +184,12 @@ export default function Table({ data }: TableProps) {
                                                 >
                                                     <LogOut size={18} />
                                                 </button>
-                                                <button className="p-2 hover:bg-neutral-100 rounded-lg transition-colors">
-                                                    <MoreVertical size={18} className="text-neutral-400" />
-                                                </button>
+                                                <MemberActions 
+                                                    member={member} 
+                                                    onEdit={(m) => { setSelectedMember(m); setIsEditOpen(true); }}
+                                                    onRenew={(m) => { setSelectedMember(m); setIsRenewOpen(true); }}
+                                                    onDelete={handleDelete}
+                                                />
                                             </div>
                                         </td>
                                     </tr>
@@ -177,6 +205,21 @@ export default function Table({ data }: TableProps) {
                     </table>
                 </div>
             </div>
+
+            {selectedMember && (
+                <>
+                    <EditMemberModal 
+                        member={selectedMember} 
+                        isOpen={isEditOpen} 
+                        onClose={() => { setIsEditOpen(false); setSelectedMember(null); }} 
+                    />
+                    <RenewMemberModal 
+                        member={selectedMember} 
+                        isOpen={isRenewOpen} 
+                        onClose={() => { setIsRenewOpen(false); setSelectedMember(null); }} 
+                    />
+                </>
+            )}
         </section>
     );
 }

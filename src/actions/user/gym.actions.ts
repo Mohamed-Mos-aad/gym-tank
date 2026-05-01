@@ -14,6 +14,10 @@ export const getGymAction = async () => {
 
     const gym = await prisma.gym.findFirst({
         where: { ownerId: userId },
+        include: {
+            subscriptions: true,
+            paymentRequests: true
+        }
     });
 
     if (!gym) throw new Error("Gym not found");

@@ -1,106 +1,70 @@
-'use client'
-// ** Hooks && Tools
-import { useState, useRef, useEffect } from 'react';
-// ** Assets
-import { ChevronDown, ListFilter, Check } from 'lucide-react';
+"use client";
 
-// ** Interfaces
+import { useState, useRef, useEffect } from "react";
+import { ChevronDown } from "lucide-react";
+
 interface Option {
     label: string;
-    value: string | number;
+    value: any;
 }
 
 interface SelectProps {
-    id: string;
-    label: string;
     options: Option[];
-    placeholder?: string;
-    icon?: boolean;
-    onChange?: (value: string | number) => void;
+    value: any;
+    onChange: (value: any) => void;
+    label?: string;
+    icon?: React.ReactNode;
 }
 
-export default function Select({ id, label, options, icon = false, placeholder = "اختر...", onChange }: SelectProps) {
-    // ** States
+export default function CustomSelect({ options, value, onChange, label, icon }: SelectProps) {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedValue, setSelectedValue] = useState<Option | null>(null);
-    const [dropUp, setDropUp] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // ** Handlers
-    const toggleDropdown = () => {
-        if (!isOpen && containerRef.current) {
-            const rect = containerRef.current.getBoundingClientRect();
-            const spaceBelow = window.innerHeight - rect.bottom;
-            setDropUp(spaceBelow < 260);
-        }
-        setIsOpen(!isOpen);
-    };
+    const selectedOption = options.find(opt => opt.value === value);
 
-    const handleSelect = (option: Option) => {
-        setSelectedValue(option);
-        setIsOpen(false);
-        if (onChange) onChange(option.value);
-    };
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
             }
         };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     return (
-        <div className="flex flex-col gap-2 relative" ref={containerRef}>
-            <label className="text-base font-medium text-neutral-800">
-                {label}
-            </label>
-
+        <div className="flex flex-col gap-2 w-full" ref={containerRef}>
+            {label && <label className="text-sm font-bold text-neutral-700">{label}</label>}
             <div className="relative">
-                <div
-                    id={id}
-                    onClick={toggleDropdown}
-                    className={`
-                        w-full rounded-xl py-4 cursor-pointer flex items-center justify-between transition-all outline-none border-none
-                        ${icon ? 'pr-12' : 'pr-4'} pl-4 
-                        ${isOpen ? 'bg-white shadow-sm' : 'bg-neutral-100'}
-                    `}
+                <button
+                    type="button"
+                    onClick={() => setIsOpen(!isOpen)}
+                    className={`w-full h-14 bg-neutral-50 border ${isOpen ? 'border-brand-500 ring-4 ring-brand-500/5' : 'border-neutral-100'} rounded-2xl px-5 flex items-center justify-between transition-all outline-none`}
                 >
-                    {icon && (
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500">
-                            <ListFilter size={20} />
-                        </div>
-                    )}
+                    <div className="flex items-center gap-3">
+                        {icon && <span className="text-neutral-400">{icon}</span>}
+                        <span className="text-sm font-bold text-neutral-900">{selectedOption?.label || "اختر..."}</span>
+                    </div>
+                    <ChevronDown size={18} className={`text-neutral-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                </button>
 
-                    <span className={`${!selectedValue ? 'text-neutral-400' : 'text-neutral-900'}`}>
-                        {selectedValue ? selectedValue.label : placeholder}
-                    </span>
-
-                    <ChevronDown 
-                        size={20} 
-                        className={`text-neutral-500 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} 
-                    />
-                </div>
                 {isOpen && (
-                    <ul className={`
-                        absolute z-50 w-full bg-white rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200 border-none outline-none
-                        ${dropUp ? 'bottom-[calc(100%+8px)]' : 'mt-2 top-full'}
-                    `}>
-                        {options.map((option, index) => (
-                            <li
-                                key={index}
-                                onClick={() => handleSelect(option)}
-                                className={`
-                                    px-4 py-3 flex items-center justify-between cursor-pointer transition-colors
-                                    ${selectedValue?.value === option.value ? 'bg-brand-50 text-brand-600' : 'hover:bg-neutral-50 text-neutral-700'}
-                                `}
-                            >
-                                <span>{option.label}</span>
-                                {selectedValue?.value === option.value && <Check size={16} />}
-                            </li>
-                        ))}
-                    </ul>
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-neutral-100 rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                        <ul className="max-h-60 overflow-y-auto py-2">
+                            {options.map((option) => (
+                                <li 
+                                    key={option.value}
+                                    onClick={() => {
+                                        onChange(option.value);
+                                        setIsOpen(false);
+                                    }}
+                                    className={`px-5 py-3 text-sm font-bold cursor-pointer transition-colors ${value === option.value ? 'bg-brand-50 text-brand-700' : 'text-neutral-700 hover:bg-neutral-50'}`}
+                                >
+                                    {option.label}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 )}
             </div>
         </div>
