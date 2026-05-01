@@ -15,7 +15,7 @@ type PlanData = {
     isPopular: boolean;
 };
 
-export default function AdminPlansClient({ initialPlans }: { initialPlans: PlanData[] }) {
+export default function AdminPlansClient({ initialPlans, currency = "SAR" }: { initialPlans: PlanData[], currency?: string }) {
     const [plans, setPlans] = useState<PlanData[]>(initialPlans);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
@@ -140,7 +140,7 @@ export default function AdminPlansClient({ initialPlans }: { initialPlans: PlanD
                         <div className="mb-6 mt-4">
                             <h2 className="text-2xl font-black text-neutral-900 mb-2">{plan.name}</h2>
                             <div className="flex items-end gap-1 mb-2">
-                                <span className="text-5xl font-black text-brand-500">${plan.price}</span>
+                                <span className="text-4xl font-black text-brand-500">{currency} {plan.price}</span>
                             </div>
                             <p className="text-sm text-neutral-500 font-bold">باقة مخصصة</p>
                         </div>
@@ -209,7 +209,7 @@ export default function AdminPlansClient({ initialPlans }: { initialPlans: PlanD
                                 />
                             </div>
                             <div className="flex flex-col gap-2">
-                                <label className="text-sm font-bold text-neutral-700">السعر ($)</label>
+                                <label className="text-sm font-bold text-neutral-700">السعر ({currency})</label>
                                 <input 
                                     type="number" 
                                     required

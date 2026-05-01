@@ -68,14 +68,6 @@ export default function AdminNavBar({ onMenuToggle }: AdminNavBarProps) {
                 </button>
                 <div className="hidden items-center gap-2 lg:flex">
                     <span className="text-xl font-bold text-brand-500 mr-2">GymTank</span>
-                    <div className="relative">
-                        <input 
-                            type="text" 
-                            placeholder="بحث سريع..." 
-                            className="h-10 w-64 rounded-xl border-none bg-neutral-100 pr-10 pl-4 text-sm outline-none focus:ring-2 focus:ring-brand-500/20"
-                        />
-                        <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400" />
-                    </div>
                 </div>
             </div>
 

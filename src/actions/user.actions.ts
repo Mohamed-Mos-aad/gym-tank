@@ -72,7 +72,7 @@ export const getMembersListAction = async () => {
 
     if (!userId) throw new Error("User not found");
 
-    const gym = await prisma.gym.findUnique({
+    const gym = await prisma.gym.findFirst({
         where: { ownerId: userId },
     });
 
@@ -93,7 +93,7 @@ export const getMembersListAction = async () => {
 
 export const createMemberAction = async (memberData)=>{
     const userId = ( await cookies()).get("gym_tank_token" )?.value;
-    const gym = await prisma.gym.findUnique({
+    const gym = await prisma.gym.findFirst({
         where: { ownerId: userId },
     });
     const gymId = gym?.id;
@@ -110,7 +110,7 @@ export const createMemberAction = async (memberData)=>{
 
 export const updateMemberAction = async (memberId, memberData)=>{
     const userId = ( await cookies()).get("gym_tank_token" )?.value;
-    const gym = await prisma.gym.findUnique({
+    const gym = await prisma.gym.findFirst({
         where: { ownerId: userId },
     });
     const gymId = gym?.id;
@@ -149,7 +149,7 @@ export const getAttendanceListAction = async (
         };
     }
 
-    const gym = await prisma.gym.findUnique({
+    const gym = await prisma.gym.findFirst({
         where: { ownerId: userId },
     });
 

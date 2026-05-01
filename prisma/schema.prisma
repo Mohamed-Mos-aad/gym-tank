@@ -146,3 +146,24 @@ model Plan {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model GlobalSettings {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  platformName      String   @default("GymTank")
+  supportEmail      String?
+  currency          String   @default("SAR")
+  timezone          String   @default("GMT+03:00")
+  maintenanceMode   Boolean  @default(false)
+  
+  // Default Limits
+  maxMembersPerGym  Int      @default(500)
+  maxCoachesPerGym  Int      @default(5)
+  maxStorageMB      Int      @default(1024)
+  
+  // Financial
+  vatRate           Float    @default(15.0)
+  gracePeriodDays   Int      @default(3)
+  reminderDays      Int      @default(3)
+
+  updatedAt         DateTime @updatedAt
+}

@@ -1,18 +1,95 @@
 "use client";
 
-import { Settings, Server, Lock, CloudRain, Mail, Globe, AlertTriangle, Plus, Minus, Info } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Settings, Server, Lock, CloudRain, Mail, Globe, AlertTriangle, Plus, Minus, Info, Loader2, CheckCircle2 } from "lucide-react";
+import { getGlobalSettings, updateGlobalSettings } from "@/actions/admin/settings.actions";
 
 export default function AdminSettingsPage() {
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveSuccess, setSaveSuccess] = useState(false);
+
+    const [formData, setFormData] = useState({
+        platformName: "GymTank",
+        supportEmail: "support@gymtank.com",
+        currency: "EGP",
+        timezone: "GMT+02:00",
+        maintenanceMode: false,
+        maxMembersPerGym: 500,
+        maxCoachesPerGym: 5,
+        maxStorageMB: 1024,
+        vatRate: 14.0,
+        gracePeriodDays: 3,
+        reminderDays: 3,
+        smtpHost: "",
+        smtpPort: 587,
+        smtpUser: "",
+        smtpEncryption: "TLS"
+    });
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            const settings = await getGlobalSettings();
+            if (settings) {
+                setFormData({
+                    platformName: settings.platformName,
+                    supportEmail: settings.supportEmail || "",
+                    currency: settings.currency,
+                    timezone: settings.timezone,
+                    maintenanceMode: settings.maintenanceMode,
+                    maxMembersPerGym: settings.maxMembersPerGym,
+                    maxCoachesPerGym: settings.maxCoachesPerGym,
+                    maxStorageMB: settings.maxStorageMB,
+                    vatRate: settings.vatRate,
+                    gracePeriodDays: settings.gracePeriodDays,
+                    reminderDays: settings.reminderDays,
+                    smtpHost: settings.smtpHost || "",
+                    smtpPort: settings.smtpPort || 587,
+                    smtpUser: settings.smtpUser || "",
+                    smtpEncryption: settings.smtpEncryption || "TLS"
+                });
+            }
+            setIsLoading(false);
+        };
+        fetchSettings();
+    }, []);
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        const res = await updateGlobalSettings(formData);
+        if (res.success) {
+            setSaveSuccess(true);
+            setTimeout(() => setSaveSuccess(false), 3000);
+        }
+        setIsSaving(false);
+    };
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-[60vh]">
+                <Loader2 className="animate-spin text-brand-500" size={40} />
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col gap-8 pb-24 relative">
-            <div>
-                <h1 className="text-3xl font-black text-neutral-900 mb-2">الإعدادات</h1>
-                <p className="text-sm text-neutral-700">تخصيص منصة جيم تانك وإدارة القواعد الافتراضية للنظام.</p>
+            <div className="flex justify-between items-end">
+                <div>
+                    <h1 className="text-3xl font-black text-neutral-900 mb-2">الإعدادات</h1>
+                    <p className="text-sm text-neutral-700">تخصيص منصة جيم تانك وإدارة القواعد الافتراضية للنظام.</p>
+                </div>
+                {saveSuccess && (
+                    <div className="flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-xl font-bold animate-in fade-in slide-in-from-top-2">
+                        <CheckCircle2 size={18} />
+                        تم حفظ التغييرات بنجاح
+                    </div>
+                )}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                {/* Right Column (Forms) - takes 2 columns in large screens */}
+                {/* Right Column (Forms) */}
                 <div className="lg:col-span-2 flex flex-col gap-6">
                     {/* General Settings */}
                     <div className="bg-white rounded-3xl p-8 shadow-sm border border-neutral-100">
@@ -26,26 +103,45 @@ export default function AdminSettingsPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                             <div>
                                 <label className="block text-sm font-bold text-neutral-700 mb-2 text-center">اسم المنصة</label>
-                                <input type="text" defaultValue="GymTank" className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-center font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors" />
+                                <input 
+                                    type="text" 
+                                    value={formData.platformName}
+                                    onChange={(e) => setFormData({ ...formData, platformName: e.target.value })}
+                                    className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-center font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors" 
+                                />
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-neutral-700 mb-2 text-center">البريد الإلكتروني للدعم</label>
-                                <input type="email" defaultValue="support@gymtank.com" className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-center font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors" />
+                                <input 
+                                    type="email" 
+                                    value={formData.supportEmail}
+                                    onChange={(e) => setFormData({ ...formData, supportEmail: e.target.value })}
+                                    className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-center font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors" 
+                                />
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-neutral-700 mb-2 text-center">العملة الافتراضية</label>
-                                <select className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-center font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors appearance-none text-center">
-                                    <option>ريال سعودي (SAR)</option>
-                                    <option>درهم إماراتي (AED)</option>
-                                    <option>دولار أمريكي (USD)</option>
+                                <select 
+                                    value={formData.currency}
+                                    onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                                    className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-center font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors appearance-none text-center"
+                                >
+                                    <option value="EGP">جنيه مصري (EGP)</option>
+                                    <option value="SAR">ريال سعودي (SAR)</option>
+                                    <option value="AED">درهم إماراتي (AED)</option>
+                                    <option value="USD">دولار أمريكي (USD)</option>
                                 </select>
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-neutral-700 mb-2 text-center">المنطقة الزمنية</label>
-                                <select className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-center font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors appearance-none text-center">
-                                    <option>الرياض (GMT+03:00)</option>
-                                    <option>دبي (GMT+04:00)</option>
-                                    <option>القاهرة (GMT+02:00)</option>
+                                <select 
+                                    value={formData.timezone}
+                                    onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
+                                    className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-center font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors appearance-none text-center"
+                                >
+                                    <option value="GMT+02:00">القاهرة (GMT+02:00)</option>
+                                    <option value="GMT+03:00">الرياض (GMT+03:00)</option>
+                                    <option value="GMT+04:00">دبي (GMT+04:00)</option>
                                 </select>
                             </div>
                         </div>
@@ -56,112 +152,51 @@ export default function AdminSettingsPage() {
                                     <h3 className="font-bold text-neutral-900 text-lg">وضع الصيانة</h3>
                                     <p className="text-sm text-neutral-500 mt-1">إيقاف المنصة مؤقتاً لجميع المستخدمين</p>
                                 </div>
-                                <Toggle active={false} />
+                                <Toggle 
+                                    active={formData.maintenanceMode} 
+                                    onClick={() => setFormData({ ...formData, maintenanceMode: !formData.maintenanceMode })} 
+                                />
                             </div>
-                        </div>
-                    </div>
-
-                    {/* SMTP Settings */}
-                    <div className="bg-white rounded-3xl p-8 shadow-sm border border-neutral-100">
-                        <div className="flex items-center justify-center mb-8 gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                                <Mail size={20} />
-                            </div>
-                            <h2 className="text-xl font-black text-neutral-900">إعدادات البريد SMTP</h2>
-                        </div>
-
-                        <div className="flex flex-col gap-6">
-                            <div>
-                                <label className="block text-sm font-bold text-neutral-700 mb-2 text-center">خادم SMTP</label>
-                                <input type="text" placeholder="smtp.provider.com" className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-center font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors" />
-                            </div>
-                            <div className="grid grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-neutral-700 mb-2 text-center">المنفذ (Port)</label>
-                                    <input type="text" defaultValue="587" className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-center font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-neutral-700 mb-2 text-center">نوع التشفير</label>
-                                    <select className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-center font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors appearance-none">
-                                        <option>TLS</option>
-                                        <option>SSL</option>
-                                        <option>None</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-bold text-neutral-700 mb-2 text-center">اسم المستخدم</label>
-                                <input type="text" className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-center font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors" />
-                            </div>
-                            <button className="w-full bg-neutral-100 text-brand-500 font-bold h-12 rounded-xl mt-2 hover:bg-neutral-200 transition-colors">
-                                اختبار الاتصال
-                            </button>
                         </div>
                     </div>
                 </div>
 
                 {/* Left Column (Cards) */}
                 <div className="flex flex-col gap-6">
-                    {/* Server Summary */}
-                    <div className="bg-brand-50/50 rounded-3xl p-6 shadow-sm border border-brand-100">
-                        <div className="flex items-center gap-2 mb-6 text-brand-700">
-                            <Info size={18} />
-                            <h2 className="text-sm font-bold">ملخص الخادم</h2>
-                        </div>
-
-                        <div className="flex flex-col gap-6 mb-8">
-                            <div>
-                                <div className="flex justify-between text-xs font-bold mb-2">
-                                    <span className="text-neutral-700">سعة التخزين</span>
-                                    <span className="text-brand-500">65%</span>
-                                </div>
-                                <div className="h-2 w-full bg-brand-100 rounded-full overflow-hidden">
-                                    <div className="h-full bg-brand-500 rounded-full" style={{ width: '65%' }}></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="flex justify-between text-xs font-bold mb-2">
-                                    <span className="text-neutral-700">استخدام الذاكرة</span>
-                                    <span className="text-brand-500">42%</span>
-                                </div>
-                                <div className="h-2 w-full bg-brand-100 rounded-full overflow-hidden">
-                                    <div className="h-full bg-brand-500 rounded-full" style={{ width: '42%' }}></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <h3 className="text-sm font-bold text-neutral-900 mb-4 text-center">أمان النظام</h3>
-                        <div className="flex flex-col gap-3">
-                            <div className="bg-white p-4 rounded-2xl flex items-center gap-4 shadow-sm border border-white">
-                                <div className="text-brand-500"><Lock size={20} /></div>
-                                <div>
-                                    <div className="text-sm font-bold text-neutral-900">تشفير SSL</div>
-                                    <div className="text-xs text-neutral-500 mt-0.5">نشط ومحدث</div>
-                                </div>
-                            </div>
-                            <div className="bg-white p-4 rounded-2xl flex items-center gap-4 shadow-sm border border-white">
-                                <div className="text-orange-600"><CloudRain size={20} /></div>
-                                <div>
-                                    <div className="text-sm font-bold text-neutral-900">نسخ احتياطي يومي</div>
-                                    <div className="text-xs text-neutral-500 mt-0.5">آخر نسخة: منذ ساعتين</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     {/* Default Limits */}
                     <div className="bg-white rounded-3xl p-6 shadow-sm border border-neutral-100">
                         <div className="flex justify-center items-center gap-2 mb-8">
                             <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
                                 <Settings size={16} />
                             </div>
-                            <h2 className="text-lg font-black text-neutral-900">الحدود الافتراضية</h2>
+                            <h2 className="text-lg font-black text-neutral-900">الحدود والسياسات</h2>
                         </div>
 
                         <div className="flex flex-col gap-6">
-                            <CounterCard title="الحد الأقصى للأعضاء / نادي" subtitle="العدد المسموح به لكل نادي جديد" value={500} />
-                            <CounterCard title="عدد المدربين الافتراضي" subtitle="المدربين المسموح بهم في الباقة الأساسية" value={5} />
-                            <CounterCard title="سعة تخزين الصور (MB)" subtitle="مساحة معرض الصور لكل نادي" value={1024} />
+                            <CounterCard 
+                                title="الحد الأقصى للأعضاء / نادي" 
+                                subtitle="العدد المسموح به لكل نادي جديد" 
+                                value={formData.maxMembersPerGym} 
+                                onChange={(val) => setFormData({ ...formData, maxMembersPerGym: val })}
+                            />
+                            <CounterCard 
+                                title="عدد المدربين الافتراضي" 
+                                subtitle="المدربين المسموح بهم في الباقة الأساسية" 
+                                value={formData.maxCoachesPerGym} 
+                                onChange={(val) => setFormData({ ...formData, maxCoachesPerGym: val })}
+                            />
+                            <CounterCard 
+                                title="ضريبة القيمة المضافة (%)" 
+                                subtitle="تطبق على جميع الباقات عند الدفع" 
+                                value={formData.vatRate} 
+                                onChange={(val) => setFormData({ ...formData, vatRate: val })}
+                            />
+                             <CounterCard 
+                                title="فترة السماح (أيام)" 
+                                subtitle="الأيام التي يمكن للعضو فيها الدخول بعد الانتهاء" 
+                                value={formData.gracePeriodDays} 
+                                onChange={(val) => setFormData({ ...formData, gracePeriodDays: val })}
+                            />
                         </div>
 
                         <div className="mt-8 bg-orange-50 rounded-2xl p-4 flex gap-3 items-start border border-orange-100">
@@ -176,10 +211,18 @@ export default function AdminSettingsPage() {
 
             {/* Bottom Actions Bar */}
             <div className="fixed bottom-0 left-0 right-0 lg:right-64 bg-white/80 backdrop-blur-md border-t border-neutral-200 p-4 sm:p-6 flex items-center justify-start gap-4 z-20" dir="ltr">
-                <button className="bg-brand-500 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg shadow-brand-500/20 hover:bg-brand-600 hover:-translate-y-0.5 transition-all w-full sm:w-auto text-sm">
+                <button 
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="bg-brand-500 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg shadow-brand-500/20 hover:bg-brand-600 hover:-translate-y-0.5 transition-all w-full sm:w-auto text-sm flex items-center justify-center gap-2"
+                >
+                    {isSaving && <Loader2 className="animate-spin" size={18} />}
                     حفظ كافة الإعدادات
                 </button>
-                <button className="bg-transparent text-neutral-500 font-bold px-6 py-3.5 rounded-xl hover:bg-neutral-100 hover:text-neutral-700 transition-all w-full sm:w-auto text-sm">
+                <button 
+                    onClick={() => window.location.reload()}
+                    className="bg-transparent text-neutral-500 font-bold px-6 py-3.5 rounded-xl hover:bg-neutral-100 hover:text-neutral-700 transition-all w-full sm:w-auto text-sm"
+                >
                     إلغاء التغييرات
                 </button>
             </div>
@@ -187,15 +230,18 @@ export default function AdminSettingsPage() {
     );
 }
 
-function Toggle({ active }: { active: boolean }) {
+function Toggle({ active, onClick }: { active: boolean, onClick: () => void }) {
     return (
-        <div className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors ${active ? 'bg-brand-500' : 'bg-neutral-300'}`}>
+        <div 
+            onClick={onClick}
+            className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors ${active ? 'bg-brand-500' : 'bg-neutral-300'}`}
+        >
             <div className={`w-4 h-4 rounded-full bg-white transition-transform ${active ? '-translate-x-6' : 'translate-x-0'}`} />
         </div>
     );
 }
 
-function CounterCard({ title, subtitle, value }: { title: string, subtitle: string, value: number }) {
+function CounterCard({ title, subtitle, value, onChange }: { title: string, subtitle: string, value: number, onChange: (val: number) => void }) {
     return (
         <div className="bg-neutral-50 rounded-2xl p-4 border border-neutral-100 flex items-center justify-between">
             <div>
@@ -203,11 +249,17 @@ function CounterCard({ title, subtitle, value }: { title: string, subtitle: stri
                 <div className="text-[10px] text-neutral-500">{subtitle}</div>
             </div>
             <div className="flex items-center gap-3 bg-white px-2 py-1.5 rounded-xl border border-neutral-200 shadow-sm shrink-0">
-                <button className="w-6 h-6 rounded-md bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-brand-50 hover:text-brand-500 transition-colors">
-                    <Minus size={14} />
+                <button 
+                    onClick={() => onChange(Math.max(0, value - 1))}
+                    className="w-6 h-6 rounded-md bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-brand-50 hover:text-brand-500 transition-colors"
+                >
+                    <Plus size={14} className="rotate-45" />
                 </button>
                 <span className="font-black text-neutral-900 min-w-[32px] text-center">{value}</span>
-                <button className="w-6 h-6 rounded-md bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-brand-50 hover:text-brand-500 transition-colors">
+                <button 
+                    onClick={() => onChange(value + 1)}
+                    className="w-6 h-6 rounded-md bg-neutral-100 flex items-center justify-center text-neutral-500 hover:bg-brand-50 hover:text-brand-500 transition-colors"
+                >
                     <Plus size={14} />
                 </button>
             </div>

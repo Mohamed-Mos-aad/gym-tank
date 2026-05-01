@@ -1,30 +1,36 @@
 import { Wallet, TrendingUp, Users, Clock, Percent, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { getPlans, getSubscriptionStats } from "@/actions/admin/plans.actions";
+import { getGlobalSettings } from "@/actions/admin/settings.actions";
 import AdminPlansClient from "@/components/admin/AdminPlansClient";
 
 export default async function AdminSubscriptionsPage() {
     const plans = await getPlans();
     const stats = await getSubscriptionStats();
+    const settings = await getGlobalSettings();
+    const currency = settings?.currency || "SAR";
 
     return (
         <div className="flex flex-col gap-8">
             {/* Plans Section handled by Client Component */}
-            <AdminPlansClient initialPlans={plans.map(p => ({
-                id: p.id,
-                name: p.name,
-                price: p.price,
-                description: p.description,
-                features: p.features,
-                isPopular: p.isPopular
-            }))} />
+            <AdminPlansClient 
+                initialPlans={plans.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    price: p.price,
+                    description: p.description,
+                    features: p.features,
+                    isPopular: p.isPopular
+                }))} 
+                currency={currency}
+            />
 
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                  <div className="bg-white rounded-2xl p-6 shadow-sm border border-neutral-100 flex items-center justify-between">
                     <div>
                         <div className="text-sm font-bold text-neutral-500 mb-2">الإيرادات المتوقعة</div>
-                        <div className="text-2xl font-black text-neutral-900">${stats.estimatedRevenue.toLocaleString()}</div>
+                        <div className="text-2xl font-black text-neutral-900">{currency} {stats.estimatedRevenue.toLocaleString()}</div>
                     </div>
                     <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center">
                         <Wallet size={24} />
@@ -71,7 +77,7 @@ export default async function AdminSubscriptionsPage() {
                                 <p className="text-xs text-neutral-500 mt-1">الأيام التي يمكن للعضو فيها الدخول بعد الانتهاء</p>
                             </div>
                         </div>
-                        <div className="bg-neutral-100 px-4 py-2 rounded-lg font-bold text-neutral-900 text-sm">3 أيام</div>
+                        <div className="bg-neutral-100 px-4 py-2 rounded-lg font-bold text-neutral-900 text-sm">{settings?.gracePeriodDays || 3} أيام</div>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -82,7 +88,7 @@ export default async function AdminSubscriptionsPage() {
                                 <p className="text-xs text-neutral-500 mt-1">تطبق على جميع الباقات عند الدفع</p>
                             </div>
                         </div>
-                        <div className="bg-neutral-100 px-4 py-2 rounded-lg font-bold text-neutral-900 text-sm">15%</div>
+                        <div className="bg-neutral-100 px-4 py-2 rounded-lg font-bold text-neutral-900 text-sm">{settings?.vatRate || 15}%</div>
                     </div>
 
                     <div className="flex items-center justify-between">

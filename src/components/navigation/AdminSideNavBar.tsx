@@ -70,14 +70,6 @@ export default function AdminSideNavBar({ isOpen, onClose }: AdminSideNavBarProp
             </ul>
 
             <div className="mt-auto flex flex-col gap-2">
-                <Link
-                    href="/admin/gyms/new"
-                    className="flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-4 py-3 text-white transition-opacity hover:opacity-90 font-bold"
-                    onClick={onClose}
-                >
-                    <Plus size={18} />
-                    إضافة نادٍ جديد
-                </Link>
                 <button
                     className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-warn-700 transition-colors hover:bg-neutral-100 font-bold"
                     onClick={logOutHandler}
