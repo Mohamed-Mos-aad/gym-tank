@@ -19,6 +19,10 @@ export const getDashboardStats = async (userId?: string) => {
             expired: 0,
             presentNow: 0,
             expiringSoon: 0,
+            gymName: "",
+            ownerName: "",
+            membersExpiringSoon: [],
+            recentLogs: []
         };
     }
 
@@ -28,7 +32,6 @@ export const getDashboardStats = async (userId?: string) => {
 
     const gymId = gym?.id;
 
-
     if (!gymId) {
         return {
             members: 0,
@@ -36,10 +39,14 @@ export const getDashboardStats = async (userId?: string) => {
             expired: 0,
             presentNow: 0,
             expiringSoon: 0,
+            gymName: "",
+            ownerName: "",
+            membersExpiringSoon: [],
+            recentLogs: []
         };
     }
 
-    const [members, active, expired, presentNow, expiringSoon, recentLogs] = await Promise.all([
+    const [members, active, expired, presentNow, expiringSoon, recentLogs, gymInfo] = await Promise.all([
         prisma.member.count({
             where: { gymId },
         }),
@@ -84,6 +91,15 @@ export const getDashboardStats = async (userId?: string) => {
                     select: { name: true, subscriptionType: true }
                 }
             }
+        }),
+
+        prisma.gym.findUnique({
+            where: { id: gymId },
+            include: {
+                owner: {
+                    select: { name: true }
+                }
+            }
         })
     ]);
 
@@ -93,6 +109,20 @@ export const getDashboardStats = async (userId?: string) => {
         expired,
         presentNow,
         expiringSoon,
+        gymName: gymInfo?.name,
+        ownerName: gymInfo?.owner?.name,
+        membersExpiringSoon: await prisma.member.findMany({
+            where: {
+                gymId,
+                endDate: {
+                    gte: now,
+                    lte: next7Days,
+                },
+            },
+            take: 3,
+            orderBy: { endDate: 'asc' },
+            select: { id: true, name: true, endDate: true, phone: true }
+        }),
         recentLogs: recentLogs.map(log => ({
             id: log.id,
             memberName: log.member.name,

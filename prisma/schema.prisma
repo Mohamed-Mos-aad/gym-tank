@@ -167,6 +167,13 @@ model GlobalSettings {
   gracePeriodDays   Int      @default(3)
   reminderDays      Int      @default(3)
 
+  // Notifications / SMTP
+  smtpHost          String?
+  smtpPort          Int?      @default(587)
+  smtpUser          String?
+  smtpPass          String?
+  smtpEncryption    String?   @default("TLS")
+
   updatedAt         DateTime @updatedAt
 }
 

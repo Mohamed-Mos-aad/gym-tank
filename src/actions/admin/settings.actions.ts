@@ -22,6 +22,11 @@ export async function getGlobalSettings() {
                     vatRate: 14.0,
                     gracePeriodDays: 3,
                     reminderDays: 3,
+                    smtpHost: "",
+                    smtpPort: 587,
+                    smtpUser: "",
+                    smtpPass: "",
+                    smtpEncryption: "TLS",
                 }
             });
         }
@@ -37,38 +42,33 @@ export async function updateGlobalSettings(data: any) {
     try {
         const settings = await prisma.globalSettings.findFirst();
         
+        const updateData = {
+            platformName: data.platformName,
+            supportEmail: data.supportEmail,
+            currency: data.currency,
+            timezone: data.timezone,
+            maintenanceMode: data.maintenanceMode,
+            maxMembersPerGym: parseInt(data.maxMembersPerGym),
+            maxCoachesPerGym: parseInt(data.maxCoachesPerGym),
+            maxStorageMB: parseInt(data.maxStorageMB),
+            vatRate: parseFloat(data.vatRate),
+            gracePeriodDays: parseInt(data.gracePeriodDays),
+            reminderDays: parseInt(data.reminderDays),
+            smtpHost: data.smtpHost,
+            smtpPort: parseInt(data.smtpPort),
+            smtpUser: data.smtpUser,
+            smtpPass: data.smtpPass,
+            smtpEncryption: data.smtpEncryption,
+        };
+
         if (settings) {
             await prisma.globalSettings.update({
                 where: { id: settings.id },
-                data: {
-                    platformName: data.platformName,
-                    supportEmail: data.supportEmail,
-                    currency: data.currency,
-                    timezone: data.timezone,
-                    maintenanceMode: data.maintenanceMode,
-                    maxMembersPerGym: parseInt(data.maxMembersPerGym),
-                    maxCoachesPerGym: parseInt(data.maxCoachesPerGym),
-                    maxStorageMB: parseInt(data.maxStorageMB),
-                    vatRate: parseFloat(data.vatRate),
-                    gracePeriodDays: parseInt(data.gracePeriodDays),
-                    reminderDays: parseInt(data.reminderDays),
-                }
+                data: updateData
             });
         } else {
             await prisma.globalSettings.create({
-                data: {
-                    platformName: data.platformName,
-                    supportEmail: data.supportEmail,
-                    currency: data.currency,
-                    timezone: data.timezone,
-                    maintenanceMode: data.maintenanceMode,
-                    maxMembersPerGym: parseInt(data.maxMembersPerGym),
-                    maxCoachesPerGym: parseInt(data.maxCoachesPerGym),
-                    maxStorageMB: parseInt(data.maxStorageMB),
-                    vatRate: parseFloat(data.vatRate),
-                    gracePeriodDays: parseInt(data.gracePeriodDays),
-                    reminderDays: parseInt(data.reminderDays),
-                }
+                data: updateData
             });
         }
         
