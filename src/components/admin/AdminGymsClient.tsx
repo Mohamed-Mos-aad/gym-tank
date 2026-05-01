@@ -54,7 +54,7 @@ export default function AdminGymsClient({ initialGyms }: { initialGyms: GymData[
                         </button>
                         
                         {isFilterOpen && (
-                            <div className="absolute left-0 top-12 w-48 bg-white border border-neutral-100 rounded-2xl shadow-lg z-20 overflow-hidden">
+                            <div className="absolute right-0 top-12 w-48 bg-white border border-neutral-100 rounded-2xl shadow-lg z-50 overflow-hidden">
                                 <div className="p-2 flex flex-col">
                                     <button onClick={() => { setFilterStatus("ALL"); setIsFilterOpen(false); }} className={`flex items-center gap-2 p-2 rounded-lg text-sm font-bold text-right transition-colors ${filterStatus === "ALL" ? "bg-neutral-100 text-neutral-900" : "text-neutral-600 hover:bg-neutral-50"}`}>
                                         {filterStatus === "ALL" ? <CheckCircle2 size={16} className="text-brand-500" /> : <Circle size={16} className="text-neutral-300" />}

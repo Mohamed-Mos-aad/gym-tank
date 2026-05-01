@@ -17,6 +17,23 @@ model User {
   isActive  Boolean  @default(true) // Added for User Management (Active/Disabled)
 
   gyms      Gym[]    // Allowed multiple branches for GYM_OWNER
+  notifications Notification[] // Notifications for the user
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  type      String   @default("SYSTEM") // e.g. SYSTEM, GYM_REGISTRATION, SUBSCRIPTION
+  link      String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -117,4 +134,15 @@ model Attendance {
   checkOut  DateTime?
 
   createdAt DateTime @default(now())
+}
+
+model Plan {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  price       Float
+  description String?
+  features    String[]
+  isPopular   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

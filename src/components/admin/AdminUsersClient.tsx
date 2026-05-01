@@ -55,7 +55,7 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
                         </button>
                         
                         {isFilterOpen && (
-                            <div className="absolute right-0 sm:left-0 sm:right-auto top-12 w-48 bg-white border border-neutral-100 rounded-2xl shadow-lg z-20 overflow-hidden">
+                            <div className="absolute right-0 top-12 w-48 bg-white border border-neutral-100 rounded-2xl shadow-lg z-50 overflow-hidden">
                                 <div className="p-2 flex flex-col">
                                     <button onClick={() => { setFilterRole("ALL"); setIsFilterOpen(false); }} className={`flex items-center gap-2 p-2 rounded-lg text-sm font-bold text-right transition-colors ${filterRole === "ALL" ? "bg-neutral-100 text-neutral-900" : "text-neutral-600 hover:bg-neutral-50"}`}>
                                         {filterRole === "ALL" ? <CheckCircle2 size={16} className="text-brand-500" /> : <Circle size={16} className="text-neutral-300" />}
@@ -88,8 +88,8 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-3xl shadow-sm border border-neutral-100 overflow-visible">
-                <div className="overflow-x-auto overflow-visible">
+            <div className="bg-white rounded-3xl shadow-sm border border-neutral-100 min-h-[350px]">
+                <div className="overflow-x-auto pb-32">
                     <table className="w-full text-right text-sm text-neutral-700 relative">
                         <thead className="bg-white border-b border-neutral-100 text-neutral-500 font-bold">
                             <tr>
@@ -136,13 +136,13 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
                                     <td className="px-6 py-4 text-center relative actions-container">
                                         <button 
                                             onClick={() => setOpenActionId(openActionId === user.id ? null : user.id)}
-                                            className="p-2 rounded-lg text-neutral-400 hover:text-brand-500 hover:bg-brand-50 transition-colors"
+                                            className="p-2 rounded-lg text-neutral-400 hover:text-brand-500 hover:bg-brand-50 transition-colors relative z-10"
                                         >
                                             <MoreVertical size={20} />
                                         </button>
                                         
                                         {openActionId === user.id && (
-                                            <div className="absolute left-1/2 -translate-x-1/2 top-14 w-40 bg-white border border-neutral-100 rounded-xl shadow-lg z-30 overflow-hidden">
+                                            <div className="absolute left-0 top-14 w-40 bg-white border border-neutral-100 rounded-xl shadow-lg z-[60] overflow-hidden">
                                                 <div className="flex flex-col p-1">
                                                     {user.isActive ? (
                                                         <button onClick={() => { updateUserStatus(user.id, false); setOpenActionId(null); }} className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors font-bold w-full text-right">

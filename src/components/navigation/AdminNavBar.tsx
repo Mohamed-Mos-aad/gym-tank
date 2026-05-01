@@ -5,21 +5,28 @@ import { useState, useRef, useEffect } from "react";
 // ** Assets
 import { Bell, Menu, Search, CheckCircle2, Circle } from "lucide-react";
 
+import { getAdminNotifications, markNotificationAsRead, markAllAdminNotificationsAsRead } from "@/actions/notifications.actions";
+import Link from "next/link";
+
 // ** Interfaces
 interface AdminNavBarProps {
     onMenuToggle: () => void;
 }
 
+type NotificationData = any;
+
 export default function AdminNavBar({ onMenuToggle }: AdminNavBarProps) {
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const notifRef = useRef<HTMLDivElement>(null);
+    const [notifications, setNotifications] = useState<NotificationData[]>([]);
 
-    // Mock Notifications
-    const [notifications, setNotifications] = useState([
-        { id: 1, text: "طلب انضمام جيم جديد: Power House", time: "منذ 10 دقائق", isRead: false },
-        { id: 2, text: "تم تجديد اشتراك نادي العضلات بنجاح", time: "منذ ساعتين", isRead: false },
-        { id: 3, text: "تحديث النظام الأسبوعي مكتمل", time: "أمس", isRead: true },
-    ]);
+    useEffect(() => {
+        const fetchNotifs = async () => {
+            const data = await getAdminNotifications();
+            setNotifications(data);
+        };
+        fetchNotifs();
+    }, []);
 
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
@@ -33,12 +40,19 @@ export default function AdminNavBar({ onMenuToggle }: AdminNavBarProps) {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const markAsRead = (id: number) => {
+    const handleMarkAsRead = async (id: string) => {
+        // Optimistic UI update
         setNotifications(notifications.map(n => n.id === id ? { ...n, isRead: true } : n));
+        await markNotificationAsRead(id);
     };
 
-    const markAllAsRead = () => {
+    const handleMarkAllAsRead = async () => {
         setNotifications(notifications.map(n => ({ ...n, isRead: true })));
+        await markAllAdminNotificationsAsRead();
+    };
+
+    const formatNotifDate = (date: Date) => {
+        return new Intl.DateTimeFormat('ar-EG', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(date));
     };
 
     return (
@@ -88,7 +102,7 @@ export default function AdminNavBar({ onMenuToggle }: AdminNavBarProps) {
                             <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-100 bg-neutral-50/50">
                                 <h3 className="font-bold text-neutral-900 text-sm">الإشعارات</h3>
                                 {unreadCount > 0 && (
-                                    <button onClick={markAllAsRead} className="text-xs font-bold text-brand-500 hover:text-brand-600 transition-colors">
+                                    <button onClick={handleMarkAllAsRead} className="text-xs font-bold text-brand-500 hover:text-brand-600 transition-colors">
                                         تحديد الكل كمقروء
                                     </button>
                                 )}
@@ -96,7 +110,7 @@ export default function AdminNavBar({ onMenuToggle }: AdminNavBarProps) {
                             <div className="max-h-80 overflow-y-auto">
                                 {notifications.length > 0 ? (
                                     notifications.map((notif) => (
-                                        <div key={notif.id} className={`flex gap-3 p-4 border-b border-neutral-100 last:border-0 hover:bg-neutral-50 transition-colors cursor-pointer ${!notif.isRead ? 'bg-brand-50/30' : ''}`} onClick={() => markAsRead(notif.id)}>
+                                        <div key={notif.id} className={`flex gap-3 p-4 border-b border-neutral-100 last:border-0 hover:bg-neutral-50 transition-colors cursor-pointer ${!notif.isRead ? 'bg-brand-50/30' : ''}`} onClick={() => handleMarkAsRead(notif.id)}>
                                             <div className="mt-0.5 shrink-0">
                                                 {!notif.isRead ? (
                                                     <Circle size={10} className="fill-brand-500 text-brand-500" />
@@ -105,8 +119,9 @@ export default function AdminNavBar({ onMenuToggle }: AdminNavBarProps) {
                                                 )}
                                             </div>
                                             <div className="flex-1">
-                                                <p className={`text-sm ${!notif.isRead ? 'font-bold text-neutral-900' : 'text-neutral-700'}`}>{notif.text}</p>
-                                                <p className="text-xs text-neutral-400 mt-1">{notif.time}</p>
+                                                <p className={`text-sm ${!notif.isRead ? 'font-bold text-neutral-900' : 'text-neutral-700'}`}>{notif.title}</p>
+                                                <p className="text-xs text-neutral-500 mt-1">{notif.message}</p>
+                                                <p className="text-[10px] text-neutral-400 mt-1">{formatNotifDate(notif.createdAt)}</p>
                                             </div>
                                         </div>
                                     ))
@@ -117,9 +132,9 @@ export default function AdminNavBar({ onMenuToggle }: AdminNavBarProps) {
                                 )}
                             </div>
                             <div className="p-2 border-t border-neutral-100 bg-neutral-50/50">
-                                <button className="w-full text-center text-xs font-bold text-neutral-600 hover:text-brand-500 transition-colors py-2">
+                                <Link href="/admin/notifications" className="block w-full text-center text-xs font-bold text-neutral-600 hover:text-brand-500 transition-colors py-2">
                                     عرض كل الإشعارات
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     )}
