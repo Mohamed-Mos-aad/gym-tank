@@ -38,7 +38,11 @@ export default function Login() {
 
     try {
       const response = await loginUserAction(formData);
-      router.push("/user");
+      if (response.role === "ADMIN") {
+        router.push("/admin");
+      } else {
+        router.push("/user");
+      }
     } catch (error) {
       console.error("Login Error:", error);
     } finally {

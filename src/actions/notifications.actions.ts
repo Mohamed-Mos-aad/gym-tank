@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 export async function getAdminNotifications() {
     try {
@@ -14,6 +15,23 @@ export async function getAdminNotifications() {
         return notifications;
     } catch (error) {
         console.error("Error fetching notifications:", error);
+        return [];
+    }
+}
+
+export async function getUserNotifications() {
+    try {
+        const userId = (await cookies()).get("gym_tank_token")?.value;
+        if (!userId) return [];
+
+        const notifications = await prisma.notification.findMany({
+            where: { userId: userId },
+            orderBy: { createdAt: "desc" },
+            take: 10
+        });
+        return notifications;
+    } catch (error) {
+        console.error("Error fetching user notifications:", error);
         return [];
     }
 }
@@ -41,6 +59,22 @@ export async function markAllAdminNotificationsAsRead() {
         return { success: true };
     } catch (error) {
         console.error("Error marking all notifications as read:", error);
+        return { success: false };
+    }
+}
+
+export async function markAllUserNotificationsAsRead() {
+    try {
+        const userId = (await cookies()).get("gym_tank_token")?.value;
+        if (!userId) return { success: false };
+
+        await prisma.notification.updateMany({
+            where: { userId: userId, isRead: false },
+            data: { isRead: true }
+        });
+        return { success: true };
+    } catch (error) {
+        console.error("Error marking all user notifications as read:", error);
         return { success: false };
     }
 }

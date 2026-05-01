@@ -10,17 +10,20 @@ interface HomeProps{
   members: number;
   active: number;
   expired: number;
+  presentNow: number;
+  expiringSoon: number;
+  recentLogs: any[];
 }
 
 
 
-export default function Home({ members, active, expired }:HomeProps) {
+export default function Home({ members, active, expired, presentNow, expiringSoon, recentLogs }:HomeProps) {
   return (
     <main className="flex flex-col gap-6 lg:gap-8">
       <Welcome />
-      <Cards members={members} active={active} expired={expired} />
+      <Cards members={members} active={active} expired={expired} presentNow={presentNow} expiringSoon={expiringSoon} />
       <section className="grid gap-6 xl:grid-cols-3 xl:gap-8">
-        <Logs />
+        <Logs data={recentLogs} />
         <Tips />
       </section>
       <section className="grid gap-6 lg:grid-cols-2 lg:gap-8">

@@ -179,7 +179,7 @@ export async function createAuditLog(action: string, details?: string) {
     try {
         await prisma.auditLog.create({
             data: {
-                adminId: userId,
+                userId,
                 action,
                 details
             }

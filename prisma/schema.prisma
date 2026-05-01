@@ -196,8 +196,9 @@ enum PaymentStatus {
 
 model AuditLog {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  adminId     String   @db.ObjectId
-  action      String   // e.g. APPROVED_GYM, UPDATED_SETTINGS, REJECTED_PAYMENT
+  userId      String?  @db.ObjectId // Can be Admin or Gym Owner
+  gymId       String?  @db.ObjectId // Optional: associated gym
+  action      String   // e.g. APPROVED_GYM, ADDED_MEMBER, LOGIN
   details     String?
   ipAddress   String?
   createdAt   DateTime @default(now())

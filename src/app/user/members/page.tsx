@@ -4,7 +4,7 @@ import Members from "@/pages/user/members/Members";
 import { cookies } from "next/headers";
 // ** Actions
 import { getDashboardStats } from "@/actions/user/calc.actions";
-import { getAttendanceListAction } from "@/actions/user/attendance.actions";
+import { getMembersListAction } from "@/actions/user/user.actions";
 
 
 
@@ -15,19 +15,14 @@ export default async function Page() {
 
 
     // ** Data
-    const data = await getAttendanceListAction(userId) ?? {
-        data: [],
-        total: 0,
-        page: 1,
-        totalPages: 1,
-    };
+    const membersData = await getMembersListAction(userId);
     const { members, active, expired, presentNow } = await getDashboardStats(userId);
 
 
 
     return (
         <Members
-            data={data}
+            data={membersData}
             members={members}
             active={active}
             expired={expired}

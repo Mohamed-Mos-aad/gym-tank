@@ -1,43 +1,74 @@
 // ** Components
 import Badge from "@/components/ui/Badge";
 // ** Assets
-import { CircleAlert, CircleCheck, UsersRound } from "lucide-react";
+import { CircleAlert, CircleCheck, UsersRound, Zap, Activity } from "lucide-react";
 // ** Interfaces
-interface CardsProps{ 
+interface CardsProps {
     members: number;
     active: number;
     expired: number;
-} 
+    presentNow: number;
+    expiringSoon: number;
+}
 
 
-export default function Cards({members, active, expired}:CardsProps) {
+export default function Cards({ members, active, expired, presentNow, expiringSoon }: CardsProps) {
     return (
-        <section className="grid w-full gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            <div className="relative flex flex-col gap-4 rounded-3xl bg-white p-6 text-right shadow sm:p-8">
-                <Badge className="absolute top-8 left-8 bg-[#ECFDF5] text-[12px] font-bold text-[#059669]">12% +</Badge>
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-500/10">
-                    <UsersRound className="text-brand-500" />
+        <section className="grid w-full gap-6 sm:grid-cols-2 xl:grid-cols-4">
+            {/* Total Members */}
+            <div className="relative flex flex-col gap-4 rounded-3xl bg-white p-6 text-right shadow-sm border border-neutral-100 hover:shadow-md transition-shadow sm:p-8">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-500">
+                    <UsersRound size={24} />
                 </div>
-                <h2 className="text-[14px] font-medium text-neutral-900">إجمالي الأعضاء</h2>
-                <p className="-mt-6 text-[36px] font-black text-brand-700">{members}</p>
+                <div>
+                    <h2 className="text-sm font-bold text-neutral-500 mb-1">إجمالي الأعضاء</h2>
+                    <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-black text-neutral-900">{members}</span>
+                        <Badge className="bg-brand-50 text-[10px] font-bold text-brand-500">+12%</Badge>
+                    </div>
+                </div>
             </div>
 
-            <div className="relative flex flex-col gap-4 rounded-3xl bg-white p-6 text-right shadow sm:p-8">
-                <Badge className="absolute top-8 left-8 bg-[#ECFDF5] text-[12px] font-bold text-[#059669]">5.2% +</Badge>
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#ECFDF5]">
-                    <CircleCheck className="text-[#059669]" />
+            {/* Active Subscriptions */}
+            <div className="relative flex flex-col gap-4 rounded-3xl bg-white p-6 text-right shadow-sm border border-neutral-100 hover:shadow-md transition-shadow sm:p-8">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500">
+                    <CircleCheck size={24} />
                 </div>
-                <h2 className="text-[14px] font-medium text-neutral-900">الاشتراكات النشطة</h2>
-                <p className="-mt-6 text-[36px] font-black text-brand-700">{active}</p>
+                <div>
+                    <h2 className="text-sm font-bold text-neutral-500 mb-1">الاشتراكات النشطة</h2>
+                    <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-black text-neutral-900">{active}</span>
+                        <Badge className="bg-emerald-50 text-[10px] font-bold text-emerald-500">مستقر</Badge>
+                    </div>
+                </div>
             </div>
 
-            <div className="relative flex flex-col gap-4 rounded-3xl bg-white p-6 text-right shadow sm:col-span-2 sm:p-8 xl:col-span-1">
-                <Badge className="absolute top-8 left-8 bg-[#ECFDF5] text-[12px] font-bold text-[#059669]">2.4% -</Badge>
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FFF7ED]">
-                    <CircleAlert className="text-[#EA580C]" />
+            {/* Present Now */}
+            <div className="relative flex flex-col gap-4 rounded-3xl bg-white p-6 text-right shadow-sm border border-neutral-100 hover:shadow-md transition-shadow sm:p-8">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-500">
+                    <Activity size={24} className="animate-pulse" />
                 </div>
-                <h2 className="text-[14px] font-medium text-neutral-900">الاشتراكات المنتهية</h2>
-                <p className="-mt-6 text-[36px] font-black text-brand-700">{expired}</p>
+                <div>
+                    <h2 className="text-sm font-bold text-neutral-500 mb-1">الموجودين الآن</h2>
+                    <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-black text-neutral-900">{presentNow}</span>
+                        <div className="flex h-2 w-2 rounded-full bg-blue-500 animate-ping"></div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Expiring Soon / Expired */}
+            <div className="relative flex flex-col gap-4 rounded-3xl bg-white p-6 text-right shadow-sm border border-neutral-100 hover:shadow-md transition-shadow sm:p-8">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-50 text-orange-500">
+                    <Zap size={24} />
+                </div>
+                <div>
+                    <h2 className="text-sm font-bold text-neutral-500 mb-1">تنتهي قريباً</h2>
+                    <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-black text-neutral-900">{expiringSoon}</span>
+                        <Badge className="bg-orange-50 text-[10px] font-bold text-orange-500">تنبيه</Badge>
+                    </div>
+                </div>
             </div>
         </section>
     )

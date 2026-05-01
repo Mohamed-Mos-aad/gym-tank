@@ -39,7 +39,7 @@ export const getDashboardStats = async (userId?: string) => {
         };
     }
 
-    const [members, active, expired, presentNow, expiringSoon] = await Promise.all([
+    const [members, active, expired, presentNow, expiringSoon, recentLogs] = await Promise.all([
         prisma.member.count({
             where: { gymId },
         }),
@@ -74,6 +74,17 @@ export const getDashboardStats = async (userId?: string) => {
                 },
             },
         }),
+
+        prisma.attendance.findMany({
+            where: { gymId },
+            take: 5,
+            orderBy: { createdAt: 'desc' },
+            include: {
+                member: {
+                    select: { name: true, subscriptionType: true }
+                }
+            }
+        })
     ]);
 
     return {
@@ -82,5 +93,12 @@ export const getDashboardStats = async (userId?: string) => {
         expired,
         presentNow,
         expiringSoon,
+        recentLogs: recentLogs.map(log => ({
+            id: log.id,
+            memberName: log.member.name,
+            type: log.checkOut ? 'انصراف' : 'دخول',
+            time: log.createdAt,
+            badge: log.member.subscriptionType || 'عضو'
+        }))
     };
 };
