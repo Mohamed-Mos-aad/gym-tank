@@ -60,7 +60,8 @@ model Gym {
   members         Member[]
   attendances     Attendance[]
 
-  subscriptions   GymSubscription[] // Track gym's subscription to platform plans
+   subscriptions   GymSubscription[] // Track gym's subscription to platform plans
+   paymentRequests PaymentRequest[]  // Requests for plan activation/renewal
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -143,6 +144,7 @@ model Plan {
   description String?
   features    String[]
   isPopular   Boolean  @default(false)
+  paymentRequests PaymentRequest[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -166,4 +168,53 @@ model GlobalSettings {
   reminderDays      Int      @default(3)
 
   updatedAt         DateTime @updatedAt
+}
+
+model PaymentRequest {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  
+  gymId           String   @db.ObjectId
+  gym             Gym      @relation(fields: [gymId], references: [id])
+  
+  planId          String   @db.ObjectId
+  plan            Plan     @relation(fields: [planId], references: [id])
+  
+  amount          Float
+  method          String   // e.g. InstaPay, Vodafone Cash, Bank Transfer
+  status          PaymentStatus @default(PENDING)
+  notes           String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum PaymentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model AuditLog {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  adminId     String   @db.ObjectId
+  action      String   // e.g. APPROVED_GYM, UPDATED_SETTINGS, REJECTED_PAYMENT
+  details     String?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+}
+
+model SupportInquiry {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String
+  subject     String?
+  message     String
+  status      InquiryStatus @default(NEW)
+  createdAt   DateTime @default(now())
+}
+
+enum InquiryStatus {
+  NEW
+  READ
+  REPLIED
 }

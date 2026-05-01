@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Bell, CheckCircle2, Circle, Trash2, Clock, Filter, CheckCircle, AlertTriangle, Info, Zap } from "lucide-react";
-import { getAdminNotifications, markNotificationAsRead, markAllAdminNotificationsAsRead } from "@/actions/notifications.actions";
+import { getAdminNotifications, markNotificationAsRead, markAllAdminNotificationsAsRead, sendBroadcastNotification } from "@/actions/notifications.actions";
+import { getAdminUsers } from "@/actions/admin/admin.actions";
 
 type NotificationData = {
     id: string;
@@ -14,17 +15,23 @@ type NotificationData = {
 };
 
 export default function AdminNotificationsPage() {
-    const [notifications, setNotifications] = useState<NotificationData[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<"ALL" | "UNREAD">("ALL");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [users, setUsers] = useState<any[]>([]);
+    const [sendData, setSendData] = useState({ title: "", message: "", target: "ALL" });
+    const [isSending, setIsSending] = useState(false);
 
     useEffect(() => {
-        const fetchNotifs = async () => {
-            const data = await getAdminNotifications();
-            setNotifications(data);
+        const fetchData = async () => {
+            const [notifData, userData] = await Promise.all([
+                getAdminNotifications(),
+                getAdminUsers()
+            ]);
+            setNotifications(notifData);
+            setUsers(userData);
             setIsLoading(false);
         };
-        fetchNotifs();
+        fetchData();
     }, []);
 
     const handleMarkAsRead = async (id: string) => {
@@ -37,11 +44,19 @@ export default function AdminNotificationsPage() {
         await markAllAdminNotificationsAsRead();
     };
 
-    const formatNotifDate = (date: Date) => {
-        return new Intl.DateTimeFormat('ar-EG', { 
-            dateStyle: 'long', 
-            timeStyle: 'short' 
-        }).format(new Date(date));
+    const handleSend = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSending(true);
+        const result = await sendBroadcastNotification(sendData);
+        if (result.success) {
+            setIsModalOpen(false);
+            setSendData({ title: "", message: "", target: "ALL" });
+            const data = await getAdminNotifications();
+            setNotifications(data);
+        } else {
+            alert("فشل إرسال الإشعار");
+        }
+        setIsSending(false);
     };
 
     const getIcon = (type: string) => {
@@ -62,8 +77,16 @@ export default function AdminNotificationsPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-neutral-900 mb-2">مركز الإشعارات</h1>
-                    <p className="text-sm text-neutral-700">تابع أحدث النشاطات والتنبيهات الخاصة بالنظام والأندية.</p>
+                    <p className="text-sm text-neutral-700">تابع أحدث النشاطات أو أرسل تنبيهات جديدة للأندية.</p>
                 </div>
+                <div className="flex items-center gap-3">
+                    <button 
+                        onClick={() => setIsModalOpen(true)}
+                        className="bg-brand-500 text-white px-6 py-2.5 rounded-xl text-sm font-black shadow-lg shadow-brand-500/20 hover:bg-brand-700 transition-all flex items-center gap-2"
+                    >
+                        <Zap size={16} />
+                        إرسال تنبيه جديد
+                    </button>
                 <div className="flex items-center gap-3">
                     <button 
                         onClick={handleMarkAllAsRead}
@@ -137,6 +160,72 @@ export default function AdminNotificationsPage() {
                     </div>
                 )}
             </div>
+
+            {/* Send Notification Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                    <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-neutral-100 animate-in fade-in zoom-in duration-200">
+                        <div className="p-8 border-b border-neutral-50 bg-neutral-50/50">
+                            <h2 className="text-xl font-black text-neutral-900">إرسال تنبيه جديد</h2>
+                            <p className="text-sm text-neutral-500 mt-1">سيتم إرسال هذا التنبيه للمستخدمين المختارين فوراً.</p>
+                        </div>
+                        <form onSubmit={handleSend} className="p-8 flex flex-col gap-6">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-neutral-700">المستهدف</label>
+                                <select 
+                                    value={sendData.target}
+                                    onChange={(e) => setSendData({ ...sendData, target: e.target.value })}
+                                    className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-sm font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors"
+                                >
+                                    <option value="ALL">جميع المستخدمين</option>
+                                    <optgroup label="مستخدم محدد">
+                                        {users.map(u => (
+                                            <option key={u.id} value={u.id}>{u.name} ({u.email})</option>
+                                        ))}
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-neutral-700">عنوان التنبيه</label>
+                                <input 
+                                    type="text" 
+                                    required
+                                    value={sendData.title}
+                                    onChange={(e) => setSendData({ ...sendData, title: e.target.value })}
+                                    className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-sm font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors"
+                                    placeholder="مثلاً: تحديث فني في النظام"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-neutral-700">محتوى الرسالة</label>
+                                <textarea 
+                                    required
+                                    value={sendData.message}
+                                    onChange={(e) => setSendData({ ...sendData, message: e.target.value })}
+                                    className="w-full h-32 bg-neutral-50 border border-neutral-100 rounded-xl p-4 text-sm font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors resize-none"
+                                    placeholder="اكتب تفاصيل التنبيه هنا..."
+                                />
+                            </div>
+                            <div className="flex gap-3 mt-4">
+                                <button 
+                                    type="submit"
+                                    disabled={isSending}
+                                    className="flex-1 bg-brand-500 text-white h-12 rounded-2xl font-black shadow-lg shadow-brand-500/20 hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
+                                >
+                                    {isSending ? "جاري الإرسال..." : "إرسال الآن"}
+                                </button>
+                                <button 
+                                    type="button"
+                                    onClick={() => setIsModalOpen(false)}
+                                    className="flex-1 bg-neutral-100 text-neutral-700 h-12 rounded-2xl font-black hover:bg-neutral-200 transition-all"
+                                >
+                                    إلغاء
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

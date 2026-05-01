@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, Filter, ChevronRight, ChevronLeft, CheckCircle2, Circle } from "lucide-react";
 import { updateGymStatus } from "@/actions/admin/admin.actions";
+import Link from "next/link";
 
 type GymData = any; // Since Prisma types are tricky to import inline, we use any for simplicity
 
@@ -113,7 +114,9 @@ export default function AdminGymsClient({ initialGyms }: { initialGyms: GymData[
                                             <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand-500 flex items-center justify-center font-bold text-sm shrink-0">
                                                 {gym.name.substring(0, 2).toUpperCase()}
                                             </div>
-                                            <div className="font-bold text-neutral-900">{gym.name}</div>
+                                            <Link href={`/admin/gyms/${gym.id}`} className="font-bold text-neutral-900 hover:text-brand-500 transition-colors">
+                                                {gym.name}
+                                            </Link>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">{gym.owner?.name || 'غير محدد'}</td>
