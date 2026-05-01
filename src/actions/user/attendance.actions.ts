@@ -24,7 +24,7 @@ export const getAttendanceListAction = async (
         };
     }
 
-    const gym = await prisma.gym.findUnique({
+    const gym = await prisma.gym.findFirst({
         where: { ownerId: userId },
     });
 
@@ -83,7 +83,7 @@ export const getAttendanceListAction = async (
 // ** Create
 export const createAttendanceAction = async (memberId: string) => {
     const userId = ( await cookies()).get("gym_tank_token" )?.value;
-    const gym = await prisma.gym.findUnique({
+    const gym = await prisma.gym.findFirst({
         where: { ownerId: userId },
     });
     const gymId = gym?.id;
@@ -136,7 +136,7 @@ export const createAttendanceAction = async (memberId: string) => {
 export const createCheckoutAction = async (memberId: string) => {
     const userId = (await cookies()).get("gym_tank_token")?.value;
 
-    const gym = await prisma.gym.findUnique({
+    const gym = await prisma.gym.findFirst({
         where: { ownerId: userId },
     });
 

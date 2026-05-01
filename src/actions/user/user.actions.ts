@@ -24,7 +24,7 @@ export const getUserAction = async (ownerId) => {
 export const getMembersListAction = async (userId?: string) => {
     if (!userId) throw new Error("User not found");
 
-    const gym = await prisma.gym.findUnique({
+    const gym = await prisma.gym.findFirst({
         where: { ownerId: userId },
     });
 

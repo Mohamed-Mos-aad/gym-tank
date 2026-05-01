@@ -22,7 +22,7 @@ export const getDashboardStats = async (userId?: string) => {
         };
     }
 
-    const gym = await prisma.gym.findUnique({
+    const gym = await prisma.gym.findFirst({
         where: { ownerId: userId },
     });
 
