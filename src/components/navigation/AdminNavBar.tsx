@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { Bell, Menu, Search, CheckCircle2, Circle } from "lucide-react";
 
 import { getAdminNotifications, markNotificationAsRead, markAllAdminNotificationsAsRead } from "@/actions/notifications.actions";
+import { getCurrentUserAction } from "@/actions/user.actions";
 import Link from "next/link";
 
 // ** Interfaces
@@ -19,13 +20,18 @@ export default function AdminNavBar({ onMenuToggle }: AdminNavBarProps) {
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const notifRef = useRef<HTMLDivElement>(null);
     const [notifications, setNotifications] = useState<NotificationData[]>([]);
+    const [user, setUser] = useState<any>(null);
 
     useEffect(() => {
-        const fetchNotifs = async () => {
-            const data = await getAdminNotifications();
-            setNotifications(data);
+        const fetchData = async () => {
+            const [notifs, userData] = await Promise.all([
+                getAdminNotifications(),
+                getCurrentUserAction()
+            ]);
+            setNotifications(notifs);
+            setUser(userData);
         };
-        fetchNotifs();
+        fetchData();
     }, []);
 
     const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -133,14 +139,14 @@ export default function AdminNavBar({ onMenuToggle }: AdminNavBarProps) {
                 </div>
 
                 <div className="hidden text-right sm:block border-r border-neutral-200 pr-4 ml-2">
-                    <h1 className="text-[14px] font-bold text-neutral-900">المدير العام</h1>
-                    <h2 className="text-[10px] text-neutral-700">GymTank Admin</h2>
+                    <h1 className="text-[14px] font-bold text-neutral-900">{user?.name || "تحميل..."}</h1>
+                    <h2 className="text-[10px] text-neutral-700">{user?.role === "ADMIN" ? "مدير عام" : "مالك نادي"}</h2>
                 </div>
                 <div className="h-10 w-10 overflow-hidden rounded-full border-2 border-white shadow-sm">
                     {/* Placeholder for user image, matching the design */}
-                    <div className="flex h-full w-full items-center justify-center bg-brand-700 text-white font-bold">
-                        A
-                    </div>
+                    <Link href="/admin/profile" className="flex h-full w-full items-center justify-center bg-brand-700 text-white font-bold hover:bg-brand-800 transition-colors">
+                        {user?.name?.substring(0, 1).toUpperCase() || "A"}
+                    </Link>
                 </div>
             </div>
         </nav>

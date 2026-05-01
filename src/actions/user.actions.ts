@@ -50,17 +50,45 @@ export const loginUserAction = async (loginData) => {
 
     if (!isValid) throw new Error("Invalid credentials");
 
-    (
-        await cookies()).set("gym_tank_token", user.id, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            path: "/",
-            maxAge: 60 * 60 * 24 * 7,
-        }
-    );
+    (await cookies()).set("gym_tank_token", user.id, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+    });
+
+    (await cookies()).set("gym_tank_role", user.role, {
+        httpOnly: false, // Accessible by middleware easily
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+    });
 
     return user;
+};
+
+export const getCurrentUserAction = async () => {
+    const userId = (await cookies()).get("gym_tank_token")?.value;
+    if (!userId) return null;
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                isActive: true,
+            }
+        });
+        return user;
+    } catch (error) {
+        console.error("Error fetching current user:", error);
+        return null;
+    }
 };
 
 
