@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Search, Filter, MoreVertical, User, Calendar, Phone, CreditCard, LogIn, LogOut } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 import CustomSelect from "@/components/ui/Select";
+import Toast from "@/components/ui/Toast";
 import MemberActions from "../components/MemberActions";
 import EditMemberModal from "../components/EditMemberModal";
 import RenewMemberModal from "../components/RenewMemberModal";
@@ -25,6 +26,12 @@ export default function Table({ data }: TableProps) {
     const [selectedMember, setSelectedMember] = useState<any>(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isRenewOpen, setIsRenewOpen] = useState(false);
+    
+    const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
+
+    const showToast = (message: string, type: "success" | "error") => {
+        setToast({ message, type });
+    };
 
     const filteredMembers = members.filter(m => {
         const matchesSearch = m.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -37,10 +44,10 @@ export default function Table({ data }: TableProps) {
         setIsProcessing(memberId);
         try {
             await createAttendanceAction(memberId);
-            alert("تم تسجيل الدخول بنجاح");
-            window.location.reload();
+            showToast("تم تسجيل الدخول بنجاح", "success");
+            setTimeout(() => window.location.reload(), 1500);
         } catch (error: any) {
-            alert(error.message || "حدث خطأ");
+            showToast(error.message || "حدث خطأ", "error");
         }
         setIsProcessing(null);
     };
@@ -49,10 +56,10 @@ export default function Table({ data }: TableProps) {
         setIsProcessing(memberId);
         try {
             await createCheckoutAction(memberId);
-            alert("تم تسجيل الانصراف بنجاح");
-            window.location.reload();
+            showToast("تم تسجيل الانصراف بنجاح", "success");
+            setTimeout(() => window.location.reload(), 1500);
         } catch (error: any) {
-            alert(error.message || "حدث خطأ");
+            showToast(error.message || "حدث خطأ", "error");
         }
         setIsProcessing(null);
     };
@@ -61,10 +68,10 @@ export default function Table({ data }: TableProps) {
         if (!confirm("هل أنت متأكد من حذف هذا العضو؟")) return;
         try {
             await deleteMemberAction(id);
-            alert("تم حذف العضو بنجاح");
-            window.location.reload();
+            showToast("تم حذف العضو بنجاح", "success");
+            setTimeout(() => window.location.reload(), 1500);
         } catch (error) {
-            alert("حدث خطأ أثناء الحذف");
+            showToast("حدث خطأ أثناء الحذف", "error");
         }
     };
 
@@ -219,6 +226,14 @@ export default function Table({ data }: TableProps) {
                         onClose={() => { setIsRenewOpen(false); setSelectedMember(null); }} 
                     />
                 </>
+            )}
+
+            {toast && (
+                <Toast 
+                    message={toast.message} 
+                    type={toast.type} 
+                    onClose={() => setToast(null)} 
+                />
             )}
         </section>
     );
