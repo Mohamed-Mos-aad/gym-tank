@@ -75,6 +75,7 @@ export default function AttendanceModal() {
           <Select
             label="اختيار العضو"
             id="memberName"
+            value={selectedMemberId}
             placeholder="ابحث عن اسم العضو أو رقم الهاتف..."
             options={membersData.map((m) => ({
               label: `${m.name} - ${m.phone}`,
