@@ -14,9 +14,11 @@ interface SelectProps {
     onChange: (value: any) => void;
     label?: string;
     icon?: React.ReactNode;
+    id?: string;
+    placeholder?: string;
 }
 
-export default function CustomSelect({ options, value, onChange, label, icon }: SelectProps) {
+export default function CustomSelect({ options, value, onChange, label, icon, id, placeholder }: SelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -38,12 +40,15 @@ export default function CustomSelect({ options, value, onChange, label, icon }: 
             <div className="relative">
                 <button
                     type="button"
+                    id={id}
                     onClick={() => setIsOpen(!isOpen)}
                     className={`w-full h-14 bg-neutral-50 border ${isOpen ? 'border-brand-500 ring-4 ring-brand-500/5' : 'border-neutral-100'} rounded-2xl px-5 flex items-center justify-between transition-all outline-none`}
                 >
                     <div className="flex items-center gap-3">
                         {icon && <span className="text-neutral-400">{icon}</span>}
-                        <span className="text-sm font-bold text-neutral-900">{selectedOption?.label || "اختر..."}</span>
+                        <span className={`text-sm font-bold ${selectedOption ? 'text-neutral-900' : 'text-neutral-400'}`}>
+                            {selectedOption?.label || placeholder || "اختر..."}
+                        </span>
                     </div>
                     <ChevronDown size={18} className={`text-neutral-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
