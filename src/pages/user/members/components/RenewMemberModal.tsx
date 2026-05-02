@@ -48,6 +48,7 @@ export default function RenewMemberModal({ member, isOpen, onClose }: RenewMembe
                         value={months}
                         onChange={(val) => setMonths(val)}
                         options={[
+                            { label: "سيشن (يوم واحد)", value: 0 },
                             { label: "شهر واحد", value: 1 },
                             { label: "3 شهور", value: 3 },
                             { label: "6 شهور", value: 6 },

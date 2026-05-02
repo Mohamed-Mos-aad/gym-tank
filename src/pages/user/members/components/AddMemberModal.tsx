@@ -107,6 +107,7 @@ export default function AddMemberModal() {
                         value={newMember.months}
                         onChange={(val) => setNewMember({ ...newMember, months: val })}
                         options={[
+                            { label: "سيشن (يوم واحد)", value: 0 },
                             { label: "شهر واحد", value: 1 },
                             { label: "3 شهور", value: 3 },
                             { label: "6 شهور", value: 6 },

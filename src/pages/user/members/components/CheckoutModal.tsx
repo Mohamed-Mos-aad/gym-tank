@@ -66,6 +66,7 @@ export default function CheckoutModal({data}:CheckoutModalProps) {
                 <Select
                     label="اختيار العضو"
                     id="memberName"
+                    value={selectedMemberId}
                     placeholder="ابحث عن اسم العضو أو رقم الهاتف..."
                     options={attendanceData.map((attendance) => ({
                         label: `${attendance.member.name} - ${attendance.member.phone}`,

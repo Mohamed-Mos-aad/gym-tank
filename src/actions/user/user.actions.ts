@@ -64,7 +64,11 @@ export const createMemberAction = async (data: any) => {
     if (!gym) throw new Error("Gym not found");
 
     const endDate = new Date();
-    endDate.setMonth(endDate.getMonth() + (data.months || 1));
+    if (data.months === 0) {
+        endDate.setHours(23, 59, 59, 999);
+    } else {
+        endDate.setMonth(endDate.getMonth() + (data.months || 1));
+    }
 
     await prisma.member.create({
         data: {
@@ -134,7 +138,12 @@ export const renewMemberAction = async (memberId: string, months: number) => {
     // If membership is already expired or null, start from now. If not, add to the current end date.
     const baseDate = (!currentEndDate || currentEndDate < now) ? now : currentEndDate;
     const newEndDate = new Date(baseDate);
-    newEndDate.setMonth(newEndDate.getMonth() + months);
+    
+    if (months === 0) {
+        newEndDate.setHours(23, 59, 59, 999);
+    } else {
+        newEndDate.setMonth(newEndDate.getMonth() + months);
+    }
 
     await prisma.member.update({
         where: { id: memberId },
