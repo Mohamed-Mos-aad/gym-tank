@@ -19,7 +19,7 @@ export default function Subscribes({data, members, active, expiringSoon}:Subscri
       <Title />
       <Cards members={members} active={active} expiringSoon={expiringSoon} />
       <Table data={data} />
-      <Tips />
+      <Tips data={data} />
     </main>
   );
 }

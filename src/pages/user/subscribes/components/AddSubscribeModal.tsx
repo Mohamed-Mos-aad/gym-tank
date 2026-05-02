@@ -103,6 +103,7 @@ export default function AddSubscribeModal() {
           <Select
             label="اختيار العضو"
             id="memberName"
+            value={modalData.id}
             placeholder="ابحث عن اسم العضو أو رقم الهاتف..."
             options={membersListHandler()}
             onChange={(value) => {

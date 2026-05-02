@@ -2,10 +2,12 @@
 import { Languages } from "lucide-react";
 // ** Components
 import Select from "@/components/ui/Select";
-
-
+import { useState } from "react";
 
 export default function LanguageInfo() {
+    const [lang, setLang] = useState('ar');
+    const [timezone, setTimezone] = useState('GMT+3');
+
     return (
         <div className="relative flex flex-col gap-4 rounded-3xl bg-white p-8 text-right shadow sm:p-8">
             <div className="flex items-center gap-4">
@@ -18,8 +20,26 @@ export default function LanguageInfo() {
                 </div>
             </div>
             <form className="grid grid-cols-2 gap-6">
-                <Select id="systemLanguage" label="لغة النظام الافتراضية" options={[{label: 'text1', value: 'text1'},{label: 'text2', value: 'text2'}]}/>
-                <Select id="systemTime" label="المنطقة الزمنية" options={[{label: 'text1', value: 'text1'},{label: 'text2', value: 'text2'}]}/>
+                <Select 
+                    id="systemLanguage" 
+                    label="لغة النظام الافتراضية" 
+                    value={lang}
+                    onChange={(val) => setLang(val)}
+                    options={[
+                        { label: 'العربية', value: 'ar' },
+                        { label: 'English', value: 'en' }
+                    ]}
+                />
+                <Select 
+                    id="systemTime" 
+                    label="المنطقة الزمنية" 
+                    value={timezone}
+                    onChange={(val) => setTimezone(val)}
+                    options={[
+                        { label: 'القاهرة (GMT+3)', value: 'GMT+3' },
+                        { label: 'الرياض (GMT+3)', value: 'GMT+3_KSA' }
+                    ]}
+                />
             </form>
         </div>
     )
