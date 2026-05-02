@@ -15,6 +15,12 @@ interface EditMemberModalProps {
 }
 
 export default function EditMemberModal({ member, isOpen, onClose }: EditMemberModalProps) {
+    if (!member || !isOpen) return null;
+
+    return <EditMemberModalContent member={member} isOpen={isOpen} onClose={onClose} />;
+}
+
+function EditMemberModalContent({ member, isOpen, onClose }: EditMemberModalProps) {
     const [data, setData] = useState({
         name: member.name,
         phone: member.phone,
@@ -33,8 +39,6 @@ export default function EditMemberModal({ member, isOpen, onClose }: EditMemberM
             setLoading(false);
         }
     };
-
-    if (!isOpen) return null;
 
     return (
         <Modal>

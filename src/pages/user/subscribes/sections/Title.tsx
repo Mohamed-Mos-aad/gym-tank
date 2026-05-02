@@ -1,8 +1,3 @@
-// ** Components
-import AddSubscribeModal from "../components/AddSubscribeModal";
-
-
-
 export default function Title() {
     return (
         <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -14,7 +9,6 @@ export default function Title() {
                     نظرة عامة على اشتراكات الأعضاء الحالية والسابقة.
                 </p>
             </div>
-            <AddSubscribeModal />
         </section>
     )
 }

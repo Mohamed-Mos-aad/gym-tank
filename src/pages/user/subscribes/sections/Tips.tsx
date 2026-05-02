@@ -30,10 +30,13 @@ export default function Tips({ data }: TipsProps) {
 
     return (
         <section className="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-8">
-            <div className="relative overflow-hidden flex flex-col items-start gap-6 rounded-[2rem] bg-gradient-to-br from-brand-600 to-brand-800 p-8 lg:col-span-2 shadow-xl shadow-brand-500/20 group">
+            <div 
+                className="relative overflow-hidden flex flex-col items-start gap-6 rounded-[2rem] p-8 lg:col-span-2 shadow-xl group"
+                style={{ background: "linear-gradient(135deg, #3525CD 0%, #1a0f8c 100%)" }}
+            >
                 <div className="relative z-10 flex flex-col gap-4">
-                    <div className="flex items-center gap-2 text-brand-100 font-bold text-sm">
-                        <Sparkles size={18} className="text-brand-300" />
+                    <div className="inline-flex w-fit items-center gap-2 bg-white/15 px-3 py-1.5 rounded-full font-bold text-sm text-white">
+                        <Sparkles size={14} className="text-white" />
                         <span>نصيحة ذكية للمالك</span>
                     </div>
                     <h2 className="text-[28px] font-black text-white leading-tight">
@@ -43,7 +46,7 @@ export default function Tips({ data }: TipsProps) {
                         الأعضاء الذين يتلقون تذكيراً قبل انتهاء اشتراكهم بـ ٣ أيام هم الأكثر عرضة للتجديد فوراً. جرب تفعيل التنبيهات الآن!
                     </p>
                     <button 
-                        className="inline-flex items-center gap-2 bg-white text-brand-600 border-2 border-white hover:bg-brand-50 font-black text-sm px-6 py-3 rounded-xl transition-all shadow-lg shadow-black/10 mt-2"
+                        className="w-fit inline-flex items-center gap-2 bg-white text-brand-600 border-2 border-white hover:bg-brand-50 font-black text-sm px-6 py-3 rounded-xl transition-all shadow-lg shadow-black/10 mt-2"
                     >
                         تفعيل التنبيهات
                     </button>

@@ -29,7 +29,7 @@ export default function RenewMemberModal({ member, isOpen, onClose }: RenewMembe
         }
     };
 
-    if (!isOpen) return null;
+    if (!isOpen || !member) return null;
 
     return (
         <Modal>
