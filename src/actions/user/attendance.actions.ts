@@ -94,16 +94,16 @@ export const createAttendanceAction = async (memberId: string) => {
     });
 
     if (!member) {
-        throw new Error("Member not found");
+        throw new Error("العضو غير موجود");
     }
     
     if (!gymId) {
-        throw new Error("Gym not found");
+        throw new Error("الجيم غير موجود");
     }
 
 
     if (member.endDate && member.endDate < now) {
-        throw new Error("Subscription expired");
+        throw new Error("اشتراك العضو منتهي، يرجى التجديد أولاً");
     }
 
     const startOfDay = new Date();
@@ -119,7 +119,7 @@ export const createAttendanceAction = async (memberId: string) => {
     });
 
     if (alreadyCheckedIn) {
-        throw new Error("Member already checked in today");
+        throw new Error("تم تسجيل دخول هذا العضو بالفعل اليوم");
     }
 
 
@@ -144,7 +144,7 @@ export const createCheckoutAction = async (memberId: string) => {
     const now = new Date();
 
     if (!gymId) {
-        throw new Error("Gym not found");
+        throw new Error("الجيم غير موجود");
     }
 
     const startOfDay = new Date();
@@ -164,11 +164,11 @@ export const createCheckoutAction = async (memberId: string) => {
     });
 
     if (!attendance) {
-        throw new Error("No check-in found for today");
+        throw new Error("لم يتم تسجيل دخول هذا العضو اليوم");
     }
 
     if (attendance.checkOut) {
-        throw new Error("Member already checked out");
+        throw new Error("تم تسجيل انصراف هذا العضو بالفعل");
     }
 
     // تحديث الانصراف

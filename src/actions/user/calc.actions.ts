@@ -68,6 +68,7 @@ export const getDashboardStats = async (userId?: string) => {
         prisma.attendance.count({
             where: {
                 gymId,
+                checkIn: { gte: new Date(new Date().setHours(0,0,0,0)) },
                 checkOut: null,
             },
         }),

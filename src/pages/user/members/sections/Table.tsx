@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Filter, MoreVertical, User, Calendar, Phone, CreditCard, LogIn, LogOut } from "lucide-react";
+import { Search, Filter, MoreVertical, User, Calendar, Phone, CreditCard, LogIn, LogOut, CheckCircle2 } from "lucide-react";
 import Badge from "@/components/ui/Badge";
 import CustomSelect from "@/components/ui/Select";
 import Toast from "@/components/ui/Toast";
 import MemberActions from "../components/MemberActions";
 import EditMemberModal from "../components/EditMemberModal";
 import RenewMemberModal from "../components/RenewMemberModal";
+import DeleteConfirmModal from "../components/DeleteConfirmModal";
 import { createAttendanceAction, createCheckoutAction } from "@/actions/user/attendance.actions";
 import { deleteMemberAction } from "@/actions/user/user.actions";
 
@@ -26,6 +27,7 @@ export default function Table({ data }: TableProps) {
     const [selectedMember, setSelectedMember] = useState<any>(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isRenewOpen, setIsRenewOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     
     const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
@@ -64,14 +66,18 @@ export default function Table({ data }: TableProps) {
         setIsProcessing(null);
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("هل أنت متأكد من حذف هذا العضو؟")) return;
+    const handleDelete = async () => {
+        if (!selectedMember) return;
+        setIsProcessing(selectedMember.id);
         try {
-            await deleteMemberAction(id);
+            await deleteMemberAction(selectedMember.id);
             showToast("تم حذف العضو بنجاح", "success");
             setTimeout(() => window.location.reload(), 1500);
         } catch (error) {
             showToast("حدث خطأ أثناء الحذف", "error");
+        } finally {
+            setIsDeleteOpen(false);
+            setIsProcessing(null);
         }
     };
 
@@ -145,7 +151,18 @@ export default function Table({ data }: TableProps) {
                                                     {member.name.substring(0, 1)}
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="font-black text-neutral-900">{member.name}</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="font-black text-neutral-900">{member.name}</span>
+                                                        {member.attendances?.[0] && !member.attendances[0].checkOut && (
+                                                            <div className="flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                                                                <span className="relative flex h-2 w-2">
+                                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                                                </span>
+                                                                <span className="text-[10px] font-bold text-emerald-600">متواجد</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                     <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">ID: {member.id.substring(0, 8)}</span>
                                                 </div>
                                             </div>
@@ -174,28 +191,40 @@ export default function Table({ data }: TableProps) {
                                             {getStatusBadge(member.subscriptionStatus || "ACTIVE")}
                                         </td>
                                         <td className="py-5 px-6 text-center">
-                                            <div className="flex justify-center gap-2">
-                                                <button 
-                                                    onClick={() => handleCheckIn(member.id)}
-                                                    disabled={isProcessing === member.id || member.subscriptionStatus === "EXPIRED"}
-                                                    title="تسجيل دخول"
-                                                    className="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-colors disabled:opacity-30"
-                                                >
-                                                    <LogIn size={18} />
-                                                </button>
-                                                <button 
-                                                    onClick={() => handleCheckOut(member.id)}
-                                                    disabled={isProcessing === member.id}
-                                                    title="تسجيل انصراف"
-                                                    className="p-2 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-colors disabled:opacity-30"
-                                                >
-                                                    <LogOut size={18} />
-                                                </button>
+                                            <div className="flex justify-center items-center gap-2">
+                                                {/* Check-in Logic */}
+                                                {(!member.attendances?.[0]) ? (
+                                                    <button 
+                                                        onClick={() => handleCheckIn(member.id)}
+                                                        disabled={isProcessing === member.id || member.subscriptionStatus === "EXPIRED"}
+                                                        title="تسجيل دخول"
+                                                        className="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-all disabled:opacity-30"
+                                                    >
+                                                        <LogIn size={18} />
+                                                    </button>
+                                                ) : (!member.attendances[0].checkOut) ? (
+                                                    /* Check-out Logic */
+                                                    <button 
+                                                        onClick={() => handleCheckOut(member.id)}
+                                                        disabled={isProcessing === member.id}
+                                                        title="تسجيل انصراف"
+                                                        className="p-2 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-all disabled:opacity-30"
+                                                    >
+                                                        <LogOut size={18} />
+                                                    </button>
+                                                ) : (
+                                                    /* Done for today */
+                                                    <div className="flex items-center gap-1 text-emerald-500 font-bold text-[10px] bg-emerald-50/50 px-2 py-1 rounded-lg border border-emerald-100/50">
+                                                        <CheckCircle2 size={14} />
+                                                        <span>أتم اليوم</span>
+                                                    </div>
+                                                )}
+
                                                 <MemberActions 
                                                     member={member} 
                                                     onEdit={(m) => { setSelectedMember(m); setIsEditOpen(true); }}
                                                     onRenew={(m) => { setSelectedMember(m); setIsRenewOpen(true); }}
-                                                    onDelete={handleDelete}
+                                                    onDelete={(m) => { setSelectedMember(m); setIsDeleteOpen(true); }}
                                                 />
                                             </div>
                                         </td>
@@ -224,6 +253,13 @@ export default function Table({ data }: TableProps) {
                         member={selectedMember} 
                         isOpen={isRenewOpen} 
                         onClose={() => { setIsRenewOpen(false); setSelectedMember(null); }} 
+                    />
+                    <DeleteConfirmModal 
+                        isOpen={isDeleteOpen}
+                        onClose={() => { setIsDeleteOpen(false); setSelectedMember(null); }}
+                        onConfirm={handleDelete}
+                        itemName={selectedMember.name}
+                        loading={isProcessing === selectedMember.id}
                     />
                 </>
             )}

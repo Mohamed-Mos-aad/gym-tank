@@ -3,10 +3,9 @@ import Title from "./sections/Title";
 import Cards from "./sections/Cards";
 import Table from "./sections/Table";
 // **Interfaces
-import { AttendanceWithMember } from "@/types";
 interface MembersProps {
     data: {
-        data: AttendanceWithMember[];
+        data: any[];
         total: number;
         page: number;
         totalPages: number;

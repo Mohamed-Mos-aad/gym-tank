@@ -7,7 +7,7 @@ interface MemberActionsProps {
     member: any;
     onEdit: (member: any) => void;
     onRenew: (member: any) => void;
-    onDelete: (id: string) => void;
+    onDelete: (member: any) => void;
 }
 
 export default function MemberActions({ member, onEdit, onRenew, onDelete }: MemberActionsProps) {
@@ -56,7 +56,7 @@ export default function MemberActions({ member, onEdit, onRenew, onDelete }: Mem
                         </li>
                         <li className="border-t border-neutral-50 mt-1 pt-1">
                             <button 
-                                onClick={() => { onDelete(member.id); setIsOpen(false); }}
+                                onClick={() => { onDelete(member); setIsOpen(false); }}
                                 className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
                             >
                                 <Trash2 size={16} />

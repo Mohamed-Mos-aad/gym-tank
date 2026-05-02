@@ -28,8 +28,20 @@ export const getMembersListAction = async (userId?: string) => {
 
     if (!gym) throw new Error("Gym not found");
 
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
     const data = await prisma.member.findMany({
         where: { gymId: gym.id },
+        include: {
+            attendances: {
+                where: {
+                    checkIn: { gte: startOfDay }
+                },
+                orderBy: { checkIn: "desc" },
+                take: 1
+            }
+        },
         orderBy: { createdAt: "desc" },
     });
 
