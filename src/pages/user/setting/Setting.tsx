@@ -24,9 +24,11 @@ export default function Setting() {
     ownerId: "",
     state: "",
     systemLanguage: "",
+    capacity: 100,
     ownerEmail: "",
     ownerName: "",
   });
+  const [subscription, setSubscription] = useState<any>(null);
 
   // ** Handlers
   const getDataHandler = async () => {
@@ -38,6 +40,9 @@ export default function Setting() {
         ownerName: userRes.name,
         ownerEmail: userRes.email,
       });
+      // Find active subscription
+      const activeSub = gymRes.subscriptions?.find((s: any) => s.status === "ACTIVE");
+      setSubscription(activeSub || null);
     } catch (error) {
       console.log(error);
     }
@@ -63,12 +68,13 @@ export default function Setting() {
             phone={data.phone}
             email={data.email}
             address={data.address}
+            capacity={data.capacity || 100}
           />
           <LanguageInfo />
         </div>
         <div className="flex flex-col gap-8">
           <OwnerInfo ownerName={data.ownerName} ownerEmail={data.ownerEmail} />
-          <SubType />
+          <SubType subscription={subscription} />
           <Support />
         </div>
       </section>

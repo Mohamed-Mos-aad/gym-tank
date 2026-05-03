@@ -6,11 +6,12 @@ import { Activity, Users } from "lucide-react";
 
 interface TrackerProps {
     presentNow: number;
+    capacity: number;
 }
 
-export default function Tracker({ presentNow }: TrackerProps) {
+export default function Tracker({ presentNow, capacity }: TrackerProps) {
     // ** Constants
-    const maxCapacity = 100; // This could be dynamic later
+    const maxCapacity = capacity;
     const occupancyRate = Math.min(Math.round((presentNow / maxCapacity) * 100), 100);
     const progressStyle = { "--progress": occupancyRate } as CSSProperties;
 

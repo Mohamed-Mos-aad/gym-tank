@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Dumbbell, Save } from "lucide-react";
+import { Dumbbell, Save, Users } from "lucide-react";
 import Input from '@/components/ui/Input';
 import { updateGymInfoAction } from "@/actions/user/gym.actions";
+import Toast from "@/components/ui/Toast";
 
 interface GymInfoProps {
     name: string;
@@ -11,29 +12,34 @@ interface GymInfoProps {
     phone: string | null;
     email: string | null;
     address: string | null;
+    capacity: number;
 }
 
-export default function GymInfo({ name, specialty, phone, email, address }: GymInfoProps) {
+export default function GymInfo({ name, specialty, phone, email, address, capacity }: GymInfoProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         name: name || "",
         specialty: specialty || "",
         phone: phone || "",
         email: email || "",
-        address: address || ""
+        address: address || "",
+        capacity: String(capacity || 100),
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        const res = await updateGymInfoAction(formData);
-        if (res.success) {
-            alert("تم تحديث معلومات النادي بنجاح");
-            setIsEditing(false);
-            window.location.reload(); // To update sidebar etc
-        } else {
-            alert("حدث خطأ أثناء التحديث");
+        try {
+            const res = await updateGymInfoAction(formData);
+            if (res.success) {
+                setToast({ message: "تم تحديث معلومات النادي بنجاح ✅", type: "success" });
+                setIsEditing(false);
+                setTimeout(() => window.location.reload(), 1500);
+            }
+        } catch {
+            setToast({ message: "حدث خطأ أثناء التحديث", type: "error" });
         }
         setIsSubmitting(false);
     };
@@ -55,7 +61,7 @@ export default function GymInfo({ name, specialty, phone, email, address }: GymI
                 ) : (
                     <div className="flex gap-2">
                         <button onClick={handleUpdate} disabled={isSubmitting} className="flex items-center gap-2 bg-brand-500 text-white px-4 py-2 rounded-lg text-xs font-black hover:bg-brand-700 transition-all shadow-md shadow-brand-500/20">
-                            <Save size={14} /> حفظ
+                            <Save size={14} /> {isSubmitting ? "جاري الحفظ..." : "حفظ"}
                         </button>
                         <button onClick={() => setIsEditing(false)} className="bg-neutral-100 text-neutral-600 px-4 py-2 rounded-lg text-xs font-black hover:bg-neutral-200 transition-colors">إلغاء</button>
                     </div>
@@ -74,7 +80,7 @@ export default function GymInfo({ name, specialty, phone, email, address }: GymI
                     />
                 </div>
                 <Input 
-                    id="gymSpeicla" 
+                    id="gymSpecial" 
                     label="التخصص" 
                     type="text" 
                     value={isEditing ? formData.specialty : specialty ?? ""}
@@ -105,7 +111,34 @@ export default function GymInfo({ name, specialty, phone, email, address }: GymI
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     disabled={!isEditing}
                 />
+
+                {/* Capacity Field */}
+                <div className="md:col-span-2 mt-2">
+                    <div className="flex items-center gap-2 mb-3">
+                        <Users size={16} className="text-brand-500" />
+                        <span className="text-sm font-black text-neutral-700">إعدادات الاستيعاب</span>
+                    </div>
+                    <Input 
+                        id="gymCapacity" 
+                        label="السعة القصوى للصالة (عدد الأشخاص)" 
+                        type="number" 
+                        value={isEditing ? formData.capacity : String(capacity)}
+                        onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                        disabled={!isEditing}
+                    />
+                    <p className="text-[10px] font-bold text-neutral-400 mt-1">
+                        يُستخدم هذا الرقم في حساب نسبة إشغال الصالة في الصفحة الرئيسية.
+                    </p>
+                </div>
             </form>
+
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
+            )}
         </div>
     );
 }

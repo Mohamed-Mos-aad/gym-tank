@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Zap, CreditCard, Clock, AlertCircle, X } from "lucide-react";
+import { Check, Zap, CreditCard, Clock, X, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import { createPaymentRequestAction } from "@/actions/user/gym.actions";
+import Toast from "@/components/ui/Toast";
+import CustomSelect from "@/components/ui/Select";
 
 type Plan = any;
 
@@ -17,6 +19,7 @@ export default function UserBillingClient({ plans, gymId, currency, pendingReque
     const [method, setMethod] = useState("InstaPay");
     const [notes, setNotes] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
     const handleRequest = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -25,11 +28,11 @@ export default function UserBillingClient({ plans, gymId, currency, pendingReque
         setIsSubmitting(true);
         try {
             await createPaymentRequestAction(selectedPlan.id, method, selectedPlan.price, notes);
-            alert("تم إرسال طلب التفعيل بنجاح. سيقوم الأدمن بمراجعته خلال 24 ساعة.");
+            setToast({ message: "تم إرسال طلب التفعيل بنجاح، سيقوم الأدمن بمراجعته خلال 24 ساعة.", type: "success" });
             setIsModalOpen(false);
-            window.location.reload();
+            setTimeout(() => window.location.reload(), 2000);
         } catch (error) {
-            alert("حدث خطأ أثناء إرسال الطلب");
+            setToast({ message: "حدث خطأ أثناء إرسال الطلب، يرجى المحاولة مرة أخرى.", type: "error" });
         }
         setIsSubmitting(false);
     };
@@ -72,14 +75,14 @@ export default function UserBillingClient({ plans, gymId, currency, pendingReque
                 ))}
             </div>
 
-            {/* Requests History */}
+            {/* Requests History - show all */}
             {pendingRequests.length > 0 && (
                 <div className="bg-white rounded-3xl p-8 shadow-sm border border-neutral-100">
-                    <h3 className="text-lg font-black text-neutral-900 mb-6">طلبات قيد الانتظار</h3>
+                    <h3 className="text-lg font-black text-neutral-900 mb-6">سجل طلبات التفعيل</h3>
                     <div className="overflow-x-auto">
                         <table className="w-full text-right text-sm">
                             <thead>
-                                <tr className="text-neutral-500 border-b border-neutral-100 pb-4">
+                                <tr className="text-neutral-500 border-b border-neutral-100">
                                     <th className="py-3 px-4">الباقة</th>
                                     <th className="py-3 px-4 text-center">المبلغ</th>
                                     <th className="py-3 px-4 text-center">الوسيلة</th>
@@ -89,12 +92,24 @@ export default function UserBillingClient({ plans, gymId, currency, pendingReque
                             </thead>
                             <tbody>
                                 {pendingRequests.map((req) => (
-                                    <tr key={req.id} className="border-b border-neutral-50 last:border-0">
+                                    <tr key={req.id} className="border-b border-neutral-50 last:border-0 hover:bg-neutral-50/30">
                                         <td className="py-4 px-4 font-bold text-neutral-900">{req.plan?.name || "باقة مخصصة"}</td>
                                         <td className="py-4 px-4 text-center font-bold text-brand-500">{currency} {req.amount}</td>
                                         <td className="py-4 px-4 text-center font-bold text-neutral-600">{req.method}</td>
                                         <td className="py-4 px-4 text-center">
-                                            <span className="bg-orange-50 text-orange-600 px-3 py-1 rounded-full text-[10px] font-bold">قيد المراجعة</span>
+                                            {req.status === "APPROVED" ? (
+                                                <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-[10px] font-bold">
+                                                    <CheckCircle2 size={10} /> مقبول
+                                                </span>
+                                            ) : req.status === "REJECTED" ? (
+                                                <span className="inline-flex items-center gap-1 bg-red-50 text-red-600 px-3 py-1 rounded-full text-[10px] font-bold">
+                                                    <XCircle size={10} /> مرفوض
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 bg-orange-50 text-orange-600 px-3 py-1 rounded-full text-[10px] font-bold">
+                                                    <AlertCircle size={10} /> قيد المراجعة
+                                                </span>
+                                            )}
                                         </td>
                                         <td className="py-4 px-4 text-center text-neutral-400">
                                             {new Intl.DateTimeFormat('ar-EG').format(new Date(req.createdAt))}
@@ -135,15 +150,16 @@ export default function UserBillingClient({ plans, gymId, currency, pendingReque
 
                             <div className="flex flex-col gap-2">
                                 <label className="text-sm font-bold text-neutral-700">وسيلة التحويل</label>
-                                <select 
+                                <CustomSelect
                                     value={method}
-                                    onChange={(e) => setMethod(e.target.value)}
-                                    className="w-full h-12 bg-neutral-50 border border-neutral-100 rounded-xl px-4 text-sm font-bold text-neutral-900 focus:outline-none focus:border-brand-500 transition-colors"
-                                >
-                                    <option value="InstaPay">انستا باي (InstaPay)</option>
-                                    <option value="Vodafone Cash">فودافون كاش</option>
-                                    <option value="Bank Transfer">تحويل بنكي</option>
-                                </select>
+                                    onChange={(val) => setMethod(val)}
+                                    options={[
+                                        { label: "انستا باي (InstaPay)", value: "InstaPay" },
+                                        { label: "فودافون كاش", value: "Vodafone Cash" },
+                                        { label: "تحويل بنكي", value: "Bank Transfer" },
+                                    ]}
+                                    icon={<CreditCard size={16} />}
+                                />
                             </div>
 
                             <div className="flex flex-col gap-2">
@@ -175,6 +191,14 @@ export default function UserBillingClient({ plans, gymId, currency, pendingReque
                         </form>
                     </div>
                 </div>
+            )}
+
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
             )}
         </div>
     );

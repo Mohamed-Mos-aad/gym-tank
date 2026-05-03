@@ -49,7 +49,7 @@ model Gym {
   address         String?
   state           String?
   systemLanguage  String   @default("ar")
-  
+  capacity        Int      @default(100) // Max gym capacity for occupancy tracker
   status          GymStatus @default(PENDING) // Added for Admin approval process
 
   startDate       DateTime @default(now())

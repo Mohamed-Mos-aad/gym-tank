@@ -29,6 +29,7 @@ export interface Gym {
     address: string | null;
     state: string | null;
     systemLanguage: string;
+    capacity: number;
 
     startDate: Date;
 
@@ -79,6 +80,7 @@ export interface GymLite {
     address: string | null;
     state: string | null;
     systemLanguage: string;
+    capacity?: number;
     startDate?: Date;
     ownerId: string;
     ownerEmail?: string,

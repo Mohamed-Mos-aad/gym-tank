@@ -19,6 +19,7 @@ export const getDashboardStats = async (userId?: string) => {
             expired: 0,
             presentNow: 0,
             expiringSoon: 0,
+            capacity: 100,
             gymName: "",
             ownerName: "",
             membersExpiringSoon: [],
@@ -39,6 +40,7 @@ export const getDashboardStats = async (userId?: string) => {
             expired: 0,
             presentNow: 0,
             expiringSoon: 0,
+            capacity: 100,
             gymName: "",
             ownerName: "",
             membersExpiringSoon: [],
@@ -112,6 +114,7 @@ export const getDashboardStats = async (userId?: string) => {
         expiringSoon,
         gymName: gymInfo?.name,
         ownerName: gymInfo?.owner?.name,
+        capacity: gymInfo?.capacity || 100,
         membersExpiringSoon: await prisma.member.findMany({
             where: {
                 gymId,

@@ -1,35 +1,49 @@
-// ** Components
-import Button from "@/components/ui/Button";
-import Badge from "@/components/ui/Badge";
+"use client";
 
+import { ShieldCheck, Zap, Calendar } from "lucide-react";
+import Link from "next/link";
 
+interface SubTypeProps {
+    subscription?: any;
+}
 
-export default function SubType() {
+export default function SubType({ subscription }: SubTypeProps) {
+    const isActive = subscription?.status === "ACTIVE";
+    const planName = subscription?.planName || "لا يوجد اشتراك";
+    const endDate = subscription?.endDate 
+        ? new Intl.DateTimeFormat('ar-EG', { dateStyle: 'long' }).format(new Date(subscription.endDate)) 
+        : null;
+
     return (
-        <div className="relative flex flex-col gap-4 rounded-3xl bg-[#4F46E5] p-8 text-right shadow sm:p-8">
-            <h2 className="text-[12px] font-black text-[#C7D2FE]">SUBSCRIPTION STATUS</h2>
-            <h3 className="w-full flex justify-between items-center text-[24px] font-bold text-white">
-                باقة المحترفين (Pro)
-                <Badge className="bg-white/20 text-[10px] text-white">نشط</Badge>
-            </h3>
-            <p className="text-[14px] text-[#E0E7FF]">
-                ينتهي اشتراكك الحالي في 12 نوفمبر 2024. سيتم التجديد
-                تلقائياً.
-            </p>
-            <div className="flex flex-col gap-4 bg-white/10 rounded-2xl p-4">
-                <div className="flex flex-col gap-2">
-                    <h4 className="w-full flex justify-between text-[12px] font-bold text-white">
-                        STORAGE
-                        <span>
-                            75%
-                        </span>
-                    </h4>
-                    <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden relative">
-                        <span className="w-[42%] h-2 bg-white absolute top-0 right-0"></span>
-                    </div>
-                </div>
-                <Button variant="guest" className="w-full">ترقية</Button>
+        <div 
+            className="relative flex flex-col gap-4 rounded-3xl p-8 text-right shadow overflow-hidden"
+            style={{ background: isActive ? "linear-gradient(135deg, #3525CD 0%, #1a0f8c 100%)" : "linear-gradient(135deg, #374151 0%, #1f2937 100%)" }}
+        >
+            <div className="flex items-center gap-2">
+                {isActive ? <ShieldCheck size={16} className="text-white/60" /> : <Zap size={16} className="text-white/60" />}
+                <h2 className="text-[11px] font-black text-white/60 uppercase tracking-wider">حالة اشتراك المنصة</h2>
             </div>
+            
+            <div className="flex justify-between items-center">
+                <h3 className="text-xl font-black text-white">{planName}</h3>
+                <span className={`text-[10px] font-black px-3 py-1 rounded-full ${isActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300'}`}>
+                    {isActive ? "نشط" : "غير نشط"}
+                </span>
+            </div>
+
+            {endDate && (
+                <div className="flex items-center gap-2 text-white/70 text-sm">
+                    <Calendar size={14} />
+                    <p>ينتهي في {endDate}</p>
+                </div>
+            )}
+
+            <Link 
+                href="/user/billing" 
+                className="w-full mt-2 text-center bg-white/15 hover:bg-white/25 text-white py-3 rounded-xl font-black text-sm transition-all"
+            >
+                {isActive ? "إدارة الاشتراك" : "اشترك الآن"}
+            </Link>
         </div>
     )
 }

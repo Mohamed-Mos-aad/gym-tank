@@ -32,6 +32,14 @@ export default function UserNavBar({ onMenuToggle }: UserNavBarProps) {
             setUser(userData);
         };
         fetchData();
+
+        // Poll for new notifications every 30 seconds
+        const interval = setInterval(async () => {
+            const notifs = await getUserNotifications();
+            setNotifications(notifs);
+        }, 30000);
+
+        return () => clearInterval(interval);
     }, []);
 
     const unreadCount = notifications.filter(n => !n.isRead).length;

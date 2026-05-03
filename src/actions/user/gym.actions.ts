@@ -74,7 +74,8 @@ export const updateGymInfoAction = async (data: any) => {
             specialty: data.specialty,
             phone: data.phone,
             email: data.email,
-            address: data.address
+            address: data.address,
+            capacity: data.capacity ? parseInt(data.capacity) : undefined,
         }
     });
 

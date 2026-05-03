@@ -12,6 +12,7 @@ interface HomeProps{
   expired: number;
   presentNow: number;
   expiringSoon: number;
+  capacity: number;
   gymName?: string;
   ownerName?: string;
   membersExpiringSoon?: any[];
@@ -26,6 +27,7 @@ export default function Home({
   expired, 
   presentNow, 
   expiringSoon, 
+  capacity,
   gymName, 
   ownerName, 
   membersExpiringSoon = [], 
@@ -45,7 +47,7 @@ export default function Home({
       </section>
       <section className="grid gap-6 lg:grid-cols-2 lg:gap-8">
         <Sessions data={membersExpiringSoon} />
-        <Tracker presentNow={presentNow} />
+        <Tracker presentNow={presentNow} capacity={capacity} />
       </section>
     </main>
   );
