@@ -4,6 +4,7 @@ import { useState } from "react";
 import { RotateCcwKey, UserRound, Save, CheckCircle, X, ShieldCheck } from "lucide-react";
 import Input from '@/components/ui/Input';
 import { updateUserProfileAction } from "@/actions/user/user.actions";
+import Toast from "@/components/ui/Toast";
 
 interface OwnerInfoProps {
     ownerName?: string;
@@ -23,16 +24,17 @@ export default function OwnerInfo({ ownerName, ownerEmail }: OwnerInfoProps) {
         confirmPassword: ""
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
     const handleProfileUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
         const res = await updateUserProfileAction(formData);
         if (res.success) {
-            alert("تم تحديث الملف الشخصي بنجاح");
+            setToast({ message: "تم تحديث الملف الشخصي بنجاح ✅", type: "success" });
             setIsEditing(false);
         } else {
-            alert(res.error || "حدث خطأ ما");
+            setToast({ message: res.error || "حدث خطأ ما", type: "error" });
         }
         setIsSubmitting(false);
     };
@@ -40,17 +42,17 @@ export default function OwnerInfo({ ownerName, ownerEmail }: OwnerInfoProps) {
     const handlePasswordUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         if (passData.newPassword !== passData.confirmPassword) {
-            alert("كلمات المرور الجديدة غير متطابقة");
+            setToast({ message: "كلمات المرور الجديدة غير متطابقة", type: "error" });
             return;
         }
         setIsSubmitting(true);
         const res = await updateUserProfileAction({ ...formData, ...passData });
         if (res.success) {
-            alert("تم تغيير كلمة المرور بنجاح");
+            setToast({ message: "تم تغيير كلمة المرور بنجاح ✅", type: "success" });
             setIsPassModalOpen(false);
             setPassData({ currentPassword: "", newPassword: "", confirmPassword: "" });
         } else {
-            alert(res.error || "حدث خطأ ما");
+            setToast({ message: res.error || "حدث خطأ ما", type: "error" });
         }
         setIsSubmitting(false);
     };
@@ -68,7 +70,13 @@ export default function OwnerInfo({ ownerName, ownerEmail }: OwnerInfoProps) {
                     </div>
                 </div>
                 {!isEditing ? (
-                    <button onClick={() => setIsEditing(true)} className="text-xs font-black text-brand-500 hover:bg-brand-50 px-4 py-2 rounded-lg transition-colors">تعديل</button>
+                    <button onClick={() => {
+                        setFormData({
+                            name: ownerName || "",
+                            email: ownerEmail || ""
+                        });
+                        setIsEditing(true);
+                    }} className="text-xs font-black text-brand-500 hover:bg-brand-50 px-4 py-2 rounded-lg transition-colors">تعديل</button>
                 ) : (
                     <div className="flex gap-2">
                         <button onClick={handleProfileUpdate} disabled={isSubmitting} className="flex items-center gap-2 bg-brand-500 text-white px-4 py-2 rounded-lg text-xs font-black hover:bg-brand-700 transition-all shadow-md shadow-brand-500/20">
@@ -157,6 +165,14 @@ export default function OwnerInfo({ ownerName, ownerEmail }: OwnerInfoProps) {
                         </form>
                     </div>
                 </div>
+            )}
+
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
             )}
         </div>
     );

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Bell, CheckCircle2, Circle, Trash2, Clock, Filter, CheckCircle, AlertTriangle, Info, Zap } from "lucide-react";
 import { getAdminNotifications, markNotificationAsRead, markAllAdminNotificationsAsRead, sendBroadcastNotification } from "@/actions/notifications.actions";
 import { getAdminUsers } from "@/actions/admin/admin.actions";
+import Toast from "@/components/ui/Toast";
 
 type NotificationData = {
     id: string;
@@ -22,6 +23,7 @@ export default function AdminNotificationsPage() {
     const [users, setUsers] = useState<any[]>([]);
     const [sendData, setSendData] = useState({ title: "", message: "", target: "ALL" });
     const [isSending, setIsSending] = useState(false);
+    const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -55,8 +57,9 @@ export default function AdminNotificationsPage() {
             setSendData({ title: "", message: "", target: "ALL" });
             const data = await getAdminNotifications();
             setNotifications(data);
+            setToast({ message: "تم إرسال الإشعار بنجاح ✅", type: "success" });
         } else {
-            alert("فشل إرسال الإشعار");
+            setToast({ message: "فشل إرسال الإشعار", type: "error" });
         }
         setIsSending(false);
     };
@@ -233,6 +236,14 @@ export default function AdminNotificationsPage() {
                         </form>
                     </div>
                 </div>
+            )}
+
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
             )}
         </div>
     );

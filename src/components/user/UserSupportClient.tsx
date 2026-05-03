@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Send, CheckCircle2 } from "lucide-react";
 import { createSupportInquiryAction } from "@/actions/user/gym.actions";
+import Toast from "@/components/ui/Toast";
 
 export default function UserSupportClient({ defaultUser }: { defaultUser: any }) {
     const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ export default function UserSupportClient({ defaultUser }: { defaultUser: any })
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -22,7 +24,7 @@ export default function UserSupportClient({ defaultUser }: { defaultUser: any })
             setIsSuccess(true);
             setFormData({ ...formData, subject: "", message: "" });
         } catch (error) {
-            alert("حدث خطأ أثناء إرسال الرسالة");
+            setToast({ message: "حدث خطأ أثناء إرسال الرسالة", type: "error" });
         }
         setIsSubmitting(false);
     };
@@ -114,6 +116,14 @@ export default function UserSupportClient({ defaultUser }: { defaultUser: any })
                     )}
                 </button>
             </form>
+
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
+            )}
         </div>
     );
 }

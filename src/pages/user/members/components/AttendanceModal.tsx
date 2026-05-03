@@ -12,6 +12,7 @@ import {
   getMembersListAction,
 } from "../../../../actions/user.actions";
 import { createAttendanceAction } from "@/actions/user/attendance.actions";
+import Toast from "@/components/ui/Toast";
 // ** Interfaces
 import { MemberLite } from "@/types";
 
@@ -22,6 +23,7 @@ export default function AttendanceModal() {
   const [attendanceModalOpen, setAttendanceModalOpen] = useState(false);
   const [membersData, setMembersData] = useState<MemberLite[]>([]);
   const [selectedMemberId, setSelectedMemberId] = useState("");
+  const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
   // ** Handlers
   const getMembersDataAction = async () => {
@@ -33,16 +35,16 @@ export default function AttendanceModal() {
   };
   const submitHandler = async () => {
     if (!selectedMemberId) {
-      alert("اختار عضو الأول ❗");
+      setToast({ message: "اختار عضو الأول ❗", type: "error" });
       return;
     }
 
     try {
       await createAttendanceAction(selectedMemberId);
-      alert("تم تسجيل الحضور ✅");
-      toggleAttendanceModal();
-    } catch (err) {
-      alert(err.message);
+      setToast({ message: "تم تسجيل الحضور ✅", type: "success" });
+      setTimeout(() => toggleAttendanceModal(), 1500);
+    } catch (err: any) {
+      setToast({ message: err.message || "حدث خطأ", type: "error" });
     }
   };
 
@@ -112,6 +114,14 @@ export default function AttendanceModal() {
             </Button>
           </div>
         </Modal>
+      )}
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </>
   );

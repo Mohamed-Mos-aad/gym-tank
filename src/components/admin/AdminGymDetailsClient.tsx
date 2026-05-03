@@ -9,10 +9,12 @@ import {
 } from "lucide-react";
 import { approvePaymentRequest, updateGymStatus } from "@/actions/admin/admin.actions";
 import { useRouter } from "next/navigation";
+import Toast from "@/components/ui/Toast";
 
 export default function AdminGymDetailsClient({ initialGym }: { initialGym: any }) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
     const formatDate = (date: Date) => {
         return new Intl.DateTimeFormat('ar-EG', { dateStyle: 'long' }).format(new Date(date));
@@ -24,10 +26,10 @@ export default function AdminGymDetailsClient({ initialGym }: { initialGym: any 
         setLoading(true);
         const result = await approvePaymentRequest(requestId);
         if (result.success) {
-            alert("تم تفعيل الاشتراك بنجاح!");
+            setToast({ message: "تم تفعيل الاشتراك بنجاح!", type: "success" });
             router.refresh();
         } else {
-            alert("حدث خطأ أثناء التفعيل");
+            setToast({ message: "حدث خطأ أثناء التفعيل", type: "error" });
         }
         setLoading(false);
     };
@@ -245,6 +247,14 @@ export default function AdminGymDetailsClient({ initialGym }: { initialGym: any 
                     </div>
                 </div>
             </div>
+            
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
+            )}
         </div>
     );
 }

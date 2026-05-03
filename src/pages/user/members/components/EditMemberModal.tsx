@@ -7,6 +7,7 @@ import Input from "@/components/ui/Input";
 import CustomSelect from "@/components/ui/Select";
 import { User, Phone, CreditCard } from "lucide-react";
 import { updateMemberAction } from "@/actions/user/user.actions";
+import Toast from "@/components/ui/Toast";
 
 interface EditMemberModalProps {
     member: any;
@@ -27,20 +28,23 @@ function EditMemberModalContent({ member, isOpen, onClose }: EditMemberModalProp
         subscriptionType: member.subscriptionType || "عادي",
     });
     const [loading, setLoading] = useState(false);
+    const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
     const handleUpdate = async () => {
         setLoading(true);
         try {
             await updateMemberAction(member.id, data);
-            onClose();
+            setToast({ message: "تم التحديث بنجاح ✅", type: "success" });
+            setTimeout(() => onClose(), 1500);
         } catch (error) {
-            alert("حدث خطأ أثناء التحديث");
+            setToast({ message: "حدث خطأ أثناء التحديث", type: "error" });
         } finally {
             setLoading(false);
         }
     };
 
     return (
+        <>
         <Modal>
             <div className="flex flex-col gap-6 p-2">
                 <div className="flex flex-col gap-1">
@@ -98,5 +102,13 @@ function EditMemberModalContent({ member, isOpen, onClose }: EditMemberModalProp
                 </div>
             </div>
         </Modal>
+        {toast && (
+            <Toast
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast(null)}
+            />
+        )}
+        </>
     );
 }

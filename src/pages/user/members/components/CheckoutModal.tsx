@@ -11,6 +11,7 @@ import { useState } from "react";
 import { createCheckoutAction } from "@/actions/user/attendance.actions";
 // ** Interfaces
 import { AttendanceWithMember } from "@/types";
+import Toast from "@/components/ui/Toast";
 interface CheckoutModalProps{
     data: AttendanceWithMember[];
 }
@@ -21,6 +22,7 @@ export default function CheckoutModal({data}:CheckoutModalProps) {
     const attendanceData = data?? [];
     const [attendanceModalOpen, setAttendanceModalOpen] = useState(false);
     const [selectedMemberId, setSelectedMemberId] = useState("");
+    const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
     
 
 
@@ -30,16 +32,16 @@ export default function CheckoutModal({data}:CheckoutModalProps) {
     };
     const submitHandler = async () => {
         if (!selectedMemberId) {
-        alert("اختار عضو الأول ❗");
-        return;
+            setToast({ message: "اختار عضو الأول ❗", type: "error" });
+            return;
         }
     
         try {
-        await createCheckoutAction(selectedMemberId);
-        alert("تم تسجيل الانصراف ✅");
-        toggleAttendanceModal();
-        } catch (err) {
-        alert(err.message);
+            await createCheckoutAction(selectedMemberId);
+            setToast({ message: "تم تسجيل الانصراف ✅", type: "success" });
+            setTimeout(() => toggleAttendanceModal(), 1500);
+        } catch (err: any) {
+            setToast({ message: err.message || "حدث خطأ", type: "error" });
         }
     };
     
@@ -104,6 +106,14 @@ export default function CheckoutModal({data}:CheckoutModalProps) {
                 </div>
                 </Modal>
             )}
+
+        {toast && (
+            <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+            />
+        )}
         </>
     );
 }

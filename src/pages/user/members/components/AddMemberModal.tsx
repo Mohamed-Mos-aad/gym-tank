@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 // ** Actions
 import { createMemberAction } from "@/actions/user/user.actions";
+import Toast from "@/components/ui/Toast";
 
 interface AddMemberModalProps {
     memberSubscriptionTypes?: string[];
@@ -30,6 +31,7 @@ export default function AddMemberModal({ memberSubscriptionTypes = ["عادي"] 
     subscriptionType: memberSubscriptionTypes[0] || "عادي",
     months: 1,
   });
+  const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
   // ** Handlers
   const toggleModal = () => {
@@ -39,17 +41,18 @@ export default function AddMemberModal({ memberSubscriptionTypes = ["عادي"] 
 
   const saveMemberHandler = async () => {
     if (!newMember.name || !newMember.phone) {
-        alert("يرجى إدخال الاسم ورقم الهاتف");
+        setToast({ message: "يرجى إدخال الاسم ورقم الهاتف", type: "error" });
         return;
     }
     
     setLoading(true);
     try {
         await createMemberAction(newMember);
+        setToast({ message: "تمت الإضافة بنجاح ✅", type: "success" });
         router.refresh();
-        toggleModal();
+        setTimeout(() => toggleModal(), 1500);
     } catch (error) {
-        alert("حدث خطأ أثناء إضافة العضو");
+        setToast({ message: "حدث خطأ أثناء إضافة العضو", type: "error" });
     } finally {
         setLoading(false);
     }
@@ -138,6 +141,14 @@ export default function AddMemberModal({ memberSubscriptionTypes = ["عادي"] 
             </div>
           </div>
         </Modal>
+      )}
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </>
   );

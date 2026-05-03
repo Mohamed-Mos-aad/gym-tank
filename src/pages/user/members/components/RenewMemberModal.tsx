@@ -6,6 +6,7 @@ import Button from "@/components/ui/Button";
 import CustomSelect from "@/components/ui/Select";
 import { RefreshCw, Calendar } from "lucide-react";
 import { renewMemberAction } from "@/actions/user/user.actions";
+import Toast from "@/components/ui/Toast";
 
 interface RenewMemberModalProps {
     member: any;
@@ -16,14 +17,16 @@ interface RenewMemberModalProps {
 export default function RenewMemberModal({ member, isOpen, onClose }: RenewMemberModalProps) {
     const [months, setMonths] = useState(1);
     const [loading, setLoading] = useState(false);
+    const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
     const handleRenew = async () => {
         setLoading(true);
         try {
             await renewMemberAction(member.id, months);
-            onClose();
+            setToast({ message: "تم التجديد بنجاح ✅", type: "success" });
+            setTimeout(() => onClose(), 1500);
         } catch (error) {
-            alert("حدث خطأ أثناء التجديد");
+            setToast({ message: "حدث خطأ أثناء التجديد", type: "error" });
         } finally {
             setLoading(false);
         }
@@ -32,6 +35,7 @@ export default function RenewMemberModal({ member, isOpen, onClose }: RenewMembe
     if (!isOpen || !member) return null;
 
     return (
+        <>
         <Modal>
             <div className="flex flex-col gap-6 p-2">
                 <div className="flex flex-col gap-1">
@@ -83,5 +87,13 @@ export default function RenewMemberModal({ member, isOpen, onClose }: RenewMembe
                 </div>
             </div>
         </Modal>
+        {toast && (
+            <Toast
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast(null)}
+            />
+        )}
+        </>
     );
 }

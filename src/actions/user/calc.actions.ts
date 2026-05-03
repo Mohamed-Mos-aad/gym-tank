@@ -7,6 +7,8 @@ import { prisma } from "@/lib/prisma";
 
 export const getDashboardStats = async (userId?: string) => {
     const now = new Date();
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
 
     const next7Days = new Date();
     next7Days.setDate(now.getDate() + 7);
@@ -70,6 +72,9 @@ export const getDashboardStats = async (userId?: string) => {
         prisma.attendance.count({
             where: {
                 gymId,
+                checkIn: {
+                    gte: startOfDay,
+                },
                 OR: [
                     { checkOut: null },
                     { checkOut: { isSet: false } }

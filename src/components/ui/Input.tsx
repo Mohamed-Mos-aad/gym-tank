@@ -8,7 +8,7 @@ import Link from 'next/link';
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     id: string;
     label: string;
-    type: "email" | "text" | "password";
+    type: "email" | "text" | "password" | "number";
     forgetPassword?: boolean;
 }
 

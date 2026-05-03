@@ -63,7 +63,18 @@ export default function GymInfo({ name, specialty, phone, email, address, capaci
                     </div>
                 </div>
                 {!isEditing ? (
-                    <button onClick={() => setIsEditing(true)} className="text-xs font-black text-brand-500 hover:bg-brand-50 px-4 py-2 rounded-lg transition-colors">تعديل</button>
+                    <button onClick={() => {
+                        setFormData({
+                            name: name || "",
+                            specialty: specialty || "",
+                            phone: phone || "",
+                            email: email || "",
+                            address: address || "",
+                            capacity: String(capacity || 100),
+                            memberSubscriptionTypes: memberSubscriptionTypes?.join("، ") || "عادي، بريميوم، VIP",
+                        });
+                        setIsEditing(true);
+                    }} className="text-xs font-black text-brand-500 hover:bg-brand-50 px-4 py-2 rounded-lg transition-colors">تعديل</button>
                 ) : (
                     <div className="flex gap-2">
                         <button onClick={handleUpdate} disabled={isSubmitting} className="flex items-center gap-2 bg-brand-500 text-white px-4 py-2 rounded-lg text-xs font-black hover:bg-brand-700 transition-all shadow-md shadow-brand-500/20">
