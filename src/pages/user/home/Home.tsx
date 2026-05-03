@@ -17,6 +17,7 @@ interface HomeProps{
   ownerName?: string;
   membersExpiringSoon?: any[];
   recentLogs: any[];
+  memberSubscriptionTypes?: string[];
 }
 
 
@@ -31,11 +32,12 @@ export default function Home({
   gymName, 
   ownerName, 
   membersExpiringSoon = [], 
-  recentLogs = [] 
+  recentLogs = [],
+  memberSubscriptionTypes
 }:HomeProps) {
   return (
     <main className="flex flex-col gap-6 lg:gap-8">
-      <Welcome ownerName={ownerName} gymName={gymName} expiringSoon={expiringSoon} />
+      <Welcome ownerName={ownerName} gymName={gymName} expiringSoon={expiringSoon} memberSubscriptionTypes={memberSubscriptionTypes} />
       <Cards members={members} active={active} expired={expired} presentNow={presentNow} expiringSoon={expiringSoon} />
       <section className="grid gap-6 xl:grid-cols-3 xl:gap-8">
         <div className="xl:col-span-2">

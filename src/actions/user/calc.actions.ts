@@ -70,8 +70,10 @@ export const getDashboardStats = async (userId?: string) => {
         prisma.attendance.count({
             where: {
                 gymId,
-                checkIn: { gte: new Date(new Date().setHours(0,0,0,0)) },
-                checkOut: null,
+                OR: [
+                    { checkOut: null },
+                    { checkOut: { isSet: false } }
+                ]
             },
         }),
 
@@ -114,7 +116,10 @@ export const getDashboardStats = async (userId?: string) => {
         expiringSoon,
         gymName: gymInfo?.name,
         ownerName: gymInfo?.owner?.name,
+        // @ts-ignore
         capacity: gymInfo?.capacity || 100,
+        // @ts-ignore
+        memberSubscriptionTypes: gymInfo?.memberSubscriptionTypes || ["عادي", "بريميوم", "VIP"],
         membersExpiringSoon: await prisma.member.findMany({
             where: {
                 gymId,

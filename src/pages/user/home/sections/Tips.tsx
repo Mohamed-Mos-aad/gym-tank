@@ -39,7 +39,7 @@ export default function Tips() {
     };
 
     return (
-        <div className="relative flex flex-col justify-between gap-6 rounded-[32px] bg-brand-700 p-8 shadow-xl shadow-brand-500/20 h-full overflow-hidden group">
+        <div className="relative flex flex-col justify-between gap-6 rounded-[32px] bg-brand-700 p-8 shadow-xl shadow-brand-500/20 h-fit overflow-hidden group">
             {/* Background Accent */}
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
                 <Sparkles size={120} className="text-white" />

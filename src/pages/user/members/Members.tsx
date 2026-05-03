@@ -14,11 +14,12 @@ interface MembersProps {
     active: number;
     expired: number;
     presentNow: number;
+    memberSubscriptionTypes?: string[];
 }
 
 
 
-export default function Members({ data, members, active, expired, presentNow }:MembersProps) {
+export default function Members({ data, members, active, expired, presentNow, memberSubscriptionTypes }: MembersProps) {
     const safeData = data ?? {
         data: [],
         total: 0,
@@ -28,7 +29,7 @@ export default function Members({ data, members, active, expired, presentNow }:M
 
     return (
         <main className="flex flex-col gap-6 lg:gap-8">
-            <Title data={safeData.data}/>
+            <Title memberSubscriptionTypes={memberSubscriptionTypes || ["عادي"]} />
             <Cards members={members} active={active} expired={expired} presentNow={presentNow}/>
             <Table data={safeData}/>
         </main>

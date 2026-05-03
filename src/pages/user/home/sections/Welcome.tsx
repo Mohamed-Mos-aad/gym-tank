@@ -1,15 +1,16 @@
 // ** Components
 import Badge from "@/components/ui/Badge";
 // ** Assets
-import AddMemberModal from "../components/AddMemberModal";
+import AddMemberModal from "../../members/components/AddMemberModal";
 
 interface WelcomeProps {
     ownerName?: string;
     gymName?: string;
     expiringSoon?: number;
+    memberSubscriptionTypes?: string[];
 }
 
-export default function Welcome({ ownerName, gymName, expiringSoon }: WelcomeProps) {
+export default function Welcome({ ownerName, gymName, expiringSoon, memberSubscriptionTypes }: WelcomeProps) {
     return (
         <section className="flex flex-col gap-6 rounded-2xl bg-linear-to-br from-brand-500 from-25% to-brand-700 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between lg:gap-4 lg:p-12">
             <div className="flex flex-col gap-2">
@@ -27,7 +28,7 @@ export default function Welcome({ ownerName, gymName, expiringSoon }: WelcomePro
             </div>
             
             <div className="relative z-10">
-                <AddMemberModal />
+                <AddMemberModal memberSubscriptionTypes={memberSubscriptionTypes} />
             </div>
         </section>
     )

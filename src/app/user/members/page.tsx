@@ -16,7 +16,7 @@ export default async function Page() {
 
     // ** Data
     const membersData = await getMembersListAction(userId);
-    const { members, active, expired, presentNow } = await getDashboardStats(userId);
+    const { members, active, expired, presentNow, memberSubscriptionTypes } = await getDashboardStats(userId);
 
 
 
@@ -27,6 +27,7 @@ export default async function Page() {
             active={active}
             expired={expired}
             presentNow={presentNow}
+            memberSubscriptionTypes={memberSubscriptionTypes}
         />
     );
 }

@@ -25,6 +25,7 @@ export default function Setting() {
     state: "",
     systemLanguage: "",
     capacity: 100,
+    memberSubscriptionTypes: ["عادي", "بريميوم", "VIP"],
     ownerEmail: "",
     ownerName: "",
   });
@@ -69,6 +70,7 @@ export default function Setting() {
             email={data.email}
             address={data.address}
             capacity={data.capacity || 100}
+            memberSubscriptionTypes={data.memberSubscriptionTypes || ["عادي", "بريميوم", "VIP"]}
           />
           <LanguageInfo />
         </div>

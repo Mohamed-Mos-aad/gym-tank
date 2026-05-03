@@ -13,7 +13,11 @@ import { useRouter } from "next/navigation";
 // ** Actions
 import { createMemberAction } from "@/actions/user/user.actions";
 
-export default function AddMemberModal() {
+interface AddMemberModalProps {
+    memberSubscriptionTypes?: string[];
+}
+
+export default function AddMemberModal({ memberSubscriptionTypes = ["عادي"] }: AddMemberModalProps) {
   // ** Hooks && Tools
   const router = useRouter();
 
@@ -23,14 +27,14 @@ export default function AddMemberModal() {
   const [newMember, setNewMember] = useState({
     name: "",
     phone: "",
-    subscriptionType: "عادي",
+    subscriptionType: memberSubscriptionTypes[0] || "عادي",
     months: 1,
   });
 
   // ** Handlers
   const toggleModal = () => {
     setIsOpen((prev) => !prev);
-    setNewMember({ name: "", phone: "", subscriptionType: "عادي", months: 1 });
+    setNewMember({ name: "", phone: "", subscriptionType: memberSubscriptionTypes[0] || "عادي", months: 1 });
   };
 
   const saveMemberHandler = async () => {
@@ -95,11 +99,7 @@ export default function AddMemberModal() {
                         label="نوع الاشتراك"
                         value={newMember.subscriptionType}
                         onChange={(val) => setNewMember({ ...newMember, subscriptionType: val })}
-                        options={[
-                            { label: "عادي (Standard)", value: "عادي" },
-                            { label: "بريميوم (Premium)", value: "بريميوم" },
-                            { label: "VIP", value: "VIP" }
-                        ]}
+                        options={memberSubscriptionTypes.map(t => ({ label: t, value: t }))}
                         icon={<CreditCard size={18} />}
                     />
                     <CustomSelect 

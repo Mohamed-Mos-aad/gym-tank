@@ -50,6 +50,7 @@ model Gym {
   state           String?
   systemLanguage  String   @default("ar")
   capacity        Int      @default(100) // Max gym capacity for occupancy tracker
+  memberSubscriptionTypes String[] @default(["عادي", "بريميوم", "VIP"]) // Custom gym plans
   status          GymStatus @default(PENDING) // Added for Admin approval process
 
   startDate       DateTime @default(now())
@@ -144,6 +145,8 @@ model Plan {
   description String?
   features    String[]
   isPopular   Boolean  @default(false)
+  maxMembers  Int?     // If null, it means unlimited members
+  durationDays Int     @default(30) // Duration of the plan in days
   paymentRequests PaymentRequest[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

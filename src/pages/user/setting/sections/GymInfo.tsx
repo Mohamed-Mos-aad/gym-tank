@@ -13,9 +13,10 @@ interface GymInfoProps {
     email: string | null;
     address: string | null;
     capacity: number;
+    memberSubscriptionTypes: string[];
 }
 
-export default function GymInfo({ name, specialty, phone, email, address, capacity }: GymInfoProps) {
+export default function GymInfo({ name, specialty, phone, email, address, capacity, memberSubscriptionTypes }: GymInfoProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         name: name || "",
@@ -24,6 +25,7 @@ export default function GymInfo({ name, specialty, phone, email, address, capaci
         email: email || "",
         address: address || "",
         capacity: String(capacity || 100),
+        memberSubscriptionTypes: memberSubscriptionTypes?.join("، ") || "عادي، بريميوم، VIP",
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
@@ -32,7 +34,11 @@ export default function GymInfo({ name, specialty, phone, email, address, capaci
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const res = await updateGymInfoAction(formData);
+            const typesArray = formData.memberSubscriptionTypes.split("،").map(t => t.trim()).filter(t => t !== "");
+            const res = await updateGymInfoAction({
+                ...formData,
+                memberSubscriptionTypes: typesArray.length > 0 ? typesArray : ["عادي"]
+            });
             if (res.success) {
                 setToast({ message: "تم تحديث معلومات النادي بنجاح ✅", type: "success" });
                 setIsEditing(false);
@@ -128,6 +134,25 @@ export default function GymInfo({ name, specialty, phone, email, address, capaci
                     />
                     <p className="text-[10px] font-bold text-neutral-400 mt-1">
                         يُستخدم هذا الرقم في حساب نسبة إشغال الصالة في الصفحة الرئيسية.
+                    </p>
+                </div>
+
+                {/* Custom Subscriptions Field */}
+                <div className="md:col-span-2 mt-2">
+                    <div className="flex items-center gap-2 mb-3">
+                        <Dumbbell size={16} className="text-brand-500" />
+                        <span className="text-sm font-black text-neutral-700">أنواع الاشتراكات المتاحة</span>
+                    </div>
+                    <Input 
+                        id="gymSubTypes" 
+                        label="اكتب الأنواع وافصل بينها بفاصلة (،)" 
+                        type="text" 
+                        value={isEditing ? formData.memberSubscriptionTypes : memberSubscriptionTypes?.join("، ")}
+                        onChange={(e) => setFormData({ ...formData, memberSubscriptionTypes: e.target.value })}
+                        disabled={!isEditing}
+                    />
+                    <p className="text-[10px] font-bold text-neutral-400 mt-1">
+                        مثال: اشتراك حديد، فتنس، VIP، كلاسات. هذه الأنواع ستظهر لك عند إضافة عضو جديد.
                     </p>
                 </div>
             </form>

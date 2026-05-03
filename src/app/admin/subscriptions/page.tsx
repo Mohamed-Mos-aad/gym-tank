@@ -1,14 +1,16 @@
 import { Wallet, TrendingUp, Users, Clock, Percent, MessageSquare } from "lucide-react";
 import Link from "next/link";
-import { getPlans, getSubscriptionStats } from "@/actions/admin/plans.actions";
+import { getPlans, getSubscriptionStats, getPendingPaymentRequests } from "@/actions/admin/plans.actions";
 import { getGlobalSettings } from "@/actions/admin/settings.actions";
 import AdminPlansClient from "@/components/admin/AdminPlansClient";
+import PendingRequestsClient from "@/components/admin/PendingRequestsClient";
 
 export default async function AdminSubscriptionsPage() {
     const plans = await getPlans();
     const stats = await getSubscriptionStats();
     const settings = await getGlobalSettings();
     const currency = settings?.currency || "SAR";
+    const pendingRequests = await getPendingPaymentRequests();
 
     return (
         <div className="flex flex-col gap-8">
@@ -24,6 +26,8 @@ export default async function AdminSubscriptionsPage() {
                 }))} 
                 currency={currency}
             />
+
+            <PendingRequestsClient requests={pendingRequests} currency={currency} />
 
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

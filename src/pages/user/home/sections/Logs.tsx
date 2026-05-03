@@ -53,9 +53,6 @@ export default function Logs({ data }: { data: any[] }) {
                         </div>
                         <div className="flex items-center gap-4 self-end sm:self-auto">
                             <Badge className="bg-brand-50/50 text-[11px] font-bold text-brand-700 border border-brand-100 px-3">{log.badge}</Badge>
-                            <button className="p-2 hover:bg-neutral-200/50 rounded-xl transition-colors text-neutral-300 hover:text-neutral-600">
-                                <EllipsisVertical size={20} />
-                            </button>
                         </div>
                     </li>
                 )) : (

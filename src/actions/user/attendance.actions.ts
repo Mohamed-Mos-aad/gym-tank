@@ -129,7 +129,8 @@ export const createAttendanceAction = async (memberId: string) => {
         gymId,
         },
     });
-    revalidatePath("/members");
+    revalidatePath("/user/members");
+    revalidatePath("/user");
     return attendance;
 };
 
@@ -181,7 +182,8 @@ export const createCheckoutAction = async (memberId: string) => {
         },
     });
 
-    revalidatePath("/members");
+    revalidatePath("/user/members");
+    revalidatePath("/user");
 
     return updatedAttendance;
 };

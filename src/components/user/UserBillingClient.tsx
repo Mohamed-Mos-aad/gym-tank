@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Check, Zap, CreditCard, Clock, X, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
-import { createPaymentRequestAction } from "@/actions/user/gym.actions";
+import { createPaymentRequestAction, activateFreeTrialAction } from "@/actions/user/gym.actions";
 import Toast from "@/components/ui/Toast";
 import CustomSelect from "@/components/ui/Select";
 
@@ -36,6 +36,22 @@ export default function UserBillingClient({ plans, gymId, currency, pendingReque
         }
         setIsSubmitting(false);
     };
+    const handlePlanSelect = async (plan: Plan) => {
+        if (plan.price === 0) {
+            setIsSubmitting(true);
+            try {
+                await activateFreeTrialAction(plan.id);
+                setToast({ message: "تم تفعيل الباقة المجانية بنجاح ✅", type: "success" });
+                setTimeout(() => window.location.reload(), 2000);
+            } catch (error) {
+                setToast({ message: "حدث خطأ أثناء التفعيل", type: "error" });
+                setIsSubmitting(false);
+            }
+        } else {
+            setSelectedPlan(plan);
+            setIsModalOpen(true);
+        }
+    };
 
     return (
         <div className="flex flex-col gap-8">
@@ -66,10 +82,11 @@ export default function UserBillingClient({ plans, gymId, currency, pendingReque
                         </div>
 
                         <button 
-                            onClick={() => { setSelectedPlan(plan); setIsModalOpen(true); }}
+                            onClick={() => handlePlanSelect(plan)}
+                            disabled={isSubmitting && plan.price === 0}
                             className={`w-full py-4 rounded-2xl font-black transition-all ${plan.isPopular ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/20 hover:bg-brand-700' : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'}`}
                         >
-                            اطلب التفعيل الآن
+                            {plan.price === 0 ? "ابدأ التجربة المجانية" : "اطلب التفعيل الآن"}
                         </button>
                     </div>
                 ))}
@@ -137,17 +154,6 @@ export default function UserBillingClient({ plans, gymId, currency, pendingReque
                         </div>
                         
                         <form onSubmit={handleRequest} className="p-8 flex flex-col gap-6">
-                            <div className="bg-brand-50 p-6 rounded-2xl border border-brand-100">
-                                <div className="flex items-center gap-3 text-brand-700 font-bold mb-2">
-                                    <CreditCard size={18} />
-                                    <span>بيانات التحويل المتاحة</span>
-                                </div>
-                                <p className="text-xs text-brand-600 leading-relaxed">
-                                    يمكنك التحويل عبر **InstaPay** على العنوان: `gymtank@instapay` 
-                                    أو عبر **Vodafone Cash** على الرقم: `01012345678`.
-                                </p>
-                            </div>
-
                             <div className="flex flex-col gap-2">
                                 <label className="text-sm font-bold text-neutral-700">وسيلة التحويل</label>
                                 <CustomSelect
@@ -160,6 +166,39 @@ export default function UserBillingClient({ plans, gymId, currency, pendingReque
                                     ]}
                                     icon={<CreditCard size={16} />}
                                 />
+                            </div>
+
+                            <div className="bg-brand-50 p-6 rounded-2xl border border-brand-100 animate-in fade-in duration-300">
+                                <div className="flex items-center gap-3 text-brand-700 font-bold mb-3">
+                                    <CreditCard size={18} />
+                                    <span>بيانات التحويل الخاصة بـ ({method})</span>
+                                </div>
+                                <div className="text-[13px] text-brand-700 leading-relaxed flex flex-col gap-3">
+                                    {method === "Vodafone Cash" && (
+                                        <div className="flex flex-col gap-1">
+                                            <p><strong>📱 فودافون كاش:</strong> <span className="font-sans font-medium bg-brand-100 px-2 py-0.5 rounded">0106918744</span></p>
+                                        </div>
+                                    )}
+                                    
+                                    {method === "InstaPay" && (
+                                        <div className="flex flex-col gap-1">
+                                            <p><strong>⚡ انستا باي (InstaPay):</strong> <span className="font-sans font-medium bg-brand-100 px-2 py-0.5 rounded">mohamed_mos_aad@instapay</span></p>
+                                            <p className="text-xs mt-1">أو عبر الرابط المباشر: <br/><a href="https://ipn.eg/S/mohamed_mos_aad/instapay/9Jmh6O" target="_blank" className="underline text-brand-600 font-sans break-all">https://ipn.eg/S/mohamed_mos_aad/instapay/9Jmh6O</a></p>
+                                        </div>
+                                    )}
+
+                                    {method === "Bank Transfer" && (
+                                        <div className="bg-white/60 p-3 rounded-xl border border-brand-200/50 mt-1">
+                                            <p className="font-bold mb-2">🏦 التحويل البنكي (حساب توفير):</p>
+                                            <ul className="space-y-1 text-xs">
+                                                <li><span className="text-brand-500 font-bold w-20 inline-block">اسم العميل:</span> محمد احمد محمد محمود محمد</li>
+                                                <li><span className="text-brand-500 font-bold w-20 inline-block">رقم الحساب:</span> <span className="font-sans">4625001490501301018</span></li>
+                                                <li><span className="text-brand-500 font-bold w-20 inline-block">رقم الفرع:</span> <span className="font-sans">462</span> (ميت سلسيل)</li>
+                                                <li><span className="text-brand-500 font-bold w-20 inline-block">IBAN:</span> <span className="font-sans">EG600003046250014905013010180</span></li>
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="flex flex-col gap-2">

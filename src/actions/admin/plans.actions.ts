@@ -132,3 +132,66 @@ export async function getSubscriptionStats() {
         return { estimatedRevenue: 0, totalSubscribers: 0, growth: 0 };
     }
 }
+
+// ─── Payment Requests ────────────────────────────────────────────────────────
+
+export async function getPendingPaymentRequests() {
+    try {
+        const requests = await prisma.paymentRequest.findMany({
+            where: { status: "PENDING" },
+            include: {
+                gym: { select: { name: true, owner: { select: { name: true } } } },
+                plan: { select: { name: true, durationDays: true } }
+            },
+            orderBy: { createdAt: "desc" }
+        });
+        return requests;
+    } catch (error) {
+        console.error("Error fetching payment requests", error);
+        return [];
+    }
+}
+
+export async function updatePaymentRequestStatus(requestId: string, status: "APPROVED" | "REJECTED") {
+    try {
+        const req = await prisma.paymentRequest.findUnique({
+            where: { id: requestId },
+            include: { plan: true }
+        });
+
+        if (!req) return { success: false, error: "Request not found" };
+
+        await prisma.paymentRequest.update({
+            where: { id: requestId },
+            data: { status }
+        });
+
+        if (status === "APPROVED") {
+            const now = new Date();
+            const endDate = new Date();
+            endDate.setDate(now.getDate() + (req.plan.durationDays || 30));
+
+            // Mark existing active subscriptions for this gym as expired
+            await prisma.gymSubscription.updateMany({
+                where: { gymId: req.gymId, status: "ACTIVE" },
+                data: { status: "EXPIRED" }
+            });
+
+            await prisma.gymSubscription.create({
+                data: {
+                    gymId: req.gymId,
+                    planName: req.plan.name,
+                    status: "ACTIVE",
+                    startDate: now,
+                    endDate: endDate
+                }
+            });
+        }
+
+        revalidatePath("/admin/subscriptions");
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating payment request", error);
+        return { success: false, error: "حدث خطأ غير متوقع" };
+    }
+}

@@ -5,16 +5,17 @@ import AddMemberModal from "../components/AddMemberModal";
 // ** Interfaces
 import { AttendanceWithMember } from "@/types";
 interface TitleProps{
-    data: AttendanceWithMember[];
+    data?: AttendanceWithMember[];
+    memberSubscriptionTypes: string[];
 }
 
 
-export default function Title({data}:TitleProps) {
+export default function Title({data, memberSubscriptionTypes}:TitleProps) {
     return (
         <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h1 className="text-[32px] font-black text-neutral-900 sm:text-[40px]">الأعضاء</h1>
             <div className="flex gap-4">
-                <AddMemberModal />
+                <AddMemberModal memberSubscriptionTypes={memberSubscriptionTypes} />
             </div>
         </section>
     )

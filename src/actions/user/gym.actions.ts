@@ -47,6 +47,39 @@ export const createPaymentRequestAction = async (planId: string, method: string,
     return { success: true };
 };
 
+export const activateFreeTrialAction = async (planId: string) => {
+    const userId = (await cookies()).get("gym_tank_token")?.value;
+    if (!userId) throw new Error("Unauthorized");
+
+    const gym = await prisma.gym.findFirst({ where: { ownerId: userId } });
+    if (!gym) throw new Error("Gym not found");
+
+    const plan = await prisma.plan.findUnique({ where: { id: planId } });
+    if (!plan || plan.price !== 0) throw new Error("Invalid free plan");
+
+    const existingSub = await prisma.gymSubscription.findFirst({
+        where: { gymId: gym.id, status: "ACTIVE" }
+    });
+    if (existingSub) throw new Error("Gym already has an active subscription");
+
+    const now = new Date();
+    const endDate = new Date();
+    // @ts-ignore
+    endDate.setDate(now.getDate() + (plan.durationDays || 14));
+
+    await prisma.gymSubscription.create({
+        data: {
+            gymId: gym.id,
+            planName: plan.name,
+            status: "ACTIVE",
+            startDate: now,
+            endDate: endDate
+        }
+    });
+
+    return { success: true };
+};
+
 export const getUserLogsAction = async () => {
     const userId = (await cookies()).get("gym_tank_token")?.value;
     if (!userId) throw new Error("Unauthorized");
@@ -75,7 +108,10 @@ export const updateGymInfoAction = async (data: any) => {
             phone: data.phone,
             email: data.email,
             address: data.address,
+            // @ts-ignore
             capacity: data.capacity ? parseInt(data.capacity) : undefined,
+            // @ts-ignore
+            memberSubscriptionTypes: data.memberSubscriptionTypes ? data.memberSubscriptionTypes : undefined,
         }
     });
 

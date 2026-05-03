@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 // ** Pages
 import Home from "@/pages/user/home/Home";
 // ** Hooks && Tools
@@ -14,9 +16,9 @@ export default async function page() {
 
 
     // ** Data
-    const { members, active, expired, presentNow, expiringSoon, capacity, gymName, ownerName, membersExpiringSoon, recentLogs } = await getDashboardStats(userId);
+    const { members, active, expired, presentNow, expiringSoon, capacity, gymName, ownerName, membersExpiringSoon, recentLogs, memberSubscriptionTypes } = await getDashboardStats(userId);
 
 
 
-    return <Home members={members} active={active} expired={expired} presentNow={presentNow} expiringSoon={expiringSoon} capacity={capacity} gymName={gymName} ownerName={ownerName} membersExpiringSoon={membersExpiringSoon} recentLogs={recentLogs} />
+    return <Home members={members} active={active} expired={expired} presentNow={presentNow} expiringSoon={expiringSoon} capacity={capacity} gymName={gymName} ownerName={ownerName} membersExpiringSoon={membersExpiringSoon} recentLogs={recentLogs} memberSubscriptionTypes={memberSubscriptionTypes} />
 }
