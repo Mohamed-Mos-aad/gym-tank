@@ -17,33 +17,27 @@ export default function Features() {
                         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-500/10">
                             <UsersRound className="text-brand-500"/>
                         </div>
-                        <h2 className="text-[24px] font-bold text-neutral-900">إدارة الأعضاء</h2>
+                        <h2 className="text-[24px] font-bold text-neutral-900">إدارة المشتركين الذكية</h2>
                         <p className="text-[16px] text-neutral-700">
-                            سجل بيانات المشتركين، صورهم، وتاريخهم
-                            الطبي والرياضي في ملفات رقمية منظمة وسهلة
-                            الوصول.
+                            إضافة أعضاء جدد، تتبع الاشتراكات النشطة والمنتهية، تخصيص أنواع الاشتراكات، مع دعم كامل للبحث برقم الهاتف والاسم لسهولة الوصول.
                         </p>
                     </div>
                     <div className="flex flex-col gap-3 rounded-3xl bg-white p-8 text-right">
                         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-info-600/10">
-                            <Banknote className="text-info-600"/>
+                            <ChartNoAxesCombined className="text-info-600"/>
                         </div>
-                        <h2 className="text-[24px] font-bold text-neutral-900">إدارة الأعضاء</h2>
+                        <h2 className="text-[24px] font-bold text-neutral-900">لوحة قيادة لحظية</h2>
                         <p className="text-[16px] text-neutral-700">
-                            سجل بيانات المشتركين، صورهم، وتاريخهم
-                            الطبي والرياضي في ملفات رقمية منظمة وسهلة
-                            الوصول.
+                            تابع أداء الجيم لحظة بلحظة. راقب المتواجدين الآن، معدلات الإشغال مقارنة بالسعة القصوى، وحركة الدخول والخروج بدقة متناهية.
                         </p>
                     </div>
                     <div className="flex flex-col gap-3 rounded-3xl bg-white p-8 text-right sm:col-span-2 xl:col-span-1">
                         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-warn-700/10">
-                            <ChartNoAxesCombined className="text-warn-700"/>
+                            <Banknote className="text-warn-700"/>
                         </div>
-                        <h2 className="text-[24px] font-bold text-neutral-900">إدارة الأعضاء</h2>
+                        <h2 className="text-[24px] font-bold text-neutral-900">تنبيهات وفواتير مبسطة</h2>
                         <p className="text-[16px] text-neutral-700">
-                            سجل بيانات المشتركين، صورهم، وتاريخهم
-                            الطبي والرياضي في ملفات رقمية منظمة وسهلة
-                            الوصول.
+                            احصل على تنبيهات فورية بالاشتراكات التي أوشكت على الانتهاء. ادفع اشتراكات المنصة وراجع سجل الفواتير والمبالغ المدفوعة بشفافية تامة.
                         </p>
                     </div>
                 </div>

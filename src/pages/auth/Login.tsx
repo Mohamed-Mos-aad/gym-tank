@@ -22,6 +22,7 @@ export default function Login() {
     email: "",
     password: "",
   });
+  const [errorMsg, setErrorMsg] = useState("");
 
   // ** Handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,8 +44,9 @@ export default function Login() {
       } else {
         router.push("/user");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login Error:", error);
+      setErrorMsg(error.message || "البريد الإلكتروني أو كلمة المرور غير صحيحة");
     } finally {
       setIsLoading(false);
     }
@@ -76,6 +78,12 @@ export default function Login() {
           onSubmit={loginHandler}
           className="mt-4 flex flex-col gap-5 sm:gap-6"
         >
+          {errorMsg && (
+            <div className="bg-red-50 text-red-600 text-sm font-bold p-4 rounded-xl border border-red-100 animate-in fade-in">
+              {errorMsg}
+            </div>
+          )}
+
           <Input
             id="email"
             name="email" // مهم جداً للـ handleChange

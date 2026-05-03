@@ -33,7 +33,11 @@ export default function HeroSection() {
                 </div>
                 <div className='flex justify-center'>
                     <div className='w-[95%] border-8 border-white rounded-3xl drop-shadow-lg rotate-2 overflow-hidden'>
-                        <Image src={gymTankDashboardPreview} alt='GymTank Dashboard Preview' className='scale-150'/>
+                        <img 
+                            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1470&auto=format&fit=crop" 
+                            alt='GymTank Dashboard Preview' 
+                            className='w-full h-full object-cover'
+                        />
                     </div>
                 </div>
             </div>

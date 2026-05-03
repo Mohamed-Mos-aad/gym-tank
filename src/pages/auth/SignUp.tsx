@@ -21,6 +21,8 @@ export default function SignUp() {
     password: "",
     confirmPassword: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   // ** Handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,11 +35,22 @@ export default function SignUp() {
 
   const createUserHandler = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMsg("");
+    
+    if (formData.password !== formData.confirmPassword) {
+      setErrorMsg("كلمات المرور غير متطابقة!");
+      return;
+    }
+
+    setIsLoading(true);
     try {
       await createUserAction(formData);
       router.push("/login");
-    } catch (error) {
+    } catch (error: any) {
       console.error("حدث خطأ أثناء التسجيل:", error);
+      setErrorMsg(error.message || "حدث خطأ أثناء التسجيل، حاول مرة أخرى.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -80,6 +93,12 @@ export default function SignUp() {
           onSubmit={createUserHandler}
           className="mt-4 flex flex-col gap-5 sm:gap-6"
         >
+          {errorMsg && (
+            <div className="bg-red-50 text-red-600 text-sm font-bold p-4 rounded-xl border border-red-100 animate-in fade-in">
+              {errorMsg}
+            </div>
+          )}
+
           <div className="grid grid-cols-2 gap-5">
             <Input
               id="gymName"
@@ -147,8 +166,8 @@ export default function SignUp() {
             </label>
           </div>
 
-          <Button type="submit" variant="primary" className="mt-2 w-full py-4">
-            إنشاء حساب
+          <Button type="submit" variant="primary" className="mt-2 w-full py-4" disabled={isLoading}>
+            {isLoading ? "جاري الإنشاء..." : "إنشاء حساب"}
           </Button>
         </form>
 
