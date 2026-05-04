@@ -28,7 +28,7 @@ export default function MemberActions({ member, onEdit, onRenew, onDelete }: Mem
         <div className="relative" ref={menuRef}>
             <button 
                 onClick={() => setIsOpen(!isOpen)}
-                className={`p-2 rounded-lg transition-all ${isOpen ? 'bg-neutral-100 text-neutral-900' : 'hover:bg-neutral-50 text-neutral-400 hover:text-neutral-600'}`}
+                className={`cursor-pointer p-2 rounded-lg transition-all ${isOpen ? 'bg-neutral-100 text-neutral-900' : 'hover:bg-neutral-50 text-neutral-400 hover:text-neutral-600'}`}
             >
                 <MoreVertical size={18} />
             </button>
@@ -39,7 +39,7 @@ export default function MemberActions({ member, onEdit, onRenew, onDelete }: Mem
                         <li>
                             <button 
                                 onClick={() => { onEdit(member); setIsOpen(false); }}
-                                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-neutral-700 hover:bg-neutral-50 transition-colors"
+                                className="cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-neutral-700 hover:bg-neutral-50 transition-colors"
                             >
                                 <Edit2 size={16} className="text-blue-500" />
                                 تعديل البيانات
@@ -48,7 +48,7 @@ export default function MemberActions({ member, onEdit, onRenew, onDelete }: Mem
                         <li>
                             <button 
                                 onClick={() => { onRenew(member); setIsOpen(false); }}
-                                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-neutral-700 hover:bg-neutral-50 transition-colors"
+                                className="cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-neutral-700 hover:bg-neutral-50 transition-colors"
                             >
                                 <RefreshCw size={16} className="text-emerald-500" />
                                 تجديد الاشتراك
@@ -57,7 +57,7 @@ export default function MemberActions({ member, onEdit, onRenew, onDelete }: Mem
                         <li className="border-t border-neutral-50 mt-1 pt-1">
                             <button 
                                 onClick={() => { onDelete(member); setIsOpen(false); }}
-                                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
+                                className="cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors"
                             >
                                 <Trash2 size={16} />
                                 حذف العضو

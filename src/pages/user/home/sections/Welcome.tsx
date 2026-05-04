@@ -12,8 +12,12 @@ interface WelcomeProps {
 
 export default function Welcome({ ownerName, gymName, expiringSoon, memberSubscriptionTypes }: WelcomeProps) {
     return (
-        <section className="flex flex-col gap-6 rounded-2xl bg-linear-to-br from-brand-500 from-25% to-brand-700 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between lg:gap-4 lg:p-12">
-            <div className="flex flex-col gap-2">
+        <section className="relative overflow-hidden flex flex-col gap-6 rounded-[32px] bg-[#0f172a] p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between lg:gap-4 lg:p-12 shadow-xl shadow-brand-900/10 border border-white/5">
+            {/* Decorative background elements */}
+            <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-brand-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+            <div className="absolute bottom-0 left-0 w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3"></div>
+
+            <div className="relative z-10 flex flex-col gap-2">
                 <div className="flex items-center gap-3">
                     <Badge className="bg-white/20 text-[10px] font-bold text-white">نظرة عامة</Badge>
                     {gymName && <span className="text-white/60 text-xs font-bold border-r border-white/20 pr-3">{gymName}</span>}

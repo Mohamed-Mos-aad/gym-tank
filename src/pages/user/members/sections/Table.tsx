@@ -198,7 +198,7 @@ export default function Table({ data }: TableProps) {
                                                         onClick={() => handleCheckIn(member.id)}
                                                         disabled={isProcessing === member.id || member.subscriptionStatus === "EXPIRED"}
                                                         title="تسجيل دخول"
-                                                        className="p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-all disabled:opacity-30"
+                                                        className="cursor-pointer p-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition-all disabled:opacity-30"
                                                     >
                                                         <LogIn size={18} />
                                                     </button>
@@ -208,7 +208,7 @@ export default function Table({ data }: TableProps) {
                                                         onClick={() => handleCheckOut(member.id)}
                                                         disabled={isProcessing === member.id}
                                                         title="تسجيل انصراف"
-                                                        className="p-2 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-all disabled:opacity-30"
+                                                        className="cursor-pointer p-2 bg-orange-50 text-orange-600 rounded-lg hover:bg-orange-100 transition-all disabled:opacity-30"
                                                     >
                                                         <LogOut size={18} />
                                                     </button>

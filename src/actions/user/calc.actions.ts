@@ -93,9 +93,14 @@ export const getDashboardStats = async (userId?: string) => {
         }),
 
         prisma.attendance.findMany({
-            where: { gymId },
+            where: { 
+                gymId,
+                checkIn: {
+                    gte: startOfDay,
+                }
+            },
             take: 5,
-            orderBy: { createdAt: 'desc' },
+            orderBy: { checkIn: 'desc' },
             include: {
                 member: {
                     select: { name: true, subscriptionType: true }
@@ -141,7 +146,7 @@ export const getDashboardStats = async (userId?: string) => {
             id: log.id,
             memberName: log.member.name,
             type: log.checkOut ? 'انصراف' : 'دخول',
-            time: log.createdAt,
+            time: log.checkOut || log.checkIn,
             badge: log.member.subscriptionType || 'عضو'
         }))
     };
