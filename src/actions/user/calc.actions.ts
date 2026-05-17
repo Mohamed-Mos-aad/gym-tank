@@ -50,6 +50,18 @@ export const getDashboardStats = async (userId?: string) => {
         };
     }
 
+    // Automate member subscription expiration: update any expired member status to EXPIRED
+    await prisma.member.updateMany({
+        where: {
+            gymId,
+            subscriptionStatus: "ACTIVE",
+            endDate: { lt: now }
+        },
+        data: {
+            subscriptionStatus: "EXPIRED"
+        }
+    });
+
     const [members, active, expired, presentNow, expiringSoon, recentLogs, gymInfo] = await Promise.all([
         prisma.member.count({
             where: { gymId },

@@ -233,6 +233,12 @@ export const quickCheckInAction = async (identifier: string, mode: "CHECKIN" | "
 
         // 1. Validation for expired subscriptions
         if (member.subscriptionStatus !== "ACTIVE" || (member.endDate && member.endDate < now)) {
+            if (member.subscriptionStatus === "ACTIVE") {
+                await prisma.member.update({
+                    where: { id: member.id },
+                    data: { subscriptionStatus: "EXPIRED" }
+                });
+            }
             return {
                 success: false,
                 code: "EXPIRED",
@@ -287,10 +293,25 @@ export const quickCheckInAction = async (identifier: string, mode: "CHECKIN" | "
             revalidatePath("/user/members");
             revalidatePath("/user");
 
+            let warningCode = "SUCCESS_CHECKIN";
+            let warningMessage = "تم تسجيل الحضور بنجاح ✅";
+            if (member.endDate) {
+                const diffTime = member.endDate.getTime() - now.getTime();
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 1) {
+                    warningCode = "EXPIRING_TOMORROW";
+                    warningMessage = `تم تسجيل الحضور. تنبيه هام جداً: ينتهي اشتراك العضو غداً! 🚨`;
+                } else if (diffDays > 1 && diffDays <= 7) {
+                    warningCode = "EXPIRING_SOON";
+                    warningMessage = `تم تسجيل الحضور. تنبيه: ينتهي اشتراك العضو بعد ${diffDays} أيام ⚠️`;
+                }
+            }
+
             return {
                 success: true,
-                code: "SUCCESS_CHECKIN",
-                message: "تم تسجيل الحضور بنجاح ✅",
+                code: warningCode,
+                message: warningMessage,
                 member: {
                     id: member.id,
                     name: member.name,

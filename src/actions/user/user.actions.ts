@@ -28,6 +28,20 @@ export const getMembersListAction = async (userId?: string) => {
 
     if (!gym) throw new Error("Gym not found");
 
+    const now = new Date();
+    
+    // Automate member subscription expiration: update any expired member status to EXPIRED
+    await prisma.member.updateMany({
+        where: {
+            gymId: gym.id,
+            subscriptionStatus: "ACTIVE",
+            endDate: { lt: now }
+        },
+        data: {
+            subscriptionStatus: "EXPIRED"
+        }
+    });
+
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
 

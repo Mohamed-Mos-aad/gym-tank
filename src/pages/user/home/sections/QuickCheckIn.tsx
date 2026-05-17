@@ -102,15 +102,19 @@ export default function QuickCheckIn() {
           success: true,
           code: response.code || "SUCCESS",
           message: response.message,
-          member: response.member,
+          member: response.member as any,
         });
-        playFeedbackSound("success");
+        if (response.code === "EXPIRING_SOON" || response.code === "EXPIRING_TOMORROW") {
+          playFeedbackSound("warning");
+        } else {
+          playFeedbackSound("success");
+        }
       } else {
         setResult({
           success: false,
           code: response.code || "ERROR",
           message: response.message,
-          member: response.member,
+          member: response.member as any,
         });
         if (response.code === "ALREADY_CHECKED_IN" || response.code === "ALREADY_CHECKED_OUT") {
           playFeedbackSound("warning");
@@ -247,6 +251,8 @@ export default function QuickCheckIn() {
             result.success
               ? result.code === "SUCCESS_CHECKOUT"
                 ? "bg-indigo-50/70 border-indigo-200 text-indigo-900"
+                : result.code === "EXPIRING_SOON" || result.code === "EXPIRING_TOMORROW"
+                ? "bg-amber-50/70 border-amber-200 text-amber-900 font-extrabold"
                 : "bg-emerald-50/70 border-emerald-200 text-emerald-900"
               : result.code === "ALREADY_CHECKED_IN" || result.code === "ALREADY_CHECKED_OUT"
               ? "bg-amber-50/70 border-amber-200 text-amber-900"
@@ -256,11 +262,15 @@ export default function QuickCheckIn() {
           <div className="flex items-start gap-4">
             <div className="mt-1">
               {result.success ? (
-                <CheckCircle2
-                  className={result.code === "SUCCESS_CHECKOUT" ? "text-indigo-600" : "text-emerald-600"}
-                  size={26}
-                  strokeWidth={2.5}
-                />
+                result.code === "EXPIRING_SOON" || result.code === "EXPIRING_TOMORROW" ? (
+                  <AlertTriangle className="text-amber-600 animate-bounce" size={26} strokeWidth={2.5} />
+                ) : (
+                  <CheckCircle2
+                    className={result.code === "SUCCESS_CHECKOUT" ? "text-indigo-600" : "text-emerald-600"}
+                    size={26}
+                    strokeWidth={2.5}
+                  />
+                )
               ) : result.code === "ALREADY_CHECKED_IN" || result.code === "ALREADY_CHECKED_OUT" ? (
                 <AlertTriangle className="text-amber-600" size={26} strokeWidth={2.5} />
               ) : (

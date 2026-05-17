@@ -86,12 +86,27 @@ export default function Table({ data }: TableProps) {
         return new Intl.DateTimeFormat('ar-EG', { dateStyle: 'medium' }).format(new Date(date));
     };
 
-    const getStatusBadge = (status: string) => {
+    const getStatusBadge = (member: any) => {
+        const status = member.subscriptionStatus || "ACTIVE";
+        
+        if (status === "ACTIVE" && member.endDate) {
+            const now = new Date();
+            const endDate = new Date(member.endDate);
+            const diffTime = endDate.getTime() - now.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 1) {
+                return <Badge className="bg-amber-100 text-amber-800 border border-amber-200 font-extrabold animate-pulse">ينتهي غداً 🚨</Badge>;
+            } else if (diffDays > 1 && diffDays <= 7) {
+                return <Badge className="bg-amber-50 text-amber-600 border border-amber-100 font-bold">ينتهي قريباً ({diffDays} أيام) ⚠️</Badge>;
+            }
+        }
+
         switch (status) {
             case "ACTIVE":
                 return <Badge className="bg-emerald-50 text-emerald-600 border border-emerald-100">نشط</Badge>;
             case "EXPIRED":
-                return <Badge className="bg-red-50 text-red-600 border border-red-100">منتهي</Badge>;
+                return <Badge className="bg-red-50 text-red-600 border border-red-100">منتهي ❌</Badge>;
             case "PENDING":
                 return <Badge className="bg-orange-50 text-orange-600 border border-orange-100">معلق</Badge>;
             default:
@@ -188,7 +203,7 @@ export default function Table({ data }: TableProps) {
                                             </div>
                                         </td>
                                         <td className="py-5 px-6 text-center">
-                                            {getStatusBadge(member.subscriptionStatus || "ACTIVE")}
+                                            {getStatusBadge(member)}
                                         </td>
                                         <td className="py-5 px-6 text-center">
                                             <div className="flex justify-center items-center gap-2">
