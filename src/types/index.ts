@@ -81,8 +81,10 @@ export interface GymLite {
     address: string | null;
     state: string | null;
     systemLanguage: string;
+    currency?: string;
     capacity?: number;
     memberSubscriptionTypes?: string[];
+    memberSubscriptionPrices?: string | null;
     startDate?: Date;
     ownerId: string;
     ownerEmail?: string,

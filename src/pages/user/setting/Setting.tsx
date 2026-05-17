@@ -6,57 +6,32 @@ import LanguageInfo from "./sections/LanguageInfo";
 import OwnerInfo from "./sections/OwnerInfo";
 import SubType from "./sections/SubType";
 import Support from "./sections/Support";
-// ** ACtions
-import { getGymAction } from "@/actions/user/gym.actions";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { GymLite } from "@/types";
-import { getUserAction } from "@/actions/user/user.actions";
 
-export default function Setting() {
-  // ** States
-  const [data, setData] = useState<GymLite>({
-    name: "",
-    specialty: "",
-    phone: "",
-    email: "",
-    address: "",
-    id: "",
-    ownerId: "",
-    state: "",
-    systemLanguage: "",
-    capacity: 100,
-    memberSubscriptionTypes: ["عادي", "بريميوم", "VIP"],
-    ownerEmail: "",
-    ownerName: "",
+interface SettingProps {
+  initialData: GymLite;
+  initialSubscription: any;
+}
+
+export default function Setting({ initialData, initialSubscription }: SettingProps) {
+  const [data] = useState<GymLite>({
+    name: initialData?.name || "",
+    specialty: initialData?.specialty || "",
+    phone: initialData?.phone || "",
+    email: initialData?.email || "",
+    address: initialData?.address || "",
+    id: initialData?.id || "",
+    ownerId: initialData?.ownerId || "",
+    state: initialData?.state || "",
+    systemLanguage: initialData?.systemLanguage || "",
+    currency: initialData?.currency || "ر.س",
+    capacity: initialData?.capacity || 100,
+    memberSubscriptionTypes: initialData?.memberSubscriptionTypes || ["عادي", "بريميوم", "VIP"],
+    memberSubscriptionPrices: initialData?.memberSubscriptionPrices || "{}",
+    ownerEmail: initialData?.ownerEmail || "",
+    ownerName: initialData?.ownerName || "",
   });
-  const [subscription, setSubscription] = useState<any>(null);
-
-  // ** Handlers
-  const getDataHandler = async () => {
-    try {
-      const gymRes = await getGymAction();
-      const userRes = await getUserAction(gymRes.ownerId);
-      setData({
-        ...gymRes,
-        ownerName: userRes.name,
-        ownerEmail: userRes.email,
-      });
-      // Find active subscription
-      const activeSub = gymRes.subscriptions?.find((s: any) => s.status === "ACTIVE");
-      setSubscription(activeSub || null);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // ** UseEffect
-  useEffect(() => {
-    const fetchDataHandler = async () => {
-      await getDataHandler();
-    };
-
-    fetchDataHandler();
-  }, []);
 
   return (
     <main className="flex flex-col gap-6 lg:gap-8">
@@ -71,12 +46,14 @@ export default function Setting() {
             address={data.address}
             capacity={data.capacity || 100}
             memberSubscriptionTypes={data.memberSubscriptionTypes || ["عادي", "بريميوم", "VIP"]}
+            memberSubscriptionPrices={data.memberSubscriptionPrices || "{}"}
+            currency={data.currency || "ر.س"}
           />
           <LanguageInfo />
         </div>
         <div className="flex flex-col gap-8">
           <OwnerInfo ownerName={data.ownerName} ownerEmail={data.ownerEmail} />
-          <SubType subscription={subscription} />
+          <SubType subscription={initialSubscription} />
           <Support />
         </div>
       </section>

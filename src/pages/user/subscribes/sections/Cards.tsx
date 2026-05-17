@@ -4,9 +4,11 @@ interface CardsProps {
     members: number;
     active: number;
     expiringSoon: number;
+    revenue?: number;
+    currency?: string;
 }
 
-export default function Cards({ members, active, expiringSoon }: CardsProps) {
+export default function Cards({ members, active, expiringSoon, revenue = 0, currency = "ر.س" }: CardsProps) {
     return (
         <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
             {/* Total Members */}
@@ -66,8 +68,8 @@ export default function Cards({ members, active, expiringSoon }: CardsProps) {
                     <div>
                         <p className="text-xs font-bold text-brand-50 mb-1">الإيرادات الشهرية المتوقعة</p>
                         <h3 className="text-3xl font-black text-white leading-none drop-shadow-sm">
-                            24,500
-                            <span className="text-xs font-bold mr-1 opacity-80 italic">ر.س</span>
+                            {revenue.toLocaleString()}
+                            <span className="text-xs font-bold mr-1 opacity-80 italic">{currency}</span>
                         </h3>
                     </div>
                 </div>

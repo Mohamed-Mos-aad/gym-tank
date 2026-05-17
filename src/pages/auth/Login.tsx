@@ -119,7 +119,7 @@ export default function Login() {
         <h4 className="text-center text-[15px] text-neutral-700 sm:text-[16px]">
           ليس لديك حساب؟
           <Link
-            href="/register"
+            href="/sign-up"
             className="text-[16px] font-bold text-brand-500"
           >
             {" "}

@@ -130,6 +130,22 @@ export const getDashboardStats = async (userId?: string) => {
         capacity: gymInfo?.capacity || 100,
         // @ts-ignore
         memberSubscriptionTypes: gymInfo?.memberSubscriptionTypes || ["عادي", "بريميوم", "VIP"],
+        memberSubscriptionPrices: gymInfo?.state ? (function() {
+            try {
+                const parsed = JSON.parse(gymInfo.state);
+                return parsed.prices || "{}";
+            } catch (e) {
+                return "{}";
+            }
+        })() : "{}",
+        currency: gymInfo?.state ? (function() {
+            try {
+                const parsed = JSON.parse(gymInfo.state);
+                return parsed.currency || "ر.س";
+            } catch (e) {
+                return "ر.س";
+            }
+        })() : "ر.س",
         membersExpiringSoon: await prisma.member.findMany({
             where: {
                 gymId,

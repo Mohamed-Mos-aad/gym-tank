@@ -15,9 +15,9 @@ export default async function Page() {
 
     // ** Data
     const { data } = await getMembersListAction(userId);
-    const { members, active, expiringSoon } = await getDashboardStats(userId);
+    const { members, active, expiringSoon, memberSubscriptionPrices, currency } = await getDashboardStats(userId);
 
 
 
-    return <Subscribes data={data} members={members} active={active} expiringSoon={expiringSoon} />
+    return <Subscribes data={data} members={members} active={active} expiringSoon={expiringSoon} memberSubscriptionPrices={memberSubscriptionPrices} currency={currency} />
 }

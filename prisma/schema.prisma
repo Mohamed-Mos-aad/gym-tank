@@ -49,8 +49,10 @@ model Gym {
   address         String?
   state           String?
   systemLanguage  String   @default("ar")
+  currency        String   @default("ر.س")
   capacity        Int      @default(100) // Max gym capacity for occupancy tracker
   memberSubscriptionTypes String[] @default(["عادي", "بريميوم", "VIP"]) // Custom gym plans
+  memberSubscriptionPrices String?
   status          GymStatus @default(PENDING) // Added for Admin approval process
 
   startDate       DateTime @default(now())

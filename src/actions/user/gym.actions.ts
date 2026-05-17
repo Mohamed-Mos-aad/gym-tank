@@ -2,6 +2,7 @@
 // ** Hooks && Tools
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 
 
@@ -22,8 +23,20 @@ export const getGymAction = async () => {
 
     if (!gym) throw new Error("Gym not found");
 
+    const gymObj = JSON.parse(JSON.stringify(gym));
+    let prices = "{}";
+    let currency = "ر.س";
+    if (gymObj.state) {
+        try {
+            const parsed = JSON.parse(gymObj.state);
+            if (parsed.prices) prices = parsed.prices;
+            if (parsed.currency) currency = parsed.currency;
+        } catch (e) {}
+    }
+    gymObj.memberSubscriptionPrices = prices;
+    gymObj.currency = currency;
 
-    return gym;
+    return gymObj;
 };
 
 export const createPaymentRequestAction = async (planId: string, method: string, amount: number, notes?: string) => {
@@ -112,8 +125,15 @@ export const updateGymInfoAction = async (data: any) => {
             capacity: data.capacity ? parseInt(data.capacity) : undefined,
             // @ts-ignore
             memberSubscriptionTypes: data.memberSubscriptionTypes ? data.memberSubscriptionTypes : undefined,
+            state: JSON.stringify({
+                prices: data.memberSubscriptionPrices !== undefined ? data.memberSubscriptionPrices : "{}",
+                currency: data.currency ? data.currency : "ر.س"
+            })
         }
     });
+
+    revalidatePath("/user/setting");
+    revalidatePath("/user/subscribes");
 
     return { success: true };
 };
