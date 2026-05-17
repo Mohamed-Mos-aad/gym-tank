@@ -187,3 +187,206 @@ export const createCheckoutAction = async (memberId: string) => {
 
     return updatedAttendance;
 };
+
+// ** Quick Check-in / Out Action
+export const quickCheckInAction = async (identifier: string, mode: "CHECKIN" | "CHECKOUT" = "CHECKIN") => {
+    try {
+        const userId = (await cookies()).get("gym_tank_token")?.value;
+        const gym = await prisma.gym.findFirst({
+            where: { ownerId: userId },
+        });
+        const gymId = gym?.id;
+
+        if (!gymId) {
+            return {
+                success: false,
+                code: "NO_GYM",
+                message: "الجيم غير موجود أو لم يتم العثور على حسابك",
+            };
+        }
+
+        const cleanIdentifier = identifier.trim();
+        if (!cleanIdentifier) {
+            return {
+                success: false,
+                code: "EMPTY_INPUT",
+                message: "يرجى إدخال رقم الموبايل 📱",
+            };
+        }
+
+        const member = await prisma.member.findFirst({
+            where: {
+                gymId,
+                phone: cleanIdentifier,
+            }
+        });
+
+        if (!member) {
+            return {
+                success: false,
+                code: "NOT_FOUND",
+                message: "رقم الموبايل هذا غير مسجل في هذا النادي ❌",
+            };
+        }
+
+        const now = new Date();
+
+        // 1. Validation for expired subscriptions
+        if (member.subscriptionStatus !== "ACTIVE" || (member.endDate && member.endDate < now)) {
+            return {
+                success: false,
+                code: "EXPIRED",
+                message: "اشتراك العضو منتهي، يرجى التجديد أولاً ⚠️",
+                member: {
+                    id: member.id,
+                    name: member.name,
+                    phone: member.phone,
+                    subscriptionType: member.subscriptionType,
+                    endDate: member.endDate,
+                }
+            };
+        }
+
+        // 2. CHECK-IN MODE
+        if (mode === "CHECKIN") {
+            const startOfDay = new Date();
+            startOfDay.setHours(0, 0, 0, 0);
+
+            const alreadyCheckedIn = await prisma.attendance.findFirst({
+                where: {
+                    memberId: member.id,
+                    gymId,
+                    checkIn: {
+                        gte: startOfDay,
+                    },
+                },
+            });
+
+            if (alreadyCheckedIn) {
+                return {
+                    success: false,
+                    code: "ALREADY_CHECKED_IN",
+                    message: "العضو سجل حضور بالفعل اليوم 🔁",
+                    member: {
+                        id: member.id,
+                        name: member.name,
+                        phone: member.phone,
+                        subscriptionType: member.subscriptionType,
+                        endDate: member.endDate,
+                    }
+                };
+            }
+
+            const attendance = await prisma.attendance.create({
+                data: {
+                    memberId: member.id,
+                    gymId,
+                },
+            });
+
+            revalidatePath("/user/members");
+            revalidatePath("/user");
+
+            return {
+                success: true,
+                code: "SUCCESS_CHECKIN",
+                message: "تم تسجيل الحضور بنجاح ✅",
+                member: {
+                    id: member.id,
+                    name: member.name,
+                    phone: member.phone,
+                    subscriptionType: member.subscriptionType,
+                    endDate: member.endDate,
+                },
+                attendance,
+            };
+        }
+
+        // 3. CHECK-OUT MODE
+        if (mode === "CHECKOUT") {
+            const startOfDay = new Date();
+            startOfDay.setHours(0, 0, 0, 0);
+
+            const attendance = await prisma.attendance.findFirst({
+                where: {
+                    memberId: member.id,
+                    gymId,
+                    checkIn: {
+                        gte: startOfDay,
+                    },
+                },
+                orderBy: {
+                    checkIn: "desc",
+                },
+            });
+
+            if (!attendance) {
+                return {
+                    success: false,
+                    code: "NO_CHECKIN_TODAY",
+                    message: "لم يتم تسجيل دخول هذا العضو اليوم ❌",
+                    member: {
+                        id: member.id,
+                        name: member.name,
+                        phone: member.phone,
+                        subscriptionType: member.subscriptionType,
+                        endDate: member.endDate,
+                    }
+                };
+            }
+
+            if (attendance.checkOut) {
+                return {
+                    success: false,
+                    code: "ALREADY_CHECKED_OUT",
+                    message: "تم تسجيل انصراف هذا العضو بالفعل اليوم 🔁",
+                    member: {
+                        id: member.id,
+                        name: member.name,
+                        phone: member.phone,
+                        subscriptionType: member.subscriptionType,
+                        endDate: member.endDate,
+                    }
+                };
+            }
+
+            const updatedAttendance = await prisma.attendance.update({
+                where: {
+                    id: attendance.id,
+                },
+                data: {
+                    checkOut: now,
+                },
+            });
+
+            revalidatePath("/user/members");
+            revalidatePath("/user");
+
+            return {
+                success: true,
+                code: "SUCCESS_CHECKOUT",
+                message: "تم تسجيل الانصراف بنجاح ✅",
+                member: {
+                    id: member.id,
+                    name: member.name,
+                    phone: member.phone,
+                    subscriptionType: member.subscriptionType,
+                    endDate: member.endDate,
+                },
+                attendance: updatedAttendance,
+            };
+        }
+
+        return {
+            success: false,
+            code: "INVALID_MODE",
+            message: "الوضع المحدد غير صالح",
+        };
+    } catch (err: any) {
+        return {
+            success: false,
+            code: "ERROR",
+            message: err.message || "حدث خطأ أثناء معالجة الطلب",
+        };
+    }
+};

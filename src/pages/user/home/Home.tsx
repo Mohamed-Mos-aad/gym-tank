@@ -1,5 +1,6 @@
 // ** Sections
 import Welcome from "./sections/Welcome";
+import QuickCheckIn from "./sections/QuickCheckIn";
 import Cards from "./sections/Cards";
 import Logs from "./sections/Logs";
 import Tips from "./sections/Tips";
@@ -37,7 +38,8 @@ export default function Home({
 }:HomeProps) {
   return (
     <main className="flex flex-col gap-6 lg:gap-8">
-      <Welcome ownerName={ownerName} gymName={gymName} expiringSoon={expiringSoon} memberSubscriptionTypes={memberSubscriptionTypes} />
+      <Welcome ownerName={ownerName} gymName={gymName} expiringSoon={expiringSoon} />
+      <QuickCheckIn />
       <Cards members={members} active={active} expired={expired} presentNow={presentNow} expiringSoon={expiringSoon} />
       <section className="grid gap-6 xl:grid-cols-3 xl:gap-8">
         <div className="xl:col-span-2">
