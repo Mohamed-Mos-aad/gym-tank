@@ -47,12 +47,16 @@ export default function AddMemberModal({ memberSubscriptionTypes = ["عادي"] 
     
     setLoading(true);
     try {
-        await createMemberAction(newMember);
-        setToast({ message: "تمت الإضافة بنجاح ✅", type: "success" });
-        router.refresh();
-        setTimeout(() => toggleModal(), 1500);
-    } catch (error) {
-        setToast({ message: "حدث خطأ أثناء إضافة العضو", type: "error" });
+        const res = await createMemberAction(newMember);
+        if (res && !res.success) {
+            setToast({ message: res.error || "حدث خطأ أثناء إضافة العضو", type: "error" });
+        } else {
+            setToast({ message: "تمت الإضافة بنجاح ✅", type: "success" });
+            router.refresh();
+            setTimeout(() => toggleModal(), 1500);
+        }
+    } catch (error: any) {
+        setToast({ message: error.message || "حدث خطأ أثناء إضافة العضو", type: "error" });
     } finally {
         setLoading(false);
     }

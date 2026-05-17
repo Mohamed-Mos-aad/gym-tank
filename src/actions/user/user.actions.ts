@@ -63,6 +63,36 @@ export const createMemberAction = async (data: any) => {
 
     if (!gym) throw new Error("Gym not found");
 
+    // ─── Enforce Subscription Limits ───────────────────────────────────────────
+    const currentMemberCount = await prisma.member.count({
+        where: { gymId: gym.id }
+    });
+
+    const activeSub = await prisma.gymSubscription.findFirst({
+        where: { gymId: gym.id, status: "ACTIVE" }
+    });
+
+    let maxMembersLimit = 50; // Default Free limit
+    let planLabel = "التجربة المجانية";
+
+    if (activeSub) {
+        const plan = await prisma.plan.findFirst({
+            where: { name: activeSub.planName }
+        });
+        if (plan) {
+            maxMembersLimit = plan.maxMembers === null ? Infinity : plan.maxMembers;
+            planLabel = plan.name;
+        }
+    }
+
+    if (currentMemberCount >= maxMembersLimit) {
+        return { 
+            success: false, 
+            error: `لقد وصلت للحد الأقصى للأعضاء المسموح به في (${planLabel}) وهو ${maxMembersLimit} عضو. يرجى ترقية اشتراكك لإضافة المزيد.` 
+        };
+    }
+    // ───────────────────────────────────────────────────────────────────────────
+
     const endDate = new Date();
     if (data.months === 0) {
         endDate.setHours(23, 59, 59, 999);

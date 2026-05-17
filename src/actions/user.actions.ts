@@ -26,6 +26,7 @@ export const createUserAction = async (userData)=>{
             data: {
                 name: gymName,
                 ownerId: user.id,
+                status: "APPROVED", // Directly APPROVED on registration to bypass approval requirement!
             },
         });
 
@@ -129,7 +130,39 @@ export const createMemberAction = async (memberData)=>{
     const gym = await prisma.gym.findFirst({
         where: { ownerId: userId },
     });
-    const gymId = gym?.id;
+    
+    if (!gym) throw new Error("Gym not found");
+    const gymId = gym.id;
+
+    // ─── Enforce Subscription Limits ───────────────────────────────────────────
+    const currentMemberCount = await prisma.member.count({
+        where: { gymId }
+    });
+
+    const activeSub = await prisma.gymSubscription.findFirst({
+        where: { gymId, status: "ACTIVE" }
+    });
+
+    let maxMembersLimit = 50; // Default Free limit
+    let planLabel = "التجربة المجانية";
+
+    if (activeSub) {
+        const plan = await prisma.plan.findFirst({
+            where: { name: activeSub.planName }
+        });
+        if (plan) {
+            maxMembersLimit = plan.maxMembers === null ? Infinity : plan.maxMembers;
+            planLabel = plan.name;
+        }
+    }
+
+    if (currentMemberCount >= maxMembersLimit) {
+        return { 
+            success: false, 
+            error: `لقد وصلت للحد الأقصى للأعضاء المسموح به في (${planLabel}) وهو ${maxMembersLimit} عضو. يرجى ترقية اشتراكك لإضافة المزيد.` 
+        };
+    }
+    // ───────────────────────────────────────────────────────────────────────────
 
     await prisma.member.create({
         data: {
@@ -138,7 +171,9 @@ export const createMemberAction = async (memberData)=>{
                 connect: { id: gymId }
             }
         }
-    })
+    });
+
+    return { success: true };
 }
 
 export const updateMemberAction = async (memberId, memberData)=>{

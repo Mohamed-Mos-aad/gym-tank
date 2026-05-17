@@ -29,9 +29,13 @@ export default function AddMemberModal() {
   };
   const saveMemberHandler = async () => {
     if (!newMember.name) return;
-    await createMemberAction(newMember);
-    router.refresh();
-    toggleAddMemberModal();
+    const res = await createMemberAction(newMember);
+    if (res && !res.success) {
+        alert(res.error || "حدث خطأ أثناء إضافة العضو");
+    } else {
+        router.refresh();
+        toggleAddMemberModal();
+    }
   };
 
   return (

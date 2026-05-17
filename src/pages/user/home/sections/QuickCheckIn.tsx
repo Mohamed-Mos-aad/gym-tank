@@ -71,9 +71,9 @@ export default function QuickCheckIn() {
     message: string;
     member?: {
       name: string;
-      phone: string;
-      subscriptionType: string;
-      endDate?: Date | string;
+      phone: string | null;
+      subscriptionType: string | null;
+      endDate?: Date | string | null;
     };
   } | null>(null);
 
