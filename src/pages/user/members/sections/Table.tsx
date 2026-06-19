@@ -9,6 +9,7 @@ import MemberActions from "../components/MemberActions";
 import EditMemberModal from "../components/EditMemberModal";
 import RenewMemberModal from "../components/RenewMemberModal";
 import DeleteConfirmModal from "../components/DeleteConfirmModal";
+import FinancialLedgerModal from "../components/FinancialLedgerModal";
 import { createAttendanceAction, createCheckoutAction } from "@/actions/user/attendance.actions";
 import { deleteMemberAction } from "@/actions/user/user.actions";
 
@@ -28,6 +29,7 @@ export default function Table({ data }: TableProps) {
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isRenewOpen, setIsRenewOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+    const [isFinancialOpen, setIsFinancialOpen] = useState(false);
     
     const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
@@ -240,6 +242,7 @@ export default function Table({ data }: TableProps) {
                                                     onEdit={(m) => { setSelectedMember(m); setIsEditOpen(true); }}
                                                     onRenew={(m) => { setSelectedMember(m); setIsRenewOpen(true); }}
                                                     onDelete={(m) => { setSelectedMember(m); setIsDeleteOpen(true); }}
+                                                    onFinancial={(m) => { setSelectedMember(m); setIsFinancialOpen(true); }}
                                                 />
                                             </div>
                                         </td>
@@ -275,6 +278,11 @@ export default function Table({ data }: TableProps) {
                         onConfirm={handleDelete}
                         itemName={selectedMember.name}
                         loading={isProcessing === selectedMember.id}
+                    />
+                    <FinancialLedgerModal 
+                        member={selectedMember}
+                        isOpen={isFinancialOpen}
+                        onClose={() => { setIsFinancialOpen(false); setSelectedMember(null); }}
                     />
                 </>
             )}

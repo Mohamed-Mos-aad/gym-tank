@@ -133,6 +133,23 @@ export async function updateGymStatus(gymId: string, status: "PENDING" | "APPROV
             where: { id: gymId },
             data: { status }
         });
+
+        // Create Audit Log
+        try {
+            const cookiesList = await (await import("next/headers")).cookies();
+            const adminId = cookiesList.get("gym_tank_token")?.value;
+            await prisma.auditLog.create({
+                data: {
+                    userId: adminId,
+                    gymId,
+                    action: "تعديل حالة الجيم",
+                    details: `تم تغيير حالة الجيم إلى ${status === "APPROVED" ? "مقبول" : status === "SUSPENDED" ? "معطل" : status}`
+                }
+            });
+        } catch (logErr) {
+            console.error("Error creating audit log in updateGymStatus:", logErr);
+        }
+
         revalidatePath("/admin/gyms");
         return { success: true };
     } catch (error) {
@@ -160,10 +177,26 @@ export async function getAdminUsers() {
 
 export async function updateUserStatus(userId: string, isActive: boolean) {
     try {
-        await prisma.user.update({
+        const updatedUser = await prisma.user.update({
             where: { id: userId },
             data: { isActive }
         });
+
+        // Create Audit Log
+        try {
+            const cookiesList = await (await import("next/headers")).cookies();
+            const adminId = cookiesList.get("gym_tank_token")?.value;
+            await prisma.auditLog.create({
+                data: {
+                    userId: adminId,
+                    action: "تعديل حالة حساب مستخدم",
+                    details: `تم ${isActive ? "تفعيل" : "تعطيل"} حساب المستخدم ${updatedUser.name} (${updatedUser.email})`
+                }
+            });
+        } catch (logErr) {
+            console.error("Error creating audit log in updateUserStatus:", logErr);
+        }
+
         revalidatePath("/admin/users");
         return { success: true };
     } catch (error) {
@@ -249,6 +282,22 @@ export async function approvePaymentRequest(requestId: string) {
             where: { id: request.gymId },
             data: { status: "APPROVED" }
         });
+
+        // 4. Create Audit Log
+        try {
+            const cookiesList = await (await import("next/headers")).cookies();
+            const adminId = cookiesList.get("gym_tank_token")?.value;
+            await prisma.auditLog.create({
+                data: {
+                    userId: adminId,
+                    gymId: request.gymId,
+                    action: "تفعيل اشتراك منصة",
+                    details: `تمت الموافقة على تفعيل باقة ${request.plan.name} بقيمة ${request.amount} ج.م`
+                }
+            });
+        } catch (logErr) {
+            console.error("Error creating audit log in approvePaymentRequest:", logErr);
+        }
 
         revalidatePath(`/admin/gyms/${request.gymId}`);
         revalidatePath("/admin/dashboard");

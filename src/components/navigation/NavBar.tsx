@@ -3,6 +3,7 @@
 // ** Hooks && Tools
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { getCurrentUserAction } from "@/actions/user.actions";
 // ** Assets
 import { Menu, X } from "lucide-react";
 
@@ -16,7 +17,23 @@ const navItems = [
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("home");
+    const [user, setUser] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
     const ctaBaseClass = "inline-flex items-center justify-center rounded-xl px-6 py-2 text-[16px] font-black shadow transition-colors duration-200";
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const currentUser = await getCurrentUserAction();
+                setUser(currentUser);
+            } catch (error) {
+                console.error("Failed to fetch user:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchUser();
+    }, []);
 
     useEffect(() => {
         const sectionIds = navItems.map((item) => item.href.replace("#", ""));
@@ -74,8 +91,21 @@ export default function NavBar() {
                 </ul>
 
                 <div className="hidden items-center gap-3 lg:flex">
-                    <Link href="/login" className={`${ctaBaseClass} bg-white text-brand-500 hover:bg-neutral-100`}>تسجيل الدخول</Link>
-                    <Link href="/" className={`${ctaBaseClass} bg-brand-500 text-white hover:bg-brand-500/90`}>ابدأ الآن</Link>
+                    {loading ? (
+                        <div className="h-10 w-24 animate-pulse rounded-xl bg-neutral-200" />
+                    ) : user ? (
+                        <Link
+                            href={user.role === "ADMIN" ? "/admin" : "/user"}
+                            className={`${ctaBaseClass} bg-brand-500 text-white hover:bg-brand-500/90`}
+                        >
+                            لوحة التحكم
+                        </Link>
+                    ) : (
+                        <>
+                            <Link href="/login" className={`${ctaBaseClass} bg-white text-brand-500 hover:bg-neutral-100`}>تسجيل الدخول</Link>
+                            <Link href="/" className={`${ctaBaseClass} bg-brand-500 text-white hover:bg-brand-500/90`}>ابدأ الآن</Link>
+                        </>
+                    )}
                 </div>
 
                 <button
@@ -111,8 +141,22 @@ export default function NavBar() {
                             })}
                         </ul>
                         <div className="mt-4 flex flex-col gap-2">
-                            <Link href="/login" className={`${ctaBaseClass} w-full bg-white text-brand-500 hover:bg-neutral-100`}>تسجيل الدخول</Link>
-                            <Link href="/" className={`${ctaBaseClass} w-full bg-brand-500 text-white hover:bg-brand-500/90`}>ابدأ الآن</Link>
+                            {loading ? (
+                                <div className="h-10 w-full animate-pulse rounded-xl bg-neutral-200" />
+                            ) : user ? (
+                                <Link
+                                    href={user.role === "ADMIN" ? "/admin" : "/user"}
+                                    className={`${ctaBaseClass} w-full bg-brand-500 text-white hover:bg-brand-500/90`}
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    لوحة التحكم
+                                </Link>
+                            ) : (
+                                <>
+                                    <Link href="/login" className={`${ctaBaseClass} w-full bg-white text-brand-500 hover:bg-neutral-100`}>تسجيل الدخول</Link>
+                                    <Link href="/" className={`${ctaBaseClass} w-full bg-brand-500 text-white hover:bg-brand-500/90`}>ابدأ الآن</Link>
+                                </>
+                            )}
                         </div>
                     </div>
                 )}

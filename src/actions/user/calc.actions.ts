@@ -107,9 +107,6 @@ export const getDashboardStats = async (userId?: string) => {
         prisma.attendance.findMany({
             where: { 
                 gymId,
-                checkIn: {
-                    gte: startOfDay,
-                }
             },
             take: 5,
             orderBy: { checkIn: 'desc' },

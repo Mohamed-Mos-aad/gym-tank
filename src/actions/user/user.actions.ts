@@ -54,6 +54,9 @@ export const getMembersListAction = async (userId?: string) => {
                 },
                 orderBy: { checkIn: "desc" },
                 take: 1
+            },
+            payments: {
+                orderBy: { paidAt: "desc" }
             }
         },
         orderBy: { createdAt: "desc" },
@@ -114,7 +117,10 @@ export const createMemberAction = async (data: any) => {
         endDate.setMonth(endDate.getMonth() + (data.months || 1));
     }
 
-    await prisma.member.create({
+    const totalPrice = data.totalPrice ? parseFloat(data.totalPrice) : 0;
+    const amountPaid = data.amountPaid ? parseFloat(data.amountPaid) : 0;
+
+    const member = await prisma.member.create({
         data: {
             name: data.name,
             phone: data.phone,
@@ -123,7 +129,30 @@ export const createMemberAction = async (data: any) => {
             startDate: new Date(),
             endDate: endDate,
             gymId: gym.id,
+            totalPrice,
+            amountPaid,
         },
+    });
+
+    if (amountPaid > 0) {
+        await prisma.memberPayment.create({
+            data: {
+                memberId: member.id,
+                amount: amountPaid,
+                method: data.paymentMethod || "نقدي",
+                notes: `دفعة أولى عند الاشتراك - باقة ${data.subscriptionType || "عادي"}`
+            }
+        });
+    }
+
+    // Write audit log
+    await prisma.auditLog.create({
+        data: {
+            userId,
+            gymId: gym.id,
+            action: "إضافة عضو جديد",
+            details: `تمت إضافة العضو ${data.name} باشتراك ${data.subscriptionType || "عادي"} (السعر: ${totalPrice}، المدفوع: ${amountPaid})`
+        }
     });
 
     revalidatePath("/user/members");
@@ -169,7 +198,7 @@ export const updateUserProfileAction = async (data: any) => {
     }
 };
 
-export const renewMemberAction = async (memberId: string, months: number) => {
+export const renewMemberAction = async (memberId: string, months: number, price: number = 0, paid: number = 0, paymentMethod: string = "نقدي") => {
     const userId = (await cookies()).get("gym_tank_token")?.value;
     if (!userId) throw new Error("Unauthorized");
 
@@ -193,8 +222,31 @@ export const renewMemberAction = async (memberId: string, months: number) => {
         where: { id: memberId },
         data: {
             endDate: newEndDate,
-            subscriptionStatus: "ACTIVE"
+            subscriptionStatus: "ACTIVE",
+            totalPrice: price,
+            amountPaid: paid,
         },
+    });
+
+    if (paid > 0) {
+        await prisma.memberPayment.create({
+            data: {
+                memberId,
+                amount: paid,
+                method: paymentMethod,
+                notes: `تجديد اشتراك لمدة ${months === 0 ? "يوم واحد" : `${months} شهور`}`
+            }
+        });
+    }
+
+    // Write audit log
+    await prisma.auditLog.create({
+        data: {
+            userId,
+            gymId: member.gymId,
+            action: "تجديد اشتراك عضو",
+            details: `تم تجديد اشتراك العضو ${member.name} (السعر: ${price}، المدفوع: ${paid})`
+        }
     });
 
     revalidatePath("/user/members");
@@ -204,6 +256,18 @@ export const renewMemberAction = async (memberId: string, months: number) => {
 export const deleteMemberAction = async (memberId: string) => {
     const userId = (await cookies()).get("gym_tank_token")?.value;
     if (!userId) throw new Error("Unauthorized");
+
+    const member = await prisma.member.findUnique({ where: { id: memberId } });
+    if (member) {
+        await prisma.auditLog.create({
+            data: {
+                userId,
+                gymId: member.gymId,
+                action: "حذف عضو",
+                details: `تم حذف العضو ${member.name} (رقم الهاتف: ${member.phone || "بدون"})`
+            }
+        });
+    }
 
     await prisma.member.delete({
         where: { id: memberId },
@@ -217,7 +281,7 @@ export const updateMemberAction = async (memberId: string, data: any) => {
     const userId = (await cookies()).get("gym_tank_token")?.value;
     if (!userId) throw new Error("Unauthorized");
 
-    await prisma.member.update({
+    const member = await prisma.member.update({
         where: { id: memberId },
         data: {
             name: data.name,
@@ -226,6 +290,57 @@ export const updateMemberAction = async (memberId: string, data: any) => {
         },
     });
 
+    await prisma.auditLog.create({
+        data: {
+            userId,
+            gymId: member.gymId,
+            action: "تحديث بيانات عضو",
+            details: `تم تحديث بيانات العضو ${member.name}`
+        }
+    });
+
     revalidatePath("/user/members");
     return { success: true };
+};
+
+export const addMemberPaymentAction = async (memberId: string, amount: number, method: string, notes?: string) => {
+    const userId = (await cookies()).get("gym_tank_token")?.value;
+    if (!userId) throw new Error("Unauthorized");
+
+    const member = await prisma.member.findUnique({
+        where: { id: memberId }
+    });
+
+    if (!member) throw new Error("Member not found");
+
+    const newAmountPaid = member.amountPaid + amount;
+
+    await prisma.member.update({
+        where: { id: memberId },
+        data: {
+            amountPaid: newAmountPaid
+        }
+    });
+
+    const payment = await prisma.memberPayment.create({
+        data: {
+            memberId,
+            amount,
+            method,
+            notes: notes || "تحصيل دفعة مالية"
+        }
+    });
+
+    // Write audit log
+    await prisma.auditLog.create({
+        data: {
+            userId,
+            gymId: member.gymId,
+            action: "تحصيل دفعة مالية",
+            details: `تم تحصيل مبلغ ${amount} ج.م للعضو ${member.name} بطريقة ${method}`
+        }
+    });
+
+    revalidatePath("/user/members");
+    return { success: true, payment };
 };

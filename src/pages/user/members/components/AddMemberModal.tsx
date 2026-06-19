@@ -30,13 +30,24 @@ export default function AddMemberModal({ memberSubscriptionTypes = ["عادي"] 
     phone: "",
     subscriptionType: memberSubscriptionTypes[0] || "عادي",
     months: 1,
+    totalPrice: "",
+    amountPaid: "",
+    paymentMethod: "نقدي",
   });
   const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
   // ** Handlers
   const toggleModal = () => {
     setIsOpen((prev) => !prev);
-    setNewMember({ name: "", phone: "", subscriptionType: memberSubscriptionTypes[0] || "عادي", months: 1 });
+    setNewMember({ 
+      name: "", 
+      phone: "", 
+      subscriptionType: memberSubscriptionTypes[0] || "عادي", 
+      months: 1,
+      totalPrice: "",
+      amountPaid: "",
+      paymentMethod: "نقدي",
+    });
   };
 
   const saveMemberHandler = async () => {
@@ -121,6 +132,37 @@ export default function AddMemberModal({ memberSubscriptionTypes = ["عادي"] 
                             { label: "سنة كاملة", value: 12 }
                         ]}
                         icon={<Calendar size={18} />}
+                    />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-3">
+                    <Input
+                        type="number"
+                        id="totalPrice"
+                        placeholder="0"
+                        label="سعر الاشتراك الإجمالي"
+                        value={newMember.totalPrice}
+                        onChange={(e) => setNewMember({ ...newMember, totalPrice: e.target.value })}
+                    />
+                    <Input
+                        type="number"
+                        id="amountPaid"
+                        placeholder="0"
+                        label="المبلغ المدفوع حالياً"
+                        value={newMember.amountPaid}
+                        onChange={(e) => setNewMember({ ...newMember, amountPaid: e.target.value })}
+                    />
+                    <CustomSelect 
+                        label="طريقة الدفع"
+                        value={newMember.paymentMethod}
+                        onChange={(val) => setNewMember({ ...newMember, paymentMethod: val })}
+                        options={[
+                            { label: "نقدي", value: "نقدي" },
+                            { label: "شبكة / فيزا", value: "شبكة" },
+                            { label: "تحويل بنكي", value: "تحويل" },
+                            { label: "فودافون كاش", value: "فودافون كاش" }
+                        ]}
+                        icon={<CreditCard size={18} />}
                     />
                 </div>
             </div>

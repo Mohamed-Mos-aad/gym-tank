@@ -11,7 +11,7 @@ export function proxy(request: NextRequest) {
         return NextResponse.next();
     }
 
-    const isAuthPage = pathname.startsWith("/login") || pathname === "/";
+    const isAuthPage = pathname.startsWith("/login");
     const isAdminPath = pathname.startsWith("/admin");
     const isUserPath = pathname.startsWith("/user");
 

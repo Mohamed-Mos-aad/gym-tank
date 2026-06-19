@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Modal from "@/components/popUp/Modal";
 import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import CustomSelect from "@/components/ui/Select";
-import { RefreshCw, Calendar } from "lucide-react";
+import { RefreshCw, Calendar, CreditCard } from "lucide-react";
 import { renewMemberAction } from "@/actions/user/user.actions";
 import Toast from "@/components/ui/Toast";
 
@@ -16,13 +17,16 @@ interface RenewMemberModalProps {
 
 export default function RenewMemberModal({ member, isOpen, onClose }: RenewMemberModalProps) {
     const [months, setMonths] = useState(1);
+    const [price, setPrice] = useState("");
+    const [paid, setPaid] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState("نقدي");
     const [loading, setLoading] = useState(false);
     const [toast, setToast] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
     const handleRenew = async () => {
         setLoading(true);
         try {
-            await renewMemberAction(member.id, months);
+            await renewMemberAction(member.id, months, parseFloat(price) || 0, parseFloat(paid) || 0, paymentMethod);
             setToast({ message: "تم التجديد بنجاح ✅", type: "success" });
             setTimeout(() => onClose(), 1500);
         } catch (error) {
@@ -60,6 +64,38 @@ export default function RenewMemberModal({ member, isOpen, onClose }: RenewMembe
                         ]}
                         icon={<Calendar size={18} />}
                     />
+                    
+                    <div className="grid gap-4 sm:grid-cols-3">
+                        <Input
+                            type="number"
+                            id="renewPrice"
+                            placeholder="0"
+                            label="سعر التجديد"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                        />
+                        <Input
+                            type="number"
+                            id="renewPaid"
+                            placeholder="0"
+                            label="المبلغ المدفوع"
+                            value={paid}
+                            onChange={(e) => setPaid(e.target.value)}
+                        />
+                        <CustomSelect 
+                            label="طريقة الدفع"
+                            value={paymentMethod}
+                            onChange={(val) => setPaymentMethod(val)}
+                            options={[
+                                { label: "نقدي", value: "نقدي" },
+                                { label: "شبكة / فيزا", value: "شبكة" },
+                                { label: "تحويل بنكي", value: "تحويل" },
+                                { label: "فودافون كاش", value: "فودافون كاش" }
+                            ]}
+                            icon={<CreditCard size={18} />}
+                        />
+                    </div>
+
                     <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
                         <p className="text-xs text-emerald-700 font-bold leading-relaxed">
                             * سيتم إضافة المدة المختارة لتاريخ انتهاء الاشتراك الحالي، أو من تاريخ اليوم إذا كان الاشتراك منتهياً.

@@ -1,16 +1,17 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MoreVertical, Edit2, RefreshCw, Trash2, ChevronDown } from "lucide-react";
+import { MoreVertical, Edit2, RefreshCw, Trash2, ChevronDown, DollarSign } from "lucide-react";
 
 interface MemberActionsProps {
     member: any;
     onEdit: (member: any) => void;
     onRenew: (member: any) => void;
     onDelete: (member: any) => void;
+    onFinancial: (member: any) => void;
 }
 
-export default function MemberActions({ member, onEdit, onRenew, onDelete }: MemberActionsProps) {
+export default function MemberActions({ member, onEdit, onRenew, onDelete, onFinancial }: MemberActionsProps) {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -52,6 +53,15 @@ export default function MemberActions({ member, onEdit, onRenew, onDelete }: Mem
                             >
                                 <RefreshCw size={16} className="text-emerald-500" />
                                 تجديد الاشتراك
+                            </button>
+                        </li>
+                        <li>
+                            <button 
+                                onClick={() => { onFinancial(member); setIsOpen(false); }}
+                                className="cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-neutral-700 hover:bg-neutral-50 transition-colors"
+                            >
+                                <DollarSign size={16} className="text-amber-500" />
+                                السجل المالي
                             </button>
                         </li>
                         <li className="border-t border-neutral-50 mt-1 pt-1">
